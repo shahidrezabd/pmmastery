@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PMP Exam Simulator</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .option-card.selected {
+            border-color: #2563eb;
+            background-color: #eff6ff;
+        }
+        .option-card.correct {
+            border-color: #22c55e;
+            background-color: #f0fdf4;
+        }
+        .option-card.incorrect {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-blue-600 p-2 rounded-lg text-white">
+                    <i data-lucide="award" class="w-6 h-6"></i>
+                </div>
+                <h1 class="text-xl font-bold text-slate-900 tracking-tight">PMP<span class="text-blue-600">Sim</span> Pro</h1>
+            </div>
+            <div id="header-actions" class="hidden md:flex items-center space-x-4 text-sm font-medium text-slate-500">
+                <span id="timer-display" class="hidden items-center text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+                    <i data-lucide="clock" class="w-4 h-4 mr-2"></i>
+                    <span id="time-remaining">00:00</span>
+                </span>
+                <button onclick="app.reset()" class="hover:text-blue-600 transition-colors">Exit Exam</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-4xl">
+        
+        <!-- View: Dashboard (Home) -->
+        <div id="view-dashboard" class="fade-in space-y-8">
+            <div class="text-center space-y-4 py-10">
+                <h2 class="text-4xl font-extrabold text-slate-900">Master the PMP Exam</h2>
+                <p class="text-lg text-slate-600 max-w-2xl mx-auto">Practice with realistic scenario-based questions covering People, Process, and Business Environment domains.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Domain Cards -->
+                <div onclick="app.startExam('People')" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-300 transition-all cursor-pointer group">
+                    <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="users" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">People</h3>
+                    <p class="text-sm text-slate-500 mb-4">Conflict resolution, team leadership, and emotional intelligence.</p>
+                    <span class="text-xs font-semibold bg-purple-50 text-purple-700 px-2 py-1 rounded">42% of Exam</span>
+                </div>
+
+                <div onclick="app.startExam('Process')" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-300 transition-all cursor-pointer group">
+                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="settings" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Process</h3>
+                    <p class="text-sm text-slate-500 mb-4">Methodology execution, risk, procurement, and governance.</p>
+                    <span class="text-xs font-semibold bg-blue-50 text-blue-700 px-2 py-1 rounded">50% of Exam</span>
+                </div>
+
+                <div onclick="app.startExam('Business Environment')" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-300 transition-all cursor-pointer group">
+                    <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="briefcase" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Business Env.</h3>
+                    <p class="text-sm text-slate-500 mb-4">Compliance, value delivery, and organizational change.</p>
+                    <span class="text-xs font-semibold bg-emerald-50 text-emerald-700 px-2 py-1 rounded">8% of Exam</span>
+                </div>
+            </div>
+
+            <div class="mt-8 bg-slate-900 rounded-2xl p-8 text-white flex flex-col md:flex-row items-center justify-between shadow-lg">
+                <div class="mb-6 md:mb-0">
+                    <h3 class="text-2xl font-bold mb-2">Ready for the real deal?</h3>
+                    <p class="text-slate-300">Take a mixed simulation exam with questions from all domains.</p>
+                </div>
+                <button onclick="app.startExam('All')" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-8 rounded-lg shadow transition-all transform hover:-translate-y-1">
+                    Start Full Mock Exam
+                </button>
+            </div>
+        </div>
+
+        <!-- View: Quiz -->
+        <div id="view-quiz" class="hidden fade-in max-w-3xl mx-auto">
+            <!-- Progress Bar -->
+            <div class="mb-6">
+                <div class="flex justify-between text-xs font-semibold text-slate-500 mb-2">
+                    <span id="question-tracker">Question 1 of 10</span>
+                    <span id="domain-badge" class="text-blue-600">Process</span>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-2.5">
+                    <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-6 md:p-8">
+                    <p id="question-text" class="text-lg md:text-xl font-medium text-slate-800 leading-relaxed mb-8">
+                        <!-- Question Text Injected Here -->
+                    </p>
+
+                    <div id="options-container" class="space-y-3">
+                        <!-- Options Injected Here -->
+                    </div>
+                </div>
+                
+                <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex justify-between items-center">
+                    <button id="btn-prev" onclick="app.prevQuestion()" class="text-slate-500 hover:text-slate-800 font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i data-lucide="chevron-left" class="inline w-4 h-4 mr-1"></i> Previous
+                    </button>
+                    <button id="btn-next" onclick="app.nextQuestion()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors shadow-sm">
+                        Next <i data-lucide="chevron-right" class="inline w-4 h-4 ml-1"></i>
+                    </button>
+                    <button id="btn-submit" onclick="app.finishExam()" class="hidden bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-colors shadow-sm">
+                        Submit Exam
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- View: Results -->
+        <div id="view-results" class="hidden fade-in space-y-8">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-8 text-center">
+                <div id="score-icon" class="w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4">
+                    <!-- Icon injected JS -->
+                </div>
+                <h2 class="text-3xl font-bold text-slate-900 mb-2">Exam Complete!</h2>
+                <p id="score-message" class="text-slate-600 mb-6">You have completed the practice session.</p>
+                
+                <div class="flex justify-center items-center gap-2 text-5xl font-extrabold text-slate-900 mb-2">
+                    <span id="score-percent">0</span><span class="text-2xl text-slate-400">%</span>
+                </div>
+                <p class="text-sm text-slate-500 mb-8">Score: <span id="score-fraction">0/0</span></p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-slate-100 pt-8 text-left">
+                    <div class="p-4 bg-purple-50 rounded-lg">
+                        <div class="text-xs font-bold text-purple-600 uppercase mb-1">People</div>
+                        <div id="score-people" class="text-xl font-bold text-slate-800">0%</div>
+                    </div>
+                    <div class="p-4 bg-blue-50 rounded-lg">
+                        <div class="text-xs font-bold text-blue-600 uppercase mb-1">Process</div>
+                        <div id="score-process" class="text-xl font-bold text-slate-800">0%</div>
+                    </div>
+                    <div class="p-4 bg-emerald-50 rounded-lg">
+                        <div class="text-xs font-bold text-emerald-600 uppercase mb-1">Business Env.</div>
+                        <div id="score-business" class="text-xl font-bold text-slate-800">0%</div>
+                    </div>
+                </div>
+                
+                <button onclick="app.reset()" class="mt-8 bg-slate-900 hover:bg-slate-800 text-white px-8 py-3 rounded-lg font-semibold transition-colors">
+                    Take Another Exam
+                </button>
+            </div>
+
+            <div class="space-y-4">
+                <h3 class="text-xl font-bold text-slate-900 px-2">Detailed Review & Rationales</h3>
+                <div id="review-container" class="space-y-4">
+                    <!-- Review Items Injected Here -->
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-12">
+        <div class="container mx-auto px-4 text-center text-slate-500 text-sm">
+            <p>&copy; 2024 PMP Simulator Pro. Not affiliated with PMI.</p>
+        </div>
+    </footer>
+
+    <script>
+        // ==========================================
+        // DATA STORE (JSON FORMAT)
+        // ==========================================
+        const questionDatabase = [
+            // --- PEOPLE DOMAIN (1-1, 4-4, 27-36, 47-54) = 20 Questions ---
+            {
+                id: 1,
+                domain: "People",
+                question: "During a daily standup, two senior developers get into a heated argument about the architectural approach for a user story. The argument escalates, and the rest of the team becomes uncomfortable. What should the project manager do?",
+                options: [
+                    "Facilitate a meeting immediately after the standup with the two developers.",
+                    "Allow the debate to continue during the standup as it shows passion.",
+                    "Decide on the architectural approach yourself to save time.",
+                    "Report the behavior to the functional manager immediately."
+                ],
+                correct: 0,
+                rationale: "This is a 'Collaborate/Problem Solve' approach. The standup is for quick updates. Moving the conversation to a specific sidebar meeting resolves the issue without disrupting the ceremony."
+            },
+            {
+                id: 4,
+                domain: "People",
+                question: "A high-performing team member has been consistently missing deadlines recently due to personal issues. This is affecting the team's velocity. What is the best course of action?",
+                options: [
+                    "Reassign the team member's tasks to others immediately.",
+                    "Discuss the issue privately with the team member to understand the root cause.",
+                    "Bring it up during the retrospective in front of the team.",
+                    "Issue a formal warning regarding performance."
+                ],
+                correct: 1,
+                rationale: "Emotional Intelligence dictates addressing the individual privately first to understand the situation (Serve the team) before taking administrative action."
+            },
+            {
+                id: 27,
+                domain: "People",
+                question: "In a matrix organization, a functional manager keeps pulling a critical resource from your project to handle operational emergencies, causing schedule slippage. The resource is willing to work but is overwhelmed. What should the PM do first?",
+                options: [
+                    "Escalate the issue to the project sponsor immediately.",
+                    "Negotiate with the functional manager to agree on a resource availability schedule.",
+                    "Ask the resource to work overtime to catch up on project tasks.",
+                    "Update the risk register and accept the delay."
+                ],
+                correct: 1,
+                rationale: "In a matrix environment, negotiation is the primary tool. The PM should first try to problem-solve directly with the functional manager (Collaboration) before escalating to the sponsor."
+            },
+            {
+                id: 28,
+                domain: "People",
+                question: "You have taken over a project with a virtual team spread across four time zones. During retrospectives, team members are silent and engagement is low. You suspect cultural differences are causing a lack of psychological safety. What is the best initial step?",
+                options: [
+                    "Mandate that everyone speaks at least once during the meeting.",
+                    "Create a team charter with the team to define ground rules and communication norms.",
+                    "Conduct anonymous surveys to find out who is unhappy.",
+                    "Replace the retrospective with a written status report."
+                ],
+                correct: 1,
+                rationale: "The Team Charter is the foundation of team culture. Co-creating ground rules helps establish norms and psychological safety, addressing the root cause of the silence."
+            },
+            {
+                id: 29,
+                domain: "People",
+                question: "A senior stakeholder frequently contacts your team members directly to request 'small' changes, bypassing the product owner. This is disrupting the current sprint. How should the servant leader handle this?",
+                options: [
+                    "Tell the team to ignore the stakeholder's emails.",
+                    "Confront the stakeholder publicly to set a precedent.",
+                    "Meet with the stakeholder to explain the workflow and how to properly request changes via the PO.",
+                    "Add the changes to the sprint since they are small."
+                ],
+                correct: 2,
+                rationale: "Servant leadership involves shielding the team from interruptions while educating stakeholders. The PM should coach the stakeholder on the proper Agile process (contacting the PO) rather than creating conflict."
+            },
+            {
+                id: 30,
+                domain: "People",
+                question: "Your agile team is high-performing but recently started complaining about burnout. The velocity has remained stable, but morale is dropping. The backlog is huge. What should the PM do?",
+                options: [
+                    "Reduce the team's velocity targets for the next few sprints.",
+                    "Encourage the team to take more breaks during the day.",
+                    "Work with the Product Owner to reprioritize and potentially descale the release plan.",
+                    "Host a team building event to boost morale."
+                ],
+                correct: 2,
+                rationale: "Burnout often comes from seeing an insurmountable mountain of work. As a Servant Leader, you work with the PO to manage expectations and ensure the pace is sustainable (Agile Manifesto principle)."
+            },
+            {
+                id: 31,
+                domain: "People",
+                question: "A new team member, who is an expert in a niche technology, refuses to share knowledge with junior members, fearing job security. This creates a single point of failure. What is the best approach?",
+                options: [
+                    "Report the behavior to HR as it violates company policy.",
+                    "Assign a 'pair programming' partner to the expert and frame it as a mentoring opportunity.",
+                    "Force the expert to document everything they do.",
+                    "Let the expert work alone to maintain high velocity."
+                ],
+                correct: 1,
+                rationale: "Pair programming or shadowing is a subtle, non-confrontational way to force knowledge transfer while stroking the expert's ego (mentorship) rather than threatening them (documentation/HR)."
+            },
+            {
+                id: 32,
+                domain: "People",
+                question: "During a meeting, a team member accuses you of favoring certain stakeholders over others. The accusation is aggressive and public. What is the most appropriate response using Emotional Intelligence?",
+                options: [
+                    "Deny the accusation immediately and show the data.",
+                    "Ask the team member to leave the meeting.",
+                    "Acknowledge their frustration, stay calm, and suggest discussing it privately after the meeting.",
+                    "Ignore the comment and continue with the agenda."
+                ],
+                correct: 2,
+                rationale: "Self-regulation is key. You must acknowledge the emotion (Empathy) to de-escalate, but move the specific conflict to a private setting to avoid a public spectacle."
+            },
+            {
+                id: 33,
+                domain: "People",
+                question: "You are managing a project where the client is technically unsavvy. The technical lead on your team is frustrated and frequently speaks condescending to the client, damaging the relationship. You have already given verbal feedback, but it hasn't changed. What next?",
+                options: [
+                    "Remove the technical lead from the project immediately.",
+                    "Stop the technical lead from attending client meetings and act as the proxy.",
+                    "Implement a formal development plan with clear behavioral expectations and consequences.",
+                    "Apologize to the client and hope the lead improves."
+                ],
+                correct: 2,
+                rationale: "If informal feedback fails, you move to formal performance management. Removing the lead (A) is a last resort. Acting as a proxy (B) creates a bottleneck. A formal plan addresses the root behavior."
+            },
+            {
+                id: 34,
+                domain: "People",
+                question: "Two team members have a fundamental disagreement on a technical approach. Both options are viable, but they cannot agree. The debate has dragged on for days and is now delaying the schedule. What conflict resolution technique should the PM use?",
+                options: [
+                    "Smoothing: Ask them to focus on areas where they agree.",
+                    "Forcing: Pick the option you think is best to end the debate.",
+                    "Compromising: Ask them to blend both solutions.",
+                    "Collaborating: Facilitate a decision-making session (e.g., pros/cons list) to reach a consensus."
+                ],
+                correct: 1,
+                rationale: "While Collaboration is usually best, if the debate is 'dragging on' and causing delay, and you are the PM, sometimes you must break the deadlock. However, the *best* next step is usually to facilitate a final decision framework. If that fails, Forcing might be needed, but 'Collaborating' via a structured decision matrix is the preferred PMP answer first."
+            },
+            {
+                id: 35,
+                domain: "People",
+                question: "A stakeholder who was previously supportive has suddenly become resistant and critical of the project. You are unsure why. What is the best way to handle this?",
+                options: [
+                    "Review the Stakeholder Engagement Plan to see how to manage resistant stakeholders.",
+                    "Schedule a face-to-face meeting to understand their underlying concerns or changed interests.",
+                    "Ask the sponsor to talk to the stakeholder.",
+                    "Ignore the resistance as long as it doesn't impact the critical path."
+                ],
+                correct: 1,
+                rationale: "Direct communication is best. Needs and interests change. The PM should seek to understand the root cause of the attitude change (Conversation) rather than just looking at a plan (A) or escalating (C)."
+            },
+            {
+                id: 36,
+                domain: "People",
+                question: "Your team is distributed and relies on asynchronous communication. A junior developer is consistently misunderstanding requirements, leading to rework. They are shy and rarely ask questions in the public chat. What should you do?",
+                options: [
+                    "Mandate that all questions be asked in the public channel.",
+                    "Set up regular 1-on-1 check-ins to provide a safe space for questions and clarification.",
+                    "Send them to a training course on requirements gathering.",
+                    "Assign their tasks to a senior developer."
+                ],
+                correct: 1,
+                rationale: "The issue is a lack of psychological safety or confidence. A 1-on-1 check-in provides a safe environment for the junior member to ask questions without fear of public embarrassment."
+            },
+            // NEW PEOPLE QUESTIONS
+            {
+                id: 47,
+                domain: "People",
+                question: "You are implementing a new Project Management Information System (PMIS). A key team member refuses to use the new system, continuing to use spreadsheets instead. This is causing data discrepancies. What should you do first?",
+                options: [
+                    "Report the team member to their functional manager.",
+                    "Restrict their access to the old spreadsheets.",
+                    "Meet with the team member to understand their resistance and explain the benefits of the new system.",
+                    "Accept the spreadsheets and import the data manually yourself."
+                ],
+                correct: 2,
+                rationale: "Resistance usually stems from fear or lack of understanding. The ADKAR model suggests first building Awareness and Desire. Forcing (B) or Escalating (A) damages the relationship."
+            },
+            {
+                id: 48,
+                domain: "People",
+                question: "You have just replaced a project manager who was known for being a micromanager. The team is currently demoralized and waits for your explicit permission to do anything. How should you lead this team?",
+                options: [
+                    "Continue micromanaging for a while to maintain stability.",
+                    "Immediately switch to a Laissez-Faire style and let them do whatever they want.",
+                    "Adopt a Servant Leadership style, empowering them gradually while providing clear guardrails.",
+                    "Ask the sponsor to replace the team members who cannot self-organize."
+                ],
+                correct: 2,
+                rationale: "A sudden switch to total freedom (B) causes chaos for a team used to strict control. A gradual shift via Servant Leadership (coaching/empowering) helps them build confidence."
+            },
+            {
+                id: 49,
+                domain: "People",
+                question: "During requirements gathering, Stakeholder A insists on Feature X, while Stakeholder B insists on Feature Y. The budget only allows for one. Both stakeholders have equal power and influence. What is the best strategy?",
+                options: [
+                    "Select the feature that is easiest to build.",
+                    "Ask the Project Sponsor to decide.",
+                    "Facilitate a consensus-building session using Multi-Criteria Decision Analysis.",
+                    "Build half of Feature X and half of Feature Y."
+                ],
+                correct: 2,
+                rationale: "As a PM, you facilitate decision-making. Using a data-driven technique like Multi-Criteria Decision Analysis helps remove emotion and allows the stakeholders to reach an agreement objectively."
+            },
+            {
+                id: 50,
+                domain: "People",
+                question: "Your team is in the 'Storming' phase of development. Arguments are frequent, and trust is low. What is the Project Manager's primary role during this phase?",
+                options: [
+                    "Step back and let the team resolve it themselves.",
+                    "Act as a directive leader to resolve conflicts and provide structure.",
+                    "Focus purely on technical tasks to distract them from the conflict.",
+                    "Disband the team and start over."
+                ],
+                correct: 1,
+                rationale: "In the Tuckman Ladder, 'Storming' requires the PM to be more directive (like a coach) to help the team navigate conflict and establish processes, guiding them toward 'Norming'."
+            },
+            {
+                id: 51,
+                domain: "People",
+                question: "A critical resource with unique knowledge announces they are leaving the company in two weeks. The project is halfway done. What is the most immediate priority?",
+                options: [
+                    "Ask HR to convince them to stay.",
+                    "Update the risk register to 'Critical'.",
+                    "Implement a knowledge transfer plan to capture their expertise before they leave.",
+                    "Pause the project until a replacement is hired."
+                ],
+                correct: 2,
+                rationale: "While updating the risk register (B) is correct, the *immediate* action to save the project is capturing the departing knowledge (C) while the resource is still available."
+            },
+            {
+                id: 52,
+                domain: "People",
+                question: "You notice that a team member from a high-context culture rarely challenges ideas during meetings, but later expresses concerns to peers. This is causing rework. How should you address this?",
+                options: [
+                    "Publicly encourage them to speak up more.",
+                    "Provide alternative channels for feedback, such as anonymous suggestion boxes or 1-on-1s.",
+                    "Assume they agree if they are silent.",
+                    "Send them to assertiveness training."
+                ],
+                correct: 1,
+                rationale: "In high-context cultures, public disagreement may be seen as rude. Providing safe, alternative/asynchronous channels allows them to contribute without violating their cultural norms."
+            },
+            {
+                id: 53,
+                domain: "People",
+                question: "A developer marks a user story as 'Done', but when the QA tests it, it fails basic functionality. The developer argues that they finished the coding. What is missing here?",
+                options: [
+                    "A detailed Project Management Plan.",
+                    "A clear and shared Definition of Done (DoD).",
+                    "A User Acceptance Test script.",
+                    "A skilled developer."
+                ],
+                correct: 1,
+                rationale: "The discrepancy lies in the understanding of 'Done'. The DoD creates a shared understanding that 'Done' includes coding, testing, documentation, etc."
+            },
+            {
+                id: 54,
+                domain: "People",
+                question: "Your Product Owner is consistently unavailable to clarify requirements for the team, leading to delays. You have spoken to them, but they claim they are too busy with other duties. What is the next step?",
+                options: [
+                    "Make the decisions yourself to keep the team moving.",
+                    "Train the development team to act as the Product Owner.",
+                    "Escalate the issue to the Product Owner's manager or the Project Sponsor.",
+                    "Cancel the Sprint."
+                ],
+                correct: 2,
+                rationale: "This is a structural impediment. If coaching the PO failed, the Servant Leader must remove the impediment by escalating to management to either free up the PO's time or assign a proxy."
+            },
+
+            // --- PROCESS DOMAIN (2-2, 5-5, 37-46, 55-62) = 20 Questions ---
+            {
+                id: 2,
+                domain: "Process",
+                question: "You have just completed the planning phase for a data center project. A key stakeholder informs you of a new environmental regulation passed yesterday that impacts waste disposal. This risk was not in your register. What should you do first?",
+                options: [
+                    "Submit a change request to increase the budget.",
+                    "Update the issue log and inform the sponsor.",
+                    "Update the risk register with the new risk and analyze its impact.",
+                    "Halt execution until legal reviews the regulation."
+                ],
+                correct: 2,
+                rationale: "When a new risk is identified, the first step is always to document it in the risk register and analyze it before taking action (like a change request)."
+            },
+            {
+                id: 5,
+                domain: "Process",
+                question: "Your project is using a Hybrid approach. The predictive components are on track, but the Agile software team is missing sprint goals because the Product Owner is unavailable to answer questions. What should you do?",
+                options: [
+                    "Switch the software team to a predictive approach.",
+                    "Make decisions on behalf of the Product Owner to keep the team moving.",
+                    "Coach the Product Owner on their role and the impact of their absence.",
+                    "Extend the sprint duration to accommodate the delays."
+                ],
+                correct: 2,
+                rationale: "This is 'Servant Leadership'. The PM should facilitate and coach stakeholders (including the PO) on agile roles to remove impediments."
+            },
+            {
+                id: 37,
+                domain: "Process",
+                question: "You are managing a construction project using a predictive methodology. The client requests a major change to the design. The project is 50% complete. The change will increase cost and schedule significantly. What is the first thing you should do?",
+                options: [
+                    "Reject the change as it is too late in the project.",
+                    "Consult with the team to estimate the impact on scope, schedule, cost, and risk.",
+                    "Implement the change and bill the client later.",
+                    "Ask the sponsor for approval."
+                ],
+                correct: 1,
+                rationale: "Standard Change Control: Before approving or rejecting, you must Analyze the Impact. You cannot ask for approval (D) without knowing the data (B)."
+            },
+            {
+                id: 38,
+                domain: "Process",
+                question: "Your project has a Cost Performance Index (CPI) of 1.2 and a Schedule Performance Index (SPI) of 0.7. The sponsor wants to know if the project can finish on time without adding budget. What is your response?",
+                options: [
+                    "No, because the project is behind schedule.",
+                    "Yes, we can 'crash' the schedule by using the surplus budget to add resources.",
+                    "Yes, we can 'fast track' the schedule, which costs nothing.",
+                    "No, we need to re-baseline the project."
+                ],
+                correct: 1,
+                rationale: "CPI > 1 means you are under budget (surplus money). SPI < 1 means you are behind schedule. 'Crashing' involves adding resources (cost) to compress schedule. Since you have surplus money, Crashing is the viable option."
+            },
+            {
+                id: 39,
+                domain: "Process",
+                question: "In an Agile project, the team is struggling to complete the work committed to in the Sprint Backlog. This has happened for three consecutive sprints. What should the PM (Scrum Master) recommend?",
+                options: [
+                    "Extend the sprint duration to allow them to finish.",
+                    "Add more developers to the team to increase velocity.",
+                    "Reduce the amount of work pulled into the next sprint based on actual velocity (Yesterday's Weather).",
+                    "Ask the team to work overtime to catch up."
+                ],
+                correct: 2,
+                rationale: "Agile relies on empirical data. If the team consistently over-commits, they should use their actual average velocity ('Yesterday's Weather') to plan the next sprint, rather than wishful thinking."
+            },
+            {
+                id: 40,
+                domain: "Process",
+                question: "A vendor delivering a critical component for your project notifies you of a potential strike at their factory. This event was identified in the risk register with a 'Watch' status. What should you do now?",
+                options: [
+                    "Wait until the strike actually happens to act.",
+                    "Re-assess the probability and impact, and potentially trigger the contingency plan.",
+                    "Terminate the contract immediately.",
+                    "Use the management reserve to find a new vendor."
+                ],
+                correct: 1,
+                rationale: "A 'Watch' risk has become more active. You must re-analyze the current status. If the probability/impact has risen, you move it to active management and prepare the contingency plan."
+            },
+            {
+                id: 41,
+                domain: "Process",
+                question: "Your team has successfully delivered a Minimum Viable Product (MVP). However, the customer refuses to accept it, claiming it lacks 'critical' features that were not in the MVP definition but were in the original broad vision. What document should you refer to?",
+                options: [
+                    "The Project Charter.",
+                    "The Product Roadmap.",
+                    "The agreed-upon Definition of MVP and Acceptance Criteria.",
+                    "The Lessons Learned Register."
+                ],
+                correct: 2,
+                rationale: "Acceptance is based on agreed criteria. If the team met the criteria defined for the MVP, the customer should accept. Referring to the specific agreement (Definition of MVP/Acceptance Criteria) is the defense."
+            },
+            {
+                id: 42,
+                domain: "Process",
+                question: "You are managing a project with complex quality requirements. The team believes that 'Quality Control' and 'Quality Assurance' are the same thing and are skipping process checks. How do you explain the difference?",
+                options: [
+                    "QA is about the product; QC is about the process.",
+                    "QA is about preventing defects (process); QC is about identifying defects (product inspection).",
+                    "QA is done at the end; QC is done throughout.",
+                    "There is no difference in Agile."
+                ],
+                correct: 1,
+                rationale: "This is a classic definition question. Quality Assurance (Manage Quality) is about the process/prevention. Quality Control is about inspection/detection of errors in the deliverable."
+            },
+            {
+                id: 43,
+                domain: "Process",
+                question: "During project execution, a team member discovers a new, more efficient way to perform a repetitive task. Implementing it requires a small deviation from the Project Management Plan. What should the PM do?",
+                options: [
+                    "Reject the idea because we must follow the plan.",
+                    "Allow the team member to do it informally.",
+                    "Submit a change request to update the process/plan to formalize the improvement.",
+                    "Wait until the next project to implement it."
+                ],
+                correct: 2,
+                rationale: "Continuous Improvement is key. However, if a process is defined in the Project Management Plan, you should formally update the plan via a Change Request so the improvement is documented and repeatable (Asset)."
+            },
+            {
+                id: 44,
+                domain: "Process",
+                question: "You are closing a multi-phase project. The previous phases were closed successfully. For the final phase, the deliverables are accepted, but the financial records are not yet reconciled. Can you declare the project closed?",
+                options: [
+                    "Yes, because the deliverables are accepted.",
+                    "No, project closure requires administrative closure, including financial reconciliation.",
+                    "Yes, but mark the status as 'Substantially Complete'.",
+                    "No, you must wait for the warranty period to end."
+                ],
+                correct: 1,
+                rationale: "Closing a project or phase involves 'Administrative Closure'. This includes closing contracts, financial records, and archiving documents. You cannot formally close until the admin work is done."
+            },
+            {
+                id: 45,
+                domain: "Process",
+                question: "Your project uses a Hybrid approach. The hardware team (Predictive) needs firm dates for component delivery, but the software team (Agile) cannot commit to a fixed date for the drivers. This friction is causing delays. What is the best integration strategy?",
+                options: [
+                    "Force the software team to work in Waterfall.",
+                    "Force the hardware team to work in Sprints.",
+                    "Create a dependency map and decouple the schedules where possible (e.g., using stubs/mocks).",
+                    "Escalate to the sponsor to choose a methodology."
+                ],
+                correct: 2,
+                rationale: "In Hybrid, the PM's job is Integration. You can't force hardware to be Agile or software to be Waterfall easily. The best technical solution is decoupling dependencies (using mocks/simulators) to allow streams to move at different paces."
+            },
+            {
+                id: 46,
+                domain: "Process",
+                question: "A stakeholder claims they are not receiving necessary project updates. You check the Communications Management Plan and see they are listed to receive the monthly report, which has been sent. What should you do?",
+                options: [
+                    "Forward them the sent emails as proof.",
+                    "Review the Communications Management Plan with the stakeholder to see if their needs have changed.",
+                    "Add them to the daily standup meeting.",
+                    "Tell them to check their spam folder."
+                ],
+                correct: 1,
+                rationale: "Communication is about perception. If the stakeholder feels uninformed, the plan is failing, even if followed. You must review the plan *with* them to adjust frequency or format to meet their actual needs."
+            },
+            // NEW PROCESS QUESTIONS
+            {
+                id: 55,
+                domain: "Process",
+                question: "You are performing a quantitative risk analysis using a Monte Carlo simulation. The report shows that there is a 75% confidence level that the project will cost $1.5M or less. The budget is fixed at $1.4M. What does this mean?",
+                options: [
+                    "The project will definitely go over budget.",
+                    "There is a greater than 25% chance of exceeding the current budget.",
+                    "You have a surplus of funds.",
+                    "You should cancel the project."
+                ],
+                correct: 1,
+                rationale: "If 75% of outcomes are $1.5M or less, it implies the curve for $1.4M is lower (e.g., perhaps only 60% confidence). This means there is a significant risk (likely >25%) of busting the $1.4M budget."
+            },
+            {
+                id: 56,
+                domain: "Process",
+                question: "Your team has built a new feature. Before showing it to the customer for acceptance, you inspect it internally to ensure it meets the technical specifications. Which process is this?",
+                options: [
+                    "Validate Scope",
+                    "Control Quality",
+                    "Manage Quality",
+                    "Plan Quality Management"
+                ],
+                correct: 1,
+                rationale: "Control Quality is the internal inspection of deliverables to ensure correctness. Validate Scope is the external acceptance by the customer/sponsor."
+            },
+            {
+                id: 57,
+                domain: "Process",
+                question: "An Agile team completes the Sprint, but three user stories are not finished. What should happen to these stories?",
+                options: [
+                    "They are automatically added to the next Sprint.",
+                    "They are moved back to the Product Backlog for re-prioritization.",
+                    "The team must work overtime to finish them.",
+                    "They are marked as done with a note."
+                ],
+                correct: 1,
+                rationale: "In Scrum, unfinished work goes back to the Product Backlog. They are not automatically pushed to the next sprint; the PO must decide if they are still the highest priority for the next sprint."
+            },
+            {
+                id: 58,
+                domain: "Process",
+                question: "You have a Fixed Price contract with a vendor. Due to a massive global supply chain disruption (Force Majeure), the vendor cannot deliver on time without going bankrupt. They ask to renegotiate. What is the best course of action?",
+                options: [
+                    "Enforce the contract penalties strictly.",
+                    "Terminate the contract for cause.",
+                    "Engage in claims administration and negotiation to find a viable solution.",
+                    "Pay them whatever they ask to get the goods."
+                ],
+                correct: 2,
+                rationale: "While a contract is binding, a 'Force Majeure' event usually triggers a specific clause. Strict enforcement might lead to total failure (no goods). Negotiation/Claims Administration is the professional path."
+            },
+            {
+                id: 59,
+                domain: "Process",
+                question: "Midway through a Sprint, a key stakeholder rushes in and demands the team add a 'tiny' critical feature immediately. What should the team do?",
+                options: [
+                    "Add it to the current Sprint since it is critical.",
+                    "Direct the stakeholder to the Product Owner.",
+                    "Stop the Sprint and replan.",
+                    "Tell the stakeholder to wait until the daily standup."
+                ],
+                correct: 1,
+                rationale: "The team should be protected from interference. The stakeholder should be directed to the Product Owner, who manages the backlog and priorities. The team does not accept work directly."
+            },
+            {
+                id: 60,
+                domain: "Process",
+                question: "Your project metrics show an SPI of 1.2 and a CPI of 0.8. Which statement best describes the project status?",
+                options: [
+                    "Ahead of schedule and under budget.",
+                    "Behind schedule and over budget.",
+                    "Ahead of schedule but over budget.",
+                    "Behind schedule but under budget."
+                ],
+                correct: 2,
+                rationale: "SPI > 1 means you are faster than planned (Ahead). CPI < 1 means you are spending more than planned (Over budget). You are burning cash to go fast."
+            },
+            {
+                id: 61,
+                domain: "Process",
+                question: "During execution, you discover a stakeholder who was not identified in the stakeholder register. This person is upset that they were not consulted. What is your immediate next step?",
+                options: [
+                    "Apologize and add them to the email list.",
+                    "Update the Stakeholder Register and assess their power/interest.",
+                    "Tell them it is too late to join the project board.",
+                    "Ask the sponsor to manage them."
+                ],
+                correct: 1,
+                rationale: "You must formally document them first. Updating the Stakeholder Register allows you to analyze their impact (Power/Interest) and then develop an engagement strategy."
+            },
+            {
+                id: 62,
+                domain: "Process",
+                question: "You are ready to start the project planning phase, but the Project Charter has not yet been signed by the sponsor. What should you do?",
+                options: [
+                    "Start planning anyway to save time.",
+                    "Wait for the signed Charter before expending significant resources.",
+                    "Draft the Project Management Plan and ask for signature later.",
+                    "Start executing the work."
+                ],
+                correct: 1,
+                rationale: "The Project Charter formally authorizes the project and the PM's authority. Without it, the project does not legally exist in the organization. You should not expend resources (Planning) until authorized."
+            },
+
+            // --- BUSINESS ENVIRONMENT DOMAIN (3, 6, 7-26) = 22 Questions ---
+            {
+                id: 3,
+                domain: "Business Environment",
+                question: "A project aimed at increasing market share by 10% is near completion. Deliverables meet scope, but a competitor just launched a product making yours obsolete. The sponsor wants to close the project. What should the PM do?",
+                options: [
+                    "Refuse to close because business value cannot be achieved.",
+                    "Close the project as the deliverables met the technical specifications.",
+                    "Submit a change request to modify features to match the competitor.",
+                    "Conduct a benefits realization analysis immediately."
+                ],
+                correct: 1,
+                rationale: "The PM is responsible for deliverables/output. If scope was met, the project is complete. Market outcome is a business risk, not a project completion criterion."
+            },
+            {
+                id: 6,
+                domain: "Business Environment",
+                question: "A new data privacy law is enacted halfway through your project. Compliance is mandatory, but it will delay the project by 2 months. What should the PM do?",
+                options: [
+                    "Ignore the law as the project started before it was enacted.",
+                    "Use the management reserve to cover the costs of compliance.",
+                    "Submit a change request to update the scope, schedule, and budget.",
+                    "Ask the sponsor to cancel the project."
+                ],
+                correct: 2,
+                rationale: "Mandatory compliance is a constraint. Since it impacts the baselines (schedule/cost), a formal Change Request is required to incorporate the new work."
+            },
+            {
+                id: 7,
+                domain: "Business Environment",
+                question: "Your organization has just announced a merger with a competitor. Rumors are circulating that your project, which overlaps with one of the competitor's initiatives, may be cancelled. Team morale is plummeting. What should the Project Manager do first?",
+                options: [
+                    "Immediately halt all project work to save costs until a decision is made.",
+                    "Inform the team to ignore the rumors and continue working until official notice is received.",
+                    "Consult the project governance board or sponsor to clarify the project's strategic alignment post-merger.",
+                    "Update the risk register with 'Loss of key resources' and trigger the contingency plan."
+                ],
+                correct: 2,
+                rationale: "In times of organizational change, the PM must seek clarity on strategic alignment. Ignoring rumors (B) hurts trust. Halting work (A) is unauthorized. The first step is clarification from governance."
+            },
+            {
+                id: 8,
+                domain: "Business Environment",
+                question: "You are managing a global supply chain project. A new tariff law is passed in a key supplier's country, increasing material costs by 25%. This increase exceeds your cost baseline's contingency reserve. What is your best course of action?",
+                options: [
+                    "Use the management reserve to cover the cost difference.",
+                    "Switch to a local supplier immediately to avoid the tariffs.",
+                    "Submit a change request to the Change Control Board (CCB) for a budget increase.",
+                    "Descale the project scope to absorb the cost increase."
+                ],
+                correct: 2,
+                rationale: "When a risk occurs that exceeds the contingency reserve (which is for known-unknowns), you typically look to the management reserve or a baseline change. Since the baseline is exceeded, a formal Change Request to the CCB is required."
+            },
+            {
+                id: 9,
+                domain: "Business Environment",
+                question: "During a compliance audit, it is discovered that a sub-component used in your product violates a newly updated safety standard. The product is 95% complete and due for launch in 2 weeks. Fixing it will delay the launch by 2 months. What should the PM do?",
+                options: [
+                    "Launch on time and issue a recall/patch later to fix the compliance issue.",
+                    "Update the risk register and proceed with the launch as the violation is minor.",
+                    "Report the compliance breach to stakeholders and recommend delaying the launch to fix it.",
+                    "Ask the legal department to seek a waiver for this specific production batch."
+                ],
+                correct: 2,
+                rationale: "Compliance with safety standards is non-negotiable in the PMP mindset (Ethics & Professional Conduct). Launching a non-compliant safety product (A/B) is unethical and creates massive liability."
+            },
+            {
+                id: 10,
+                domain: "Business Environment",
+                question: "You are leading a digital transformation project. The new software requires users to change their daily workflows significantly. During User Acceptance Testing (UAT), end-users are resistant and complaining that the old system was better. This resistance threatens adoption. What did the PM likely miss?",
+                options: [
+                    "Defining a clear Definition of Done (DoD).",
+                    "Conducting adequate Organizational Change Management (OCM) activities.",
+                    "Creating a detailed Requirement Traceability Matrix (RTM).",
+                    "Performing a quantitative risk analysis."
+                ],
+                correct: 1,
+                rationale: "Resistance to 'new ways of working' is a classic symptom of poor Organizational Change Management (OCM). The technical output is there, but the business adoption is failing."
+            },
+            {
+                id: 11,
+                domain: "Business Environment",
+                question: "A project sponsor asks you to skip the final quality review to release the product early and capture a market opportunity. The product meets functional requirements but has not been stress-tested. What should the PM do?",
+                options: [
+                    "Follow the sponsor's directive as they own the budget.",
+                    "Refuse the request citing the PMI Code of Ethics.",
+                    "Analyze the impact of skipping the test, document the risks, and present a recommendation to the sponsor.",
+                    "Agree to the release but require the sponsor to sign a liability waiver."
+                ],
+                correct: 2,
+                rationale: "A PM must provide data for decision making. While you cannot unethicaly endanger people (safety), for business risks, you must analyze the impact/risk of the request and ensure the sponsor makes an informed decision."
+            },
+            {
+                id: 12,
+                domain: "Business Environment",
+                question: "Midway through an Agile project, the CEO announces a strategic pivot toward AI-driven solutions. Your current project is building a legacy web portal. The backlog is full of items that no longer align with this new strategy. What should the PM do?",
+                options: [
+                    "Continue the project as planned since the charter is already signed.",
+                    "Collaborate with the Product Owner to reprioritize the backlog to align with the AI strategy.",
+                    "Immediately terminate the project and release the team.",
+                    "Ask the team to include AI features in the current Sprint without changing the goal."
+                ],
+                correct: 1,
+                rationale: "Projects must remain aligned with business strategy. In Agile, we adapt. The PM and PO should review the backlog to see if the project can pivot to deliver value under the new strategy."
+            },
+            {
+                id: 13,
+                domain: "Business Environment",
+                question: "Your project relies on a proprietary algorithm. A week before launch, a competitor files a lawsuit claiming patent infringement. Legal advises that the outcome is uncertain. What is the immediate action?",
+                options: [
+                    "Cancel the project immediately to avoid legal liability.",
+                    "Log the issue, update the risk report, and engage key stakeholders/legal for a decision.",
+                    "Ignore the lawsuit until a court order is issued.",
+                    "Release the product but put the revenue in an escrow account."
+                ],
+                correct: 1,
+                rationale: "This is now an Issue (it has happened). The PM cannot make legal decisions alone. The correct step is to document (Log/Report) and engage the governance/legal authorities for direction."
+            },
+            {
+                id: 14,
+                domain: "Business Environment",
+                question: "You discover that a high-value deliverable produced by your team violates a specific accessibility regulation (e.g., WCAG) that was not originally in the scope but is mandatory by law in the target market. The product owner argues that fixing it is too expensive. What is the PM's responsibility?",
+                options: [
+                    "Accept the Product Owner's decision as they own ROI.",
+                    "Prioritize the compliance work immediately, even if it impacts other scope.",
+                    "Submit a change request to remove the target market from the launch plan.",
+                    "Document the non-compliance and proceed."
+                ],
+                correct: 1,
+                rationale: "Regulatory compliance is generally a mandatory constraint, not a 'feature' to be prioritized against others. The PM must ensure the project meets legal requirements. It must be prioritized."
+            },
+            {
+                id: 15,
+                domain: "Business Environment",
+                question: "Your organization has a new sustainability initiative requiring all projects to reduce carbon footprint by 20%. Your construction project is 60% complete, and meeting this new requirement would require expensive material changes and rework. What should you do?",
+                options: [
+                    "Ignore the initiative as the project started before the policy date.",
+                    "Implement the changes immediately to support the organizational strategy.",
+                    "Perform an impact analysis and submit a Change Request to the governance board.",
+                    "Reduce the project scope to offset the cost of the new sustainable materials."
+                ],
+                correct: 2,
+                rationale: "New organizational mandates are external changes to the project. You cannot simply ignore them, nor can you blow the budget without approval. You must analyze the impact and go through Change Control."
+            },
+            {
+                id: 16,
+                domain: "Business Environment",
+                question: "You are managing a project to deploy a software tool in a foreign country. You learn that in this specific culture, signing a contract requires a 'facilitation payment' to local officials, which is illegal in your company's home country but customary there. The local consultant urges you to pay. What do you do?",
+                options: [
+                    "Pay the fee as it is a customary local business practice.",
+                    "Refuse to pay and report the incident to your organization's compliance officer.",
+                    "Negotiate to reduce the fee to a nominal amount.",
+                    "Ask the local consultant to pay it on your behalf so it's not on your books."
+                ],
+                correct: 1,
+                rationale: "PMI Code of Ethics strictly forbids bribery or illegal acts, regardless of local custom ('When in Rome' does not apply to legality/ethics). Facilitation payments are often illegal (e.g., FCPA)."
+            },
+            {
+                id: 17,
+                domain: "Business Environment",
+                question: "During a Benefits Realization review, you realize that the market conditions have shifted, and the project's projected ROI has dropped from 20% to 2%. The project is on schedule and budget. What is the most appropriate action?",
+                options: [
+                    "Continue the project as it is performing well against the baseline.",
+                    "Hide the data until the project is closed to ensure the team gets their bonuses.",
+                    "Present the new data to the project sponsor and governance board for a go/no-go decision.",
+                    "Cut quality to reduce costs and artificially inflate the ROI."
+                ],
+                correct: 2,
+                rationale: "A PM is a steward of the organization's resources. If the business case is no longer valid, the PM must transparently report this to governance, even if the project execution is perfect."
+            },
+            {
+                id: 18,
+                domain: "Business Environment",
+                question: "A key stakeholder from the 'Operations' department refuses to sign off on the project closure, stating that their team has not been trained on the new system, despite training being out of scope. You cannot close without their signature. What should you have done differently?",
+                options: [
+                    "Nothing; the stakeholder is being unreasonable.",
+                    "Included a transition plan and operational readiness in the project scope/benefits analysis.",
+                    "Escalated the issue to the sponsor earlier.",
+                    "Used a predictive methodology instead of Agile."
+                ],
+                correct: 1,
+                rationale: "This is a failure of Business Environment integration (transition to operations). Projects deliver business value only when operations can use them. Operational readiness should have been planned."
+            },
+            {
+                id: 19,
+                domain: "Business Environment",
+                question: "Your project is heavily dependent on a specific vendor. You discover via a news report that the vendor is using child labor in their manufacturing plant. Changing vendors will delay the project by 3 months. What should you do?",
+                options: [
+                    "Continue with the vendor but demand they change practices.",
+                    "Wait for official confirmation before acting to avoid delays.",
+                    "Immediately follow organizational policies regarding ethical procurement and initiate a vendor change.",
+                    "Update the risk register and increase the contingency reserve."
+                ],
+                correct: 2,
+                rationale: "Corporate Social Responsibility (CSR) and ethics take precedence. Most organizations have zero-tolerance policies for human rights violations. You must follow policy, even if it hurts the schedule."
+            },
+            {
+                id: 20,
+                domain: "Business Environment",
+                question: "A predictive project has a Cost Performance Index (CPI) of 1.1 and Schedule Performance Index (SPI) of 1.05. However, the business users are unhappy because the features delivered so far do not solve their current business problems. What is the most likely cause?",
+                options: [
+                    "Poor technical quality control.",
+                    "Scope creep.",
+                    "Lack of alignment between project deliverables and business value/benefits.",
+                    "Inaccurate cost baselining."
+                ],
+                correct: 2,
+                rationale: "The metrics (CPI/SPI) show the project is 'doing things right' (efficiency), but the unhappiness shows it is not 'doing the right things' (effectiveness/value). This is a value alignment gap."
+            },
+            {
+                id: 21,
+                domain: "Business Environment",
+                question: "Your project involves collecting user data. A new regulation grants users the 'right to be forgotten'. Your current architecture uses 'Write Once Read Many' (WORM) drives where data cannot be deleted. This architecture was approved 6 months ago. What do you do?",
+                options: [
+                    "Proceed as planned since the architecture was approved before the regulation.",
+                    "Initiate a project phase review to evaluate the architecture against the new compliance requirement.",
+                    "Ask legal to find a loophole in the regulation.",
+                    "Deliver the project and mark the risk as 'Accepted'."
+                ],
+                correct: 1,
+                rationale: "Compliance is mandatory. If the architecture physically prevents compliance (cannot delete data), the architecture is invalid. You must review and likely change the architecture (Phase Review/Change Request)."
+            },
+            {
+                id: 22,
+                domain: "Business Environment",
+                question: "You are managing a project to launch a new pharmaceutical drug. The clinical trials are successful, but the regulatory body (FDA/EMA) changes the documentation requirements for approval one week before submission. What should the PM do?",
+                options: [
+                    "Submit the existing documentation and hope for a waiver.",
+                    "Update the schedule to reflect the delay required to update the documentation.",
+                    "Ask the team to work overtime to update the docs without changing the schedule.",
+                    "Assess the impact of the new requirement and submit a change request to the baseline.",
+                ],
+                correct: 3,
+                rationale: "A regulatory change triggers a change in scope/schedule. The PM must assess the impact and formally update the baseline via Change Control. (C) might burn out the team and (B) cannot be done without approval."
+            },
+            {
+                id: 23,
+                domain: "Business Environment",
+                question: "Your company has adopted a new strategic objective to become 'Customer Obsessed'. However, your current project is incentivized strictly on 'On Time Delivery', leading the team to cut corners on user experience. What should the PM do?",
+                options: [
+                    "Change the team's incentives immediately.",
+                    "Discuss the misalignment between project KPIs and organizational strategy with the sponsor.",
+                    "Ignore the strategic objective and focus on the project charter.",
+                    "Force the team to improve UX while maintaining the original deadline."
+                ],
+                correct: 1,
+                rationale: "The PM aligns the project with the organization. If project KPIs drive behavior contrary to strategy, the PM must escalate this misalignment to leadership (Sponsor) to correct the metrics."
+            },
+            {
+                id: 24,
+                domain: "Business Environment",
+                question: "A project manager is assigned to a project that has a positive Net Present Value (NPV) but a payback period of 5 years. The organization's policy states that all projects must have a payback period of less than 3 years. The sponsor argues this project is a 'special exception'. What should the PM do?",
+                options: [
+                    "Reject the project assignment.",
+                    "Verify if the project charter authorizes this exception and aligns with strategic intent.",
+                    "Proceed but document the policy violation in the issue log.",
+                    "Change the financial model to show a 3-year payback."
+                ],
+                correct: 1,
+                rationale: "The Project Charter is the document that authorizes the project and its alignment. If the Sponsor claims an exception, it must be codified in the Charter. The PM verifies authority."
+            },
+            {
+                id: 25,
+                domain: "Business Environment",
+                question: "You are managing a Joint Venture (JV) project between Company A and Company B. Company A wants to use Agile, while Company B insists on Waterfall. This conflict is stalling progress. What aspect of the business environment is failing?",
+                options: [
+                    "Compliance Management.",
+                    "Governance Framework.",
+                    "Benefits Realization.",
+                    "Market Analysis."
+                ],
+                correct: 1,
+                rationale: "This is a Governance issue. For JVs/partnerships, a clear governance framework must be established early to decide *how* decisions are made and which methodologies are used."
+            },
+            {
+                id: 26,
+                domain: "Business Environment",
+                question: "A competitor releases a product that uses a technology your project team considered 'impossible'. The sponsor is furious and demands to know why your team missed this. What tool would have best helped the PM prevent this surprise?",
+                options: [
+                    "SWOT Analysis.",
+                    "Benchmarking.",
+                    "Continuous Improvement.",
+                    "Monte Carlo Simulation."
+                ],
+                correct: 1,
+                rationale: "Benchmarking involves comparing your practices/tech to those of other organizations (competitors) to identify best practices and gaps. It is the primary tool for external environment analysis."
+            }
+        ];
+
+        // ==========================================
+        // APPLICATION LOGIC
+        // ==========================================
+        const app = {
+            currentQuestions: [],
+            userAnswers: {}, 
+            currentIndex: 0,
+            timerInterval: null,
+            timeRemaining: 0,
+
+            init: function() {
+                lucide.createIcons();
+            },
+
+            reset: function() {
+                this.userAnswers = {};
+                this.currentIndex = 0;
+                this.currentQuestions = [];
+                clearInterval(this.timerInterval);
+                
+                document.getElementById('view-dashboard').classList.remove('hidden');
+                document.getElementById('view-quiz').classList.add('hidden');
+                document.getElementById('view-results').classList.add('hidden');
+                document.getElementById('timer-display').classList.add('hidden');
+                document.getElementById('header-actions').classList.add('hidden');
+                document.getElementById('header-actions').classList.remove('flex');
+                
+                // Reset standard view
+                document.getElementById('header-actions').classList.remove('hidden');
+                document.getElementById('header-actions').classList.add('flex');
+            },
+
+            startExam: function(filterDomain) {
+                // Filter questions
+                if (filterDomain === 'All') {
+                    this.currentQuestions = [...questionDatabase].sort(() => 0.5 - Math.random()); // Shuffle
+                } else {
+                    this.currentQuestions = questionDatabase.filter(q => q.domain === filterDomain);
+                }
+
+                if (this.currentQuestions.length === 0) {
+                    alert("No questions found for this category.");
+                    return;
+                }
+
+                // Setup UI
+                document.getElementById('view-dashboard').classList.add('hidden');
+                document.getElementById('view-quiz').classList.remove('hidden');
+                document.getElementById('timer-display').classList.remove('hidden');
+                document.getElementById('timer-display').classList.add('flex');
+
+                // Start Timer (Example: 1.5 mins per question)
+                this.timeRemaining = this.currentQuestions.length * 90; 
+                this.startTimer();
+
+                this.renderQuestion();
+            },
+
+            startTimer: function() {
+                const display = document.getElementById('time-remaining');
+                this.timerInterval = setInterval(() => {
+                    this.timeRemaining--;
+                    
+                    const minutes = Math.floor(this.timeRemaining / 60);
+                    const seconds = this.timeRemaining % 60;
+                    display.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+                    if (this.timeRemaining <= 0) {
+                        this.finishExam();
+                    }
+                }, 1000);
+            },
+
+            renderQuestion: function() {
+                const question = this.currentQuestions[this.currentIndex];
+                const total = this.currentQuestions.length;
+                
+                // Update Progress
+                document.getElementById('question-tracker').textContent = `Question ${this.currentIndex + 1} of ${total}`;
+                document.getElementById('domain-badge').textContent = question.domain;
+                document.getElementById('progress-bar').style.width = `${((this.currentIndex + 1) / total) * 100}%`;
+
+                // Update Text
+                document.getElementById('question-text').textContent = question.question;
+
+                // Render Options
+                const container = document.getElementById('options-container');
+                container.innerHTML = '';
+                
+                question.options.forEach((opt, idx) => {
+                    const isSelected = this.userAnswers[question.id] === idx;
+                    const btn = document.createElement('div');
+                    btn.className = `option-card p-4 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 transition-all flex items-start gap-3 ${isSelected ? 'selected ring-1 ring-blue-500' : ''}`;
+                    btn.onclick = () => this.selectAnswer(idx);
+                    btn.innerHTML = `
+                        <div class="mt-0.5 w-5 h-5 rounded-full border-2 ${isSelected ? 'border-blue-600 bg-blue-600' : 'border-slate-300'} flex items-center justify-center">
+                            ${isSelected ? '<div class="w-2 h-2 bg-white rounded-full"></div>' : ''}
+                        </div>
+                        <span class="text-slate-700 font-medium">${opt}</span>
+                    `;
+                    container.appendChild(btn);
+                });
+
+                // Button States
+                document.getElementById('btn-prev').disabled = this.currentIndex === 0;
+                
+                if (this.currentIndex === total - 1) {
+                    document.getElementById('btn-next').classList.add('hidden');
+                    document.getElementById('btn-submit').classList.remove('hidden');
+                } else {
+                    document.getElementById('btn-next').classList.remove('hidden');
+                    document.getElementById('btn-submit').classList.add('hidden');
+                }
+            },
+
+            selectAnswer: function(index) {
+                const qId = this.currentQuestions[this.currentIndex].id;
+                this.userAnswers[qId] = index;
+                this.renderQuestion(); // Re-render to show selection
+            },
+
+            nextQuestion: function() {
+                if (this.currentIndex < this.currentQuestions.length - 1) {
+                    this.currentIndex++;
+                    this.renderQuestion();
+                }
+            },
+
+            prevQuestion: function() {
+                if (this.currentIndex > 0) {
+                    this.currentIndex--;
+                    this.renderQuestion();
+                }
+            },
+
+            finishExam: function() {
+                clearInterval(this.timerInterval);
+                
+                // Calculate Score
+                let score = 0;
+                let domainScores = { 'People': {total:0, correct:0}, 'Process': {total:0, correct:0}, 'Business Environment': {total:0, correct:0} };
+
+                this.currentQuestions.forEach(q => {
+                    // Initialize domain if missing
+                    if(!domainScores[q.domain]) domainScores[q.domain] = {total:0, correct:0};
+                    
+                    domainScores[q.domain].total++;
+                    if (this.userAnswers[q.id] === q.correct) {
+                        score++;
+                        domainScores[q.domain].correct++;
+                    }
+                });
+
+                const percentage = Math.round((score / this.currentQuestions.length) * 100);
+                const passed = percentage >= 70; // Arbitrary pass mark
+
+                // Render Results
+                document.getElementById('view-quiz').classList.add('hidden');
+                document.getElementById('timer-display').classList.add('hidden');
+                document.getElementById('view-results').classList.remove('hidden');
+
+                // Header Stats
+                const scoreIcon = document.getElementById('score-icon');
+                const scoreMsg = document.getElementById('score-message');
+                
+                if (passed) {
+                    scoreIcon.innerHTML = `<i data-lucide="check-circle" class="w-12 h-12 text-white"></i>`;
+                    scoreIcon.className = "w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4 bg-green-500 shadow-lg shadow-green-200";
+                    scoreMsg.innerHTML = `<span class="text-green-600 font-bold">Congratulations!</span> You passed the simulation.`;
+                } else {
+                    scoreIcon.innerHTML = `<i data-lucide="x-circle" class="w-12 h-12 text-white"></i>`;
+                    scoreIcon.className = "w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4 bg-red-500 shadow-lg shadow-red-200";
+                    scoreMsg.innerHTML = `<span class="text-red-600 font-bold">Needs Improvement.</span> Keep practicing to reach the 70% target.`;
+                }
+
+                document.getElementById('score-percent').textContent = percentage;
+                document.getElementById('score-fraction').textContent = `${score}/${this.currentQuestions.length}`;
+
+                // Domain Breakdowns
+                const updateDomain = (id, data) => {
+                    const el = document.getElementById(id);
+                    if (data && data.total > 0) {
+                        el.textContent = Math.round((data.correct / data.total) * 100) + '%';
+                    } else {
+                        el.textContent = 'N/A';
+                    }
+                };
+                
+                updateDomain('score-people', domainScores['People']);
+                updateDomain('score-process', domainScores['Process']);
+                updateDomain('score-business', domainScores['Business Environment']);
+
+                // Detailed Review
+                const reviewContainer = document.getElementById('review-container');
+                reviewContainer.innerHTML = '';
+
+                this.currentQuestions.forEach((q, index) => {
+                    const userAns = this.userAnswers[q.id];
+                    const isCorrect = userAns === q.correct;
+                    
+                    const item = document.createElement('div');
+                    item.className = `border rounded-lg p-5 ${isCorrect ? 'border-slate-200 bg-white' : 'border-red-200 bg-red-50'}`;
+                    
+                    item.innerHTML = `
+                        <div class="flex items-start gap-3">
+                            <div class="mt-1 min-w-[24px]">
+                                ${isCorrect 
+                                    ? '<i data-lucide="check" class="text-green-600"></i>' 
+                                    : '<i data-lucide="x" class="text-red-500"></i>'}
+                            </div>
+                            <div class="w-full">
+                                <p class="text-slate-800 font-medium mb-3"><span class="text-slate-500 mr-2">Q${index+1}.</span> ${q.question}</p>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-4">
+                                    <div class="${isCorrect ? 'text-green-700 bg-green-50' : 'text-red-700 bg-red-100'} p-3 rounded">
+                                        <span class="font-bold block text-xs uppercase mb-1">Your Answer</span>
+                                        ${userAns !== undefined ? q.options[userAns] : 'Skipped'}
+                                    </div>
+                                    <div class="text-green-700 bg-green-50 p-3 rounded border border-green-100">
+                                        <span class="font-bold block text-xs uppercase mb-1">Correct Answer</span>
+                                        ${q.options[q.correct]}
+                                    </div>
+                                </div>
+                                
+                                <div class="text-slate-600 text-sm bg-slate-100 p-4 rounded-lg">
+                                    <span class="font-bold text-slate-700 mr-2">Rationale:</span> ${q.rationale}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    reviewContainer.appendChild(item);
+                });
+
+                // Refresh Icons
+                lucide.createIcons();
+                window.scrollTo(0, 0);
+            }
+        };
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
+
+    </script>
+</body>
+</html>
