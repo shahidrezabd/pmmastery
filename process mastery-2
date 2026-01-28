@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PMP Process Blitz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Space Grotesk', sans-serif; user-select: none; }
+        
+        .card-enter { animation: slideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(50px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        .pop-score { animation: popUp 0.6s forwards; }
+        @keyframes popUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-40px) scale(1.5); }
+        }
+
+        /* Gradient Text */
+        .text-gradient {
+            background: linear-gradient(to right, #4f46e5, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-correct {
+            background-color: #059669 !important; /* Green-600 */
+            border-color: #34d399 !important;
+            color: white !important;
+            pointer-events: none;
+            transform: scale(0.98);
+            opacity: 0.8;
+        }
+
+        /* Flowchart Styles */
+        .flow-line::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -20px;
+            width: 2px;
+            height: 20px;
+            background-color: #475569; /* Slate-600 */
+            transform: translateX(-50%);
+            z-index: 0;
+        }
+        .flow-line:last-child::after {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col overflow-hidden">
+
+    <!-- Navbar -->
+    <div class="p-4 flex justify-between items-center bg-slate-800/50 backdrop-blur border-b border-slate-700 z-10">
+        <div onclick="location.reload()" class="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
+            <div class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center">
+                <i data-lucide="zap" class="text-white w-5 h-5"></i>
+            </div>
+            <span class="font-bold text-xl tracking-wide">Process<span class="text-indigo-400">Blitz</span></span>
+        </div>
+        <div class="flex gap-4 text-sm font-medium">
+            <div class="flex items-center gap-1.5 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
+                <i data-lucide="trophy" class="w-4 h-4 text-yellow-400"></i>
+                <span id="best-score">Best: 0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Container -->
+    <main class="flex-grow relative flex flex-col items-center justify-center p-4 max-w-2xl mx-auto w-full">
+        
+        <!-- MENU SCREEN -->
+        <div id="screen-menu" class="absolute inset-0 z-40 bg-slate-900 flex flex-col items-center justify-center p-6 overflow-y-auto">
+            <div class="text-center space-y-2 mb-8 mt-12 md:mt-0">
+                <h1 class="text-5xl font-bold text-white mb-2">Select <span class="text-gradient">Game Mode</span></h1>
+                <p class="text-slate-400">Choose your challenge to master the PMP</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-4xl">
+                <!-- Mode 1: Process Groups -->
+                <button onclick="game.selectMode('group')" class="group relative bg-slate-800 border border-slate-700 hover:border-indigo-500 p-6 rounded-2xl text-left transition-all hover:shadow-xl hover:shadow-indigo-500/10 hover:-translate-y-1">
+                    <div class="absolute top-6 right-6 w-10 h-10 bg-indigo-500/10 rounded-lg flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-colors text-indigo-400">
+                        <i data-lucide="layers" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Process Groups</h3>
+                    <p class="text-slate-400 text-sm mb-4">Map processes to Initiating, Planning, Executing, M&C, or Closing.</p>
+                    <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">Blitz Mode</span>
+                </button>
+
+                <!-- Mode 2: Knowledge Areas -->
+                <button onclick="game.selectMode('area')" class="group relative bg-slate-800 border border-slate-700 hover:border-pink-500 p-6 rounded-2xl text-left transition-all hover:shadow-xl hover:shadow-pink-500/10 hover:-translate-y-1">
+                    <div class="absolute top-6 right-6 w-10 h-10 bg-pink-500/10 rounded-lg flex items-center justify-center group-hover:bg-pink-500 group-hover:text-white transition-colors text-pink-400">
+                        <i data-lucide="book-open" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Knowledge Areas</h3>
+                    <p class="text-slate-400 text-sm mb-4">Match processes to Scope, Cost, Schedule, Risk, etc.</p>
+                    <span class="text-xs font-bold uppercase tracking-wider text-pink-400">Mastery Mode</span>
+                </button>
+
+                <!-- Mode 3: Process Flows -->
+                <button onclick="game.selectMode('flow')" class="group relative bg-slate-800 border border-slate-700 hover:border-emerald-500 p-6 rounded-2xl text-left transition-all hover:shadow-xl hover:shadow-emerald-500/10 hover:-translate-y-1">
+                    <div class="absolute top-6 right-6 w-10 h-10 bg-emerald-500/10 rounded-lg flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-colors text-emerald-400">
+                        <i data-lucide="git-merge" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Important Flows</h3>
+                    <p class="text-slate-400 text-sm mb-4">Sequence the steps correctly (e.g., Change Request Journey).</p>
+                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Sequence Mode</span>
+                </button>
+            </div>
+
+            <!-- Study Section -->
+            <div class="mt-8 w-full max-w-4xl border-t border-slate-800 pt-8 flex flex-col items-center">
+                <p class="text-slate-500 mb-4 text-sm uppercase tracking-widest font-bold">Study Materials</p>
+                <button onclick="game.showFlowcharts()" class="flex items-center gap-3 text-slate-400 hover:text-white transition-colors bg-slate-800 hover:bg-slate-700 px-6 py-3 rounded-xl border border-slate-700 hover:border-slate-500">
+                    <i data-lucide="map" class="w-5 h-5"></i>
+                    <span>View Reference Flowcharts</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- FLOWCHART REFERENCE SCREEN -->
+        <div id="screen-flowcharts" class="absolute inset-0 z-50 bg-slate-900 flex flex-col hidden transform transition-all duration-300">
+            <!-- Header -->
+            <div class="bg-slate-800/80 backdrop-blur p-4 border-b border-slate-700 flex items-center justify-between shadow-md z-10">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-emerald-500/20 rounded-lg flex items-center justify-center text-emerald-400">
+                        <i data-lucide="map" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-white">Process Flowcharts</h2>
+                        <p class="text-xs text-slate-400">Master the sequence before you play</p>
+                    </div>
+                </div>
+                <button onclick="game.hideFlowcharts()" class="bg-slate-700 hover:bg-slate-600 text-white p-2 rounded-lg transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <!-- Scrollable Content -->
+            <div class="flex-grow overflow-y-auto p-6">
+                <div id="flowcharts-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto pb-12">
+                    <!-- Flowcharts injected here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- START SCREEN -->
+        <div id="screen-start" class="absolute inset-0 flex flex-col items-center justify-center z-20 bg-slate-900/90 backdrop-blur-sm transition-opacity duration-300 pointer-events-none opacity-0">
+            <div class="text-center space-y-6 max-w-md px-6">
+                <div class="inline-block p-4 bg-indigo-500/10 rounded-full mb-4 ring-1 ring-indigo-500/50">
+                    <i data-lucide="brain-circuit" class="w-16 h-16 text-indigo-400"></i>
+                </div>
+                <h1 class="text-4xl font-bold text-white mb-2" id="start-title">Ready?</h1>
+                <p class="text-slate-400 text-lg" id="start-desc">Sort as fast as you can. Speed builds your streak!</p>
+                
+                <div class="grid grid-cols-2 gap-4 text-left bg-slate-800 p-4 rounded-xl border border-slate-700">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded bg-green-900/50 text-green-400 flex items-center justify-center"><i data-lucide="check" class="w-4 h-4"></i></div>
+                        <span class="text-sm text-slate-300">+100 pts</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded bg-orange-900/50 text-orange-400 flex items-center justify-center"><i data-lucide="flame" class="w-4 h-4"></i></div>
+                        <span class="text-sm text-slate-300">Streak Bonus</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded bg-red-900/50 text-red-400 flex items-center justify-center"><i data-lucide="heart-off" class="w-4 h-4"></i></div>
+                        <span class="text-sm text-slate-300">3 Lives</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded bg-blue-900/50 text-blue-400 flex items-center justify-center"><i data-lucide="timer" class="w-4 h-4"></i></div>
+                        <span class="text-sm text-slate-300">Time Limit</span>
+                    </div>
+                </div>
+
+                <button onclick="game.start()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white text-xl font-bold py-4 rounded-xl shadow-lg shadow-indigo-900/50 transition-all transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
+                    Start Game <i data-lucide="play" class="w-5 h-5 fill-current"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- GAME HUD -->
+        <div id="game-hud" class="w-full flex justify-between items-end mb-8 px-2 opacity-0 transition-opacity duration-300">
+            <div class="flex flex-col">
+                <span class="text-xs text-slate-400 uppercase tracking-wider font-bold">Score</span>
+                <span id="score-display" class="text-3xl font-bold font-mono">0</span>
+            </div>
+            
+            <div class="flex flex-col items-center">
+                <div class="bg-slate-800 px-4 py-1 rounded-full border border-slate-700 mb-1">
+                    <span id="streak-display" class="text-orange-400 font-bold text-sm flex items-center gap-1">
+                        <i data-lucide="flame" class="w-3 h-3"></i> 0 Streak
+                    </span>
+                </div>
+                <div class="w-32 h-2 bg-slate-800 rounded-full overflow-hidden">
+                    <div id="timer-bar" class="h-full bg-blue-500 transition-all duration-1000 ease-linear w-full"></div>
+                </div>
+            </div>
+
+            <div class="flex gap-1" id="lives-display">
+                <!-- Hearts injected here -->
+            </div>
+        </div>
+
+        <!-- CARD AREA -->
+        <div id="card-container" class="relative w-full h-48 flex items-center justify-center mb-8 perspective-1000">
+            <!-- Cards will be injected here -->
+            <div id="active-card" class="absolute w-full max-w-md bg-white text-slate-900 rounded-2xl p-8 shadow-2xl flex flex-col items-center justify-center text-center transform transition-all duration-300 border-b-8 border-indigo-200">
+                <span class="text-xs font-bold text-indigo-500 uppercase tracking-widest mb-2" id="card-label">Process Name</span>
+                <h2 class="text-2xl md:text-3xl font-bold leading-tight" id="card-text">Loading...</h2>
+                <div id="flow-hint" class="hidden mt-2 text-sm text-slate-500 font-medium bg-slate-100 px-3 py-1 rounded-full">Tap the buttons in order!</div>
+            </div>
+        </div>
+
+        <!-- FEEDBACK OVERLAY -->
+        <div id="feedback-overlay" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none z-30 hidden">
+            <span class="text-4xl font-black text-white drop-shadow-lg" id="feedback-text">PERFECT!</span>
+        </div>
+
+        <!-- CONTROLS CONTAINER (Dynamic) -->
+        <div id="controls" class="w-full grid gap-3 max-w-3xl opacity-0 transition-opacity duration-300">
+            <!-- Buttons injected by JS based on mode -->
+        </div>
+
+    </main>
+
+    <!-- GAME OVER MODAL -->
+    <div id="modal-gameover" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl transform scale-100 transition-transform">
+            <div class="mb-6">
+                <i data-lucide="flag" class="w-16 h-16 text-indigo-500 mx-auto mb-4"></i>
+                <h2 class="text-3xl font-bold text-white mb-1">Session Complete</h2>
+                <p class="text-slate-400" id="final-reason">Run out of time!</p>
+            </div>
+
+            <div class="bg-slate-800 rounded-xl p-6 mb-6">
+                <div class="text-xs text-slate-400 uppercase tracking-widest mb-2">Final Score</div>
+                <div class="text-5xl font-black text-white mb-2" id="final-score">0</div>
+                <div class="flex justify-center gap-4 text-sm text-slate-300">
+                    <span><i data-lucide="check" class="inline w-3 h-3 text-green-500"></i> <span id="final-correct">0</span> Correct</span>
+                    <span><i data-lucide="x" class="inline w-3 h-3 text-red-500"></i> <span id="final-wrong">0</span> Wrong</span>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <button onclick="game.start()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition-colors">
+                    Play Again
+                </button>
+                <button onclick="location.reload()" class="w-full bg-transparent hover:bg-slate-800 text-slate-400 hover:text-white font-medium py-3 rounded-xl transition-colors">
+                    Back to Menu
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // DATA
+        // ==========================================
+        const processData = [
+            // INITIATING (2)
+            { name: "Develop Project Charter", group: "Initiating", area: "Integration" },
+            { name: "Identify Stakeholders", group: "Initiating", area: "Stakeholder" },
+            // PLANNING (24)
+            { name: "Develop Project Management Plan", group: "Planning", area: "Integration" },
+            { name: "Plan Scope Management", group: "Planning", area: "Scope" },
+            { name: "Collect Requirements", group: "Planning", area: "Scope" },
+            { name: "Define Scope", group: "Planning", area: "Scope" },
+            { name: "Create WBS", group: "Planning", area: "Scope" },
+            { name: "Plan Schedule Management", group: "Planning", area: "Schedule" },
+            { name: "Define Activities", group: "Planning", area: "Schedule" },
+            { name: "Sequence Activities", group: "Planning", area: "Schedule" },
+            { name: "Estimate Activity Durations", group: "Planning", area: "Schedule" },
+            { name: "Develop Schedule", group: "Planning", area: "Schedule" },
+            { name: "Plan Cost Management", group: "Planning", area: "Cost" },
+            { name: "Estimate Costs", group: "Planning", area: "Cost" },
+            { name: "Determine Budget", group: "Planning", area: "Cost" },
+            { name: "Plan Quality Management", group: "Planning", area: "Quality" },
+            { name: "Plan Resource Management", group: "Planning", area: "Resource" },
+            { name: "Estimate Activity Resources", group: "Planning", area: "Resource" },
+            { name: "Plan Communications Management", group: "Planning", area: "Communications" },
+            { name: "Plan Risk Management", group: "Planning", area: "Risk" },
+            { name: "Identify Risks", group: "Planning", area: "Risk" },
+            { name: "Perform Qualitative Risk Analysis", group: "Planning", area: "Risk" },
+            { name: "Perform Quantitative Risk Analysis", group: "Planning", area: "Risk" },
+            { name: "Plan Risk Responses", group: "Planning", area: "Risk" },
+            { name: "Plan Procurement Management", group: "Planning", area: "Procurement" },
+            { name: "Plan Stakeholder Engagement", group: "Planning", area: "Stakeholder" },
+            // EXECUTING (10)
+            { name: "Direct and Manage Project Work", group: "Executing", area: "Integration" },
+            { name: "Manage Project Knowledge", group: "Executing", area: "Integration" },
+            { name: "Manage Quality", group: "Executing", area: "Quality" },
+            { name: "Acquire Resources", group: "Executing", area: "Resource" },
+            { name: "Develop Team", group: "Executing", area: "Resource" },
+            { name: "Manage Team", group: "Executing", area: "Resource" },
+            { name: "Manage Communications", group: "Executing", area: "Communications" },
+            { name: "Implement Risk Responses", group: "Executing", area: "Risk" },
+            { name: "Conduct Procurements", group: "Executing", area: "Procurement" },
+            { name: "Manage Stakeholder Engagement", group: "Executing", area: "Stakeholder" },
+            // M&C (12)
+            { name: "Monitor and Control Project Work", group: "Monitoring & Controlling", area: "Integration" },
+            { name: "Perform Integrated Change Control", group: "Monitoring & Controlling", area: "Integration" },
+            { name: "Validate Scope", group: "Monitoring & Controlling", area: "Scope" },
+            { name: "Control Scope", group: "Monitoring & Controlling", area: "Scope" },
+            { name: "Control Schedule", group: "Monitoring & Controlling", area: "Schedule" },
+            { name: "Control Costs", group: "Monitoring & Controlling", area: "Cost" },
+            { name: "Control Quality", group: "Monitoring & Controlling", area: "Quality" },
+            { name: "Control Resources", group: "Monitoring & Controlling", area: "Resource" },
+            { name: "Monitor Communications", group: "Monitoring & Controlling", area: "Communications" },
+            { name: "Monitor Risks", group: "Monitoring & Controlling", area: "Risk" },
+            { name: "Control Procurements", group: "Monitoring & Controlling", area: "Procurement" },
+            { name: "Monitor Stakeholder Engagement", group: "Monitoring & Controlling", area: "Stakeholder" },
+            // CLOSING (1)
+            { name: "Close Project or Phase", group: "Closing", area: "Integration" }
+        ];
+
+        const flowData = [
+            {
+                name: "The Deliverable Journey",
+                steps: ["Direct & Manage Project Work", "Control Quality", "Validate Scope", "Close Project or Phase"]
+            },
+            {
+                name: "Change Request Handling",
+                steps: ["Submit Change Request", "Assess Impact", "Get CCB Approval", "Update Baselines"]
+            },
+            {
+                name: "Risk Management Cycle",
+                steps: ["Identify Risks", "Qualitative Analysis", "Quantitative Analysis", "Plan Risk Responses"]
+            },
+            {
+                name: "Closing Process",
+                steps: ["Accept Deliverables", "Transfer Product", "Update Lessons Learned", "Release Team"]
+            },
+            {
+                name: "Stakeholder Engagement",
+                steps: ["Identify Stakeholders", "Plan Engagement", "Manage Engagement", "Monitor Engagement"]
+            },
+            {
+                name: "Procurement Lifecycle",
+                steps: ["Plan Procurement", "Conduct Procurement", "Control Procurement", "Close Procurement"]
+            },
+            {
+                name: "Quality Management",
+                steps: ["Plan Quality", "Manage Quality (QA)", "Control Quality (QC)", "Verified Deliverables"]
+            },
+            {
+                name: "Scope Definition",
+                steps: ["Collect Requirements", "Define Scope", "Create WBS", "Scope Baseline"]
+            },
+            {
+                name: "Work Performance Data Flow",
+                steps: ["Direct & Manage Project Work", "Controlling Processes", "Monitor & Control Project Work", "Manage Communications"]
+            }
+        ];
+
+        const allAreas = [
+            "Integration", "Scope", "Schedule", "Cost", "Quality", 
+            "Resource", "Communications", "Risk", "Procurement", "Stakeholder"
+        ];
+
+        // ==========================================
+        // GAME ENGINE
+        // ==========================================
+        const game = {
+            mode: 'group',
+            score: 0,
+            streak: 0,
+            lives: 3,
+            maxTime: 10,
+            currentTime: 10,
+            timerInterval: null,
+            isPlaying: false,
+            currentCard: null,
+            deck: [],
+            stats: { correct: 0, wrong: 0 },
+            flowStep: 0,
+
+            init: function() {
+                lucide.createIcons();
+                const best = localStorage.getItem('pmp_blitz_best') || 0;
+                document.getElementById('best-score').textContent = `Best: ${best}`;
+            },
+
+            // SCREEN MANAGEMENT
+            selectMode: function(mode) {
+                this.mode = mode;
+                document.getElementById('screen-menu').classList.add('opacity-0', 'pointer-events-none');
+                const startScreen = document.getElementById('screen-start');
+                startScreen.classList.remove('opacity-0', 'pointer-events-none', 'hidden');
+                
+                if(mode === 'group') {
+                    document.getElementById('start-title').innerHTML = "Process <span class='text-indigo-400'>Groups</span>";
+                    document.getElementById('start-desc').textContent = "Map processes to Initiating, Planning, Executing, M&C, or Closing.";
+                } else if(mode === 'area') {
+                    document.getElementById('start-title').innerHTML = "Knowledge <span class='text-pink-400'>Areas</span>";
+                    document.getElementById('start-desc').textContent = "Identify the Knowledge Area (Scope, Cost, Risk, etc.) for each process.";
+                } else {
+                    document.getElementById('start-title').innerHTML = "Process <span class='text-emerald-400'>Flows</span>";
+                    document.getElementById('start-desc').textContent = "Tap the steps in the correct order to complete the sequence!";
+                }
+            },
+
+            showFlowcharts: function() {
+                document.getElementById('screen-menu').classList.add('hidden');
+                const screen = document.getElementById('screen-flowcharts');
+                screen.classList.remove('hidden');
+                
+                // Render flows
+                const container = document.getElementById('flowcharts-container');
+                container.innerHTML = '';
+                
+                flowData.forEach(flow => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-lg';
+                    
+                    let stepsHtml = '';
+                    flow.steps.forEach((step, index) => {
+                        stepsHtml += `
+                            <div class="relative flow-line mb-5 last:mb-0">
+                                <div class="bg-slate-900 border border-slate-600 rounded-lg p-3 text-center z-10 relative">
+                                    <span class="text-xs font-bold text-emerald-500 uppercase tracking-widest block mb-1">Step ${index + 1}</span>
+                                    <span class="font-medium text-slate-200 text-sm">${step}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    card.innerHTML = `
+                        <h3 class="text-lg font-bold text-white mb-6 border-b border-slate-700 pb-3 flex items-center gap-2">
+                            <i data-lucide="git-merge" class="w-5 h-5 text-emerald-400"></i> ${flow.name}
+                        </h3>
+                        <div class="flex flex-col">
+                            ${stepsHtml}
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+                lucide.createIcons();
+            },
+
+            hideFlowcharts: function() {
+                document.getElementById('screen-flowcharts').classList.add('hidden');
+                document.getElementById('screen-menu').classList.remove('hidden');
+            },
+
+            // GAMEPLAY
+            start: function() {
+                this.score = 0;
+                this.streak = 0;
+                this.lives = 3;
+                this.stats = { correct: 0, wrong: 0 };
+                this.isPlaying = true;
+                
+                if (this.mode === 'flow') {
+                    this.deck = [...flowData].sort(() => Math.random() - 0.5);
+                    this.maxTime = 15;
+                } else {
+                    this.deck = [...processData].sort(() => Math.random() - 0.5);
+                    this.maxTime = 10;
+                }
+
+                document.getElementById('screen-start').classList.add('opacity-0', 'pointer-events-none');
+                document.getElementById('modal-gameover').classList.add('hidden');
+                document.getElementById('game-hud').classList.remove('opacity-0');
+                document.getElementById('controls').classList.remove('opacity-0');
+                
+                this.setupControls();
+                this.updateHUD();
+                this.nextCard();
+            },
+
+            setupControls: function() {
+                const container = document.getElementById('controls');
+                container.innerHTML = '';
+
+                if (this.mode === 'group') {
+                    container.className = "w-full grid grid-cols-2 md:grid-cols-3 gap-3 max-w-3xl opacity-100 transition-opacity duration-300";
+                    const groups = [
+                        { id: 'Initiating', label: 'Initiating', letter: 'I', color: 'purple' },
+                        { id: 'Planning', label: 'Planning', letter: 'P', color: 'blue' },
+                        { id: 'Executing', label: 'Executing', letter: 'E', color: 'green' },
+                        { id: 'Monitoring & Controlling', label: 'Monitoring & Controlling', letter: 'M', color: 'yellow', span: true },
+                        { id: 'Closing', label: 'Closing', letter: 'C', color: 'red', span: true }
+                    ];
+
+                    groups.forEach(g => {
+                        const btn = document.createElement('button');
+                        btn.onclick = () => this.submit(g.id);
+                        btn.className = `group-btn bg-${g.color}-900/40 hover:bg-${g.color}-600 border border-${g.color}-700/50 hover:border-${g.color}-400 text-${g.color}-200 hover:text-white p-4 rounded-xl transition-all duration-200 flex flex-col items-center gap-1 group ${g.span ? 'md:col-span-1.5' : ''}`;
+                        btn.innerHTML = `<div class="w-8 h-8 rounded-full bg-${g.color}-800 group-hover:bg-white/20 flex items-center justify-center mb-1"><span class="font-bold text-lg">${g.letter}</span></div><span class="font-medium ${g.id.length > 15 ? 'text-xs' : 'text-sm'} text-center leading-tight">${g.label}</span>`;
+                        container.appendChild(btn);
+                    });
+                } else if (this.mode === 'area') {
+                    container.className = "w-full grid grid-cols-1 md:grid-cols-2 gap-3 max-w-3xl opacity-100 transition-opacity duration-300";
+                } else if (this.mode === 'flow') {
+                    container.className = "w-full grid grid-cols-1 gap-3 max-w-lg mx-auto opacity-100 transition-opacity duration-300";
+                }
+            },
+
+            updateHUD: function() {
+                document.getElementById('score-display').textContent = this.score;
+                
+                const streakEl = document.getElementById('streak-display');
+                streakEl.innerHTML = `<i data-lucide="flame" class="w-3 h-3"></i> ${this.streak} Streak`;
+                streakEl.className = this.streak > 4 ? "text-orange-500 font-bold text-sm flex items-center gap-1 animate-pulse" : "text-slate-400 font-bold text-sm flex items-center gap-1";
+                lucide.createIcons();
+
+                const livesContainer = document.getElementById('lives-display');
+                livesContainer.innerHTML = '';
+                for(let i=0; i<3; i++) {
+                    const heart = document.createElement('i');
+                    heart.setAttribute('data-lucide', 'heart');
+                    heart.className = i < this.lives ? "w-6 h-6 text-red-500 fill-current" : "w-6 h-6 text-slate-700";
+                    livesContainer.appendChild(heart);
+                }
+                lucide.createIcons();
+            },
+
+            nextCard: function() {
+                if (this.lives <= 0) return this.endGame("Out of Lives!");
+                if (this.deck.length === 0) {
+                    if (this.mode === 'flow') this.deck = [...flowData].sort(() => Math.random() - 0.5);
+                    else this.deck = [...processData].sort(() => Math.random() - 0.5);
+                }
+
+                this.currentCard = this.deck.pop();
+                this.flowStep = 0;
+                
+                if (this.mode === 'flow') {
+                    this.maxTime = 20;
+                } else {
+                    const speedModifier = Math.min(this.streak * 0.2, 5); 
+                    this.maxTime = Math.max(10 - speedModifier, 3);
+                }
+                this.currentTime = this.maxTime;
+                
+                const cardEl = document.getElementById('active-card');
+                cardEl.classList.remove('card-enter', 'shake');
+                void cardEl.offsetWidth; 
+                cardEl.classList.add('card-enter');
+                
+                document.getElementById('card-text').textContent = this.currentCard.name;
+                
+                const flowHint = document.getElementById('flow-hint');
+                if (this.mode === 'flow') flowHint.classList.remove('hidden');
+                else flowHint.classList.add('hidden');
+                
+                cardEl.className = "absolute w-full max-w-md bg-white text-slate-900 rounded-2xl p-8 shadow-2xl flex flex-col items-center justify-center text-center transform transition-all duration-300 border-b-8 border-indigo-200";
+
+                if(this.mode === 'area') {
+                    this.generateAreaOptions();
+                } else if(this.mode === 'flow') {
+                    this.generateFlowOptions();
+                }
+
+                this.startTimer();
+            },
+
+            generateAreaOptions: function() {
+                const correct = this.currentCard.area;
+                const distractors = allAreas.filter(a => a !== correct).sort(() => 0.5 - Math.random()).slice(0, 3);
+                const options = [correct, ...distractors].sort(() => 0.5 - Math.random());
+                const container = document.getElementById('controls');
+                container.innerHTML = '';
+                options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.onclick = () => this.submit(opt);
+                    btn.className = "group relative bg-slate-800 border border-slate-700 hover:border-pink-500 hover:bg-pink-900/20 text-slate-300 hover:text-white p-6 rounded-xl transition-all duration-200 font-bold text-lg";
+                    btn.textContent = opt;
+                    container.appendChild(btn);
+                });
+            },
+
+            generateFlowOptions: function() {
+                const stepsShuffled = [...this.currentCard.steps].sort(() => 0.5 - Math.random());
+                const container = document.getElementById('controls');
+                container.innerHTML = '';
+                stepsShuffled.forEach((stepText) => {
+                    const btn = document.createElement('button');
+                    btn.onclick = (e) => this.submitFlow(stepText, e.currentTarget);
+                    btn.className = "group relative bg-slate-800 border border-slate-700 hover:border-emerald-500 hover:bg-emerald-900/20 text-slate-300 hover:text-white p-4 rounded-xl transition-all duration-200 font-medium text-lg flex items-center justify-between";
+                    btn.innerHTML = `<span>${stepText}</span><div class="w-6 h-6 rounded-full border-2 border-slate-600 flex items-center justify-center text-xs opacity-50">?</div>`;
+                    container.appendChild(btn);
+                });
+            },
+
+            startTimer: function() {
+                clearInterval(this.timerInterval);
+                const timerBar = document.getElementById('timer-bar');
+                
+                this.timerInterval = setInterval(() => {
+                    this.currentTime -= 0.1;
+                    const pct = (this.currentTime / this.maxTime) * 100;
+                    timerBar.style.width = `${pct}%`;
+                    
+                    if (pct < 30) timerBar.classList.replace('bg-blue-500', 'bg-red-500');
+                    else timerBar.classList.replace('bg-red-500', 'bg-blue-500');
+
+                    if (this.currentTime <= 0) {
+                        this.handleWrong("Time's Up!");
+                    }
+                }, 100);
+            },
+
+            submit: function(answer) {
+                if (!this.isPlaying || this.mode === 'flow') return;
+                clearInterval(this.timerInterval);
+
+                const correctAnswer = this.mode === 'group' ? this.currentCard.group : this.currentCard.area;
+
+                if (answer === correctAnswer) {
+                    this.handleCorrect();
+                } else {
+                    this.handleWrong();
+                }
+            },
+
+            submitFlow: function(answer, btnElement) {
+                if (!this.isPlaying) return;
+                
+                const expectedStep = this.currentCard.steps[this.flowStep];
+
+                if (answer === expectedStep) {
+                    this.flowStep++;
+                    btnElement.classList.add('btn-correct');
+                    btnElement.innerHTML = `<span>${answer}</span><div class="w-6 h-6 rounded-full bg-white text-green-600 flex items-center justify-center text-xs font-bold">${this.flowStep}</div>`;
+                    
+                    if (this.flowStep >= this.currentCard.steps.length) {
+                        clearInterval(this.timerInterval);
+                        this.handleCorrect();
+                    }
+                } else {
+                    clearInterval(this.timerInterval);
+                    this.handleWrong();
+                }
+            },
+
+            handleCorrect: function() {
+                this.streak++;
+                this.stats.correct++;
+                
+                const timeBonus = Math.floor(this.currentTime * 10);
+                const streakBonus = this.streak * 10;
+                const points = 100 + timeBonus + streakBonus;
+                this.score += points;
+
+                this.showFloatingText(`+${points}`, 'text-green-400');
+                const cardEl = document.getElementById('active-card');
+                cardEl.classList.add('border-green-500', 'scale-105');
+                setTimeout(() => cardEl.classList.remove('scale-105'), 100);
+
+                this.updateHUD();
+                setTimeout(() => this.nextCard(), 400); 
+            },
+
+            handleWrong: function(reason) {
+                this.streak = 0;
+                this.lives--;
+                this.stats.wrong++;
+                
+                const cardEl = document.getElementById('active-card');
+                cardEl.classList.add('shake', 'border-red-500');
+                
+                if (this.mode === 'flow') {
+                    document.getElementById('card-text').innerHTML = `<span class="text-red-500 text-lg">Order Failed! Correct:</span><br/><div class="text-sm mt-2 space-y-1">${this.currentCard.steps.map((s,i) => `<div>${i+1}. ${s}</div>`).join('')}</div>`;
+                } else {
+                    const correctAnswer = this.mode === 'group' ? this.currentCard.group : this.currentCard.area;
+                    document.getElementById('card-text').innerHTML = `<span class="text-red-500 text-lg">Wrong! It was:</span><br/>${correctAnswer}`;
+                }
+                
+                this.updateHUD();
+                
+                setTimeout(() => {
+                    if (this.lives > 0) {
+                        this.nextCard();
+                    } else {
+                        this.endGame("Out of Lives!");
+                    }
+                }, 2000);
+            },
+
+            showFloatingText: function(text, colorClass) {
+                const hud = document.getElementById('score-display');
+                const el = document.createElement('div');
+                el.className = `absolute text-2xl font-bold ${colorClass} pop-score`;
+                el.style.left = `${hud.getBoundingClientRect().left + 20}px`;
+                el.style.top = `${hud.getBoundingClientRect().top}px`;
+                el.textContent = text;
+                document.body.appendChild(el);
+                setTimeout(() => el.remove(), 600);
+            },
+
+            endGame: function(reason) {
+                this.isPlaying = false;
+                clearInterval(this.timerInterval);
+                
+                const best = localStorage.getItem('pmp_blitz_best') || 0;
+                if (this.score > best) {
+                    localStorage.setItem('pmp_blitz_best', this.score);
+                    document.getElementById('best-score').textContent = `Best: ${this.score}`;
+                }
+
+                document.getElementById('final-reason').textContent = reason;
+                document.getElementById('final-score').textContent = this.score;
+                document.getElementById('final-correct').textContent = this.stats.correct;
+                document.getElementById('final-wrong').textContent = this.stats.wrong;
+                document.getElementById('modal-gameover').classList.remove('hidden');
+            }
+        };
+
+        game.init();
+
+    </script>
+</body>
+</html>
