@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PMP Process Blitz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Space Grotesk', sans-serif; user-select: none; }
+        
+        .card-enter { animation: slideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(50px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        .pop-score { animation: popUp 0.6s forwards; }
+        @keyframes popUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-40px) scale(1.5); }
+        }
+
+        /* Gradient Text */
+        .text-gradient {
+            background: linear-gradient(to right, #4f46e5, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col overflow-hidden">
+
+    <!-- Navbar -->
+    <div class="p-4 flex justify-between items-center bg-slate-800/50 backdrop-blur border-b border-slate-700 z-10">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center">
+                <i data-lucide="zap" class="text-white w-5 h-5"></i>
+            </div>
+            <span class="font-bold text-xl tracking-wide">Process<span class="text-indigo-400">Blitz</span></span>
+        </div>
+        <div class="flex gap-4 text-sm font-medium">
+            <div class="flex items-center gap-1.5 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
+                <i data-lucide="trophy" class="w-4 h-4 text-yellow-400"></i>
+                <span id="best-score">Best: 0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Container -->
+    <main class="flex-grow relative flex flex-col items-center justify-center p-4 max-w-2xl mx-auto w-full">
+        
+        <!-- START SCREEN -->
+        <div id="screen-start" class="absolute inset-0 flex flex-col items-center justify-center z-20 bg-slate-900/90 backdrop-blur-sm transition-opacity duration-300">
+            <div class="text-center space-y-6 max-w-md px-6">
+                <div class="inline-block p-4 bg-indigo-500/10 rounded-full mb-4 ring-1 ring-indigo-500/50">
+                    <i data-lucide="brain-circuit" class="w-16 h-16 text-indigo-400"></i>
+                </div>
+                <h1 class="text-5xl font-bold text-white mb-2">Master the<br/><span class="text-gradient">49 Processes</span></h1>
+                <p class="text-slate-400 text-lg">Sort the PMP processes into their correct Process Groups as fast as you can. Speed builds your streak!</p>
+                
+                <div class="grid grid-cols-2 gap-4 text-left bg-slate-800 p-4 rounded-xl border border-slate-700">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded bg-green-900/50 text-green-400 flex items-center justify-center"><i data-lucide="check" class="w-4 h-4"></i></div>
+                        <span class="text-sm text-slate-300">+100 pts</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded bg-orange-900/50 text-orange-400 flex items-center justify-center"><i data-lucide="flame" class="w-4 h-4"></i></div>
+                        <span class="text-sm text-slate-300">Streak Bonus</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded bg-red-900/50 text-red-400 flex items-center justify-center"><i data-lucide="heart-off" class="w-4 h-4"></i></div>
+                        <span class="text-sm text-slate-300">3 Lives</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded bg-blue-900/50 text-blue-400 flex items-center justify-center"><i data-lucide="timer" class="w-4 h-4"></i></div>
+                        <span class="text-sm text-slate-300">Time Limit</span>
+                    </div>
+                </div>
+
+                <button onclick="game.start()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white text-xl font-bold py-4 rounded-xl shadow-lg shadow-indigo-900/50 transition-all transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
+                    Start Game <i data-lucide="play" class="w-5 h-5 fill-current"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- GAME HUD -->
+        <div id="game-hud" class="w-full flex justify-between items-end mb-8 px-2 opacity-0 transition-opacity duration-300">
+            <div class="flex flex-col">
+                <span class="text-xs text-slate-400 uppercase tracking-wider font-bold">Score</span>
+                <span id="score-display" class="text-3xl font-bold font-mono">0</span>
+            </div>
+            
+            <div class="flex flex-col items-center">
+                <div class="bg-slate-800 px-4 py-1 rounded-full border border-slate-700 mb-1">
+                    <span id="streak-display" class="text-orange-400 font-bold text-sm flex items-center gap-1">
+                        <i data-lucide="flame" class="w-3 h-3"></i> 0 Streak
+                    </span>
+                </div>
+                <div class="w-32 h-2 bg-slate-800 rounded-full overflow-hidden">
+                    <div id="timer-bar" class="h-full bg-blue-500 transition-all duration-1000 ease-linear w-full"></div>
+                </div>
+            </div>
+
+            <div class="flex gap-1" id="lives-display">
+                <!-- Hearts injected here -->
+            </div>
+        </div>
+
+        <!-- CARD AREA -->
+        <div id="card-container" class="relative w-full h-48 flex items-center justify-center mb-8 perspective-1000">
+            <!-- Cards will be injected here -->
+            <div id="active-card" class="absolute w-full max-w-md bg-white text-slate-900 rounded-2xl p-8 shadow-2xl flex flex-col items-center justify-center text-center transform transition-all duration-300 border-b-8 border-indigo-200">
+                <span class="text-xs font-bold text-indigo-500 uppercase tracking-widest mb-2">Process Name</span>
+                <h2 class="text-2xl md:text-3xl font-bold leading-tight" id="card-text">Loading...</h2>
+            </div>
+        </div>
+
+        <!-- FEEDBACK OVERLAY -->
+        <div id="feedback-overlay" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none z-30 hidden">
+            <span class="text-4xl font-black text-white drop-shadow-lg" id="feedback-text">PERFECT!</span>
+        </div>
+
+        <!-- CONTROLS (PROCESS GROUPS) -->
+        <div id="controls" class="w-full grid grid-cols-2 md:grid-cols-3 gap-3 max-w-3xl opacity-0 transition-opacity duration-300">
+            <button onclick="game.submit('Initiating')" class="group-btn bg-purple-900/40 hover:bg-purple-600 border border-purple-700/50 hover:border-purple-400 text-purple-200 hover:text-white p-4 rounded-xl transition-all duration-200 flex flex-col items-center gap-1 group">
+                <div class="w-8 h-8 rounded-full bg-purple-800 group-hover:bg-white/20 flex items-center justify-center mb-1"><span class="font-bold text-lg">I</span></div>
+                <span class="font-medium">Initiating</span>
+            </button>
+            
+            <button onclick="game.submit('Planning')" class="group-btn bg-blue-900/40 hover:bg-blue-600 border border-blue-700/50 hover:border-blue-400 text-blue-200 hover:text-white p-4 rounded-xl transition-all duration-200 flex flex-col items-center gap-1 group">
+                <div class="w-8 h-8 rounded-full bg-blue-800 group-hover:bg-white/20 flex items-center justify-center mb-1"><span class="font-bold text-lg">P</span></div>
+                <span class="font-medium">Planning</span>
+            </button>
+
+            <button onclick="game.submit('Executing')" class="group-btn bg-green-900/40 hover:bg-green-600 border border-green-700/50 hover:border-green-400 text-green-200 hover:text-white p-4 rounded-xl transition-all duration-200 flex flex-col items-center gap-1 group">
+                <div class="w-8 h-8 rounded-full bg-green-800 group-hover:bg-white/20 flex items-center justify-center mb-1"><span class="font-bold text-lg">E</span></div>
+                <span class="font-medium">Executing</span>
+            </button>
+
+            <button onclick="game.submit('Monitoring & Controlling')" class="group-btn bg-yellow-900/40 hover:bg-yellow-600 border border-yellow-700/50 hover:border-yellow-400 text-yellow-200 hover:text-white p-4 rounded-xl transition-all duration-200 flex flex-col items-center gap-1 group md:col-span-1.5">
+                <div class="w-8 h-8 rounded-full bg-yellow-800 group-hover:bg-white/20 flex items-center justify-center mb-1"><span class="font-bold text-lg">M</span></div>
+                <span class="font-medium text-center">Monitoring &<br>Controlling</span>
+            </button>
+
+            <button onclick="game.submit('Closing')" class="group-btn bg-red-900/40 hover:bg-red-600 border border-red-700/50 hover:border-red-400 text-red-200 hover:text-white p-4 rounded-xl transition-all duration-200 flex flex-col items-center gap-1 group md:col-span-1.5">
+                <div class="w-8 h-8 rounded-full bg-red-800 group-hover:bg-white/20 flex items-center justify-center mb-1"><span class="font-bold text-lg">C</span></div>
+                <span class="font-medium">Closing</span>
+            </button>
+        </div>
+
+    </main>
+
+    <!-- GAME OVER MODAL -->
+    <div id="modal-gameover" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl transform scale-100 transition-transform">
+            <div class="mb-6">
+                <i data-lucide="flag" class="w-16 h-16 text-indigo-500 mx-auto mb-4"></i>
+                <h2 class="text-3xl font-bold text-white mb-1">Session Complete</h2>
+                <p class="text-slate-400" id="final-reason">Run out of time!</p>
+            </div>
+
+            <div class="bg-slate-800 rounded-xl p-6 mb-6">
+                <div class="text-xs text-slate-400 uppercase tracking-widest mb-2">Final Score</div>
+                <div class="text-5xl font-black text-white mb-2" id="final-score">0</div>
+                <div class="flex justify-center gap-4 text-sm text-slate-300">
+                    <span><i data-lucide="check" class="inline w-3 h-3 text-green-500"></i> <span id="final-correct">0</span> Correct</span>
+                    <span><i data-lucide="x" class="inline w-3 h-3 text-red-500"></i> <span id="final-wrong">0</span> Wrong</span>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <button onclick="game.start()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition-colors">
+                    Play Again
+                </button>
+                <button onclick="location.reload()" class="w-full bg-transparent hover:bg-slate-800 text-slate-400 hover:text-white font-medium py-3 rounded-xl transition-colors">
+                    Back to Menu
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // DATA: THE 49 PROCESSES
+        // ==========================================
+        const processData = [
+            // INITIATING (2)
+            { name: "Develop Project Charter", group: "Initiating" },
+            { name: "Identify Stakeholders", group: "Initiating" },
+            
+            // PLANNING (24)
+            { name: "Develop Project Management Plan", group: "Planning" },
+            { name: "Plan Scope Management", group: "Planning" },
+            { name: "Collect Requirements", group: "Planning" },
+            { name: "Define Scope", group: "Planning" },
+            { name: "Create WBS", group: "Planning" },
+            { name: "Plan Schedule Management", group: "Planning" },
+            { name: "Define Activities", group: "Planning" },
+            { name: "Sequence Activities", group: "Planning" },
+            { name: "Estimate Activity Durations", group: "Planning" },
+            { name: "Develop Schedule", group: "Planning" },
+            { name: "Plan Cost Management", group: "Planning" },
+            { name: "Estimate Costs", group: "Planning" },
+            { name: "Determine Budget", group: "Planning" },
+            { name: "Plan Quality Management", group: "Planning" },
+            { name: "Plan Resource Management", group: "Planning" },
+            { name: "Estimate Activity Resources", group: "Planning" },
+            { name: "Plan Communications Management", group: "Planning" },
+            { name: "Plan Risk Management", group: "Planning" },
+            { name: "Identify Risks", group: "Planning" },
+            { name: "Perform Qualitative Risk Analysis", group: "Planning" },
+            { name: "Perform Quantitative Risk Analysis", group: "Planning" },
+            { name: "Plan Risk Responses", group: "Planning" },
+            { name: "Plan Procurement Management", group: "Planning" },
+            { name: "Plan Stakeholder Engagement", group: "Planning" },
+
+            // EXECUTING (10)
+            { name: "Direct and Manage Project Work", group: "Executing" },
+            { name: "Manage Project Knowledge", group: "Executing" },
+            { name: "Manage Quality", group: "Executing" },
+            { name: "Acquire Resources", group: "Executing" },
+            { name: "Develop Team", group: "Executing" },
+            { name: "Manage Team", group: "Executing" },
+            { name: "Manage Communications", group: "Executing" },
+            { name: "Implement Risk Responses", group: "Executing" },
+            { name: "Conduct Procurements", group: "Executing" },
+            { name: "Manage Stakeholder Engagement", group: "Executing" },
+
+            // MONITORING & CONTROLLING (12)
+            { name: "Monitor and Control Project Work", group: "Monitoring & Controlling" },
+            { name: "Perform Integrated Change Control", group: "Monitoring & Controlling" },
+            { name: "Validate Scope", group: "Monitoring & Controlling" },
+            { name: "Control Scope", group: "Monitoring & Controlling" },
+            { name: "Control Schedule", group: "Monitoring & Controlling" },
+            { name: "Control Costs", group: "Monitoring & Controlling" },
+            { name: "Control Quality", group: "Monitoring & Controlling" },
+            { name: "Control Resources", group: "Monitoring & Controlling" },
+            { name: "Monitor Communications", group: "Monitoring & Controlling" },
+            { name: "Monitor Risks", group: "Monitoring & Controlling" },
+            { name: "Control Procurements", group: "Monitoring & Controlling" },
+            { name: "Monitor Stakeholder Engagement", group: "Monitoring & Controlling" },
+
+            // CLOSING (1)
+            { name: "Close Project or Phase", group: "Closing" }
+        ];
+
+        // ==========================================
+        // GAME ENGINE
+        // ==========================================
+        const game = {
+            score: 0,
+            streak: 0,
+            lives: 3,
+            maxTime: 10, // seconds per card initially
+            currentTime: 10,
+            timerInterval: null,
+            isPlaying: false,
+            currentCard: null,
+            deck: [],
+            stats: { correct: 0, wrong: 0 },
+
+            init: function() {
+                lucide.createIcons();
+                const best = localStorage.getItem('pmp_blitz_best') || 0;
+                document.getElementById('best-score').textContent = `Best: ${best}`;
+            },
+
+            start: function() {
+                this.score = 0;
+                this.streak = 0;
+                this.lives = 3;
+                this.stats = { correct: 0, wrong: 0 };
+                this.isPlaying = true;
+                
+                // Clone and shuffle deck
+                this.deck = [...processData].sort(() => Math.random() - 0.5);
+
+                // UI Reset
+                document.getElementById('screen-start').classList.add('opacity-0', 'pointer-events-none');
+                document.getElementById('modal-gameover').classList.add('hidden');
+                document.getElementById('game-hud').classList.remove('opacity-0');
+                document.getElementById('controls').classList.remove('opacity-0');
+                
+                this.updateHUD();
+                this.nextCard();
+            },
+
+            updateHUD: function() {
+                document.getElementById('score-display').textContent = this.score;
+                
+                // Streak
+                const streakEl = document.getElementById('streak-display');
+                streakEl.innerHTML = `<i data-lucide="flame" class="w-3 h-3"></i> ${this.streak} Streak`;
+                streakEl.className = this.streak > 4 ? "text-orange-500 font-bold text-sm flex items-center gap-1 animate-pulse" : "text-slate-400 font-bold text-sm flex items-center gap-1";
+                lucide.createIcons();
+
+                // Lives
+                const livesContainer = document.getElementById('lives-display');
+                livesContainer.innerHTML = '';
+                for(let i=0; i<3; i++) {
+                    const heart = document.createElement('i');
+                    heart.setAttribute('data-lucide', 'heart');
+                    heart.className = i < this.lives ? "w-6 h-6 text-red-500 fill-current" : "w-6 h-6 text-slate-700";
+                    livesContainer.appendChild(heart);
+                }
+                lucide.createIcons();
+            },
+
+            nextCard: function() {
+                if (this.lives <= 0) return this.endGame("Out of Lives!");
+                if (this.deck.length === 0) {
+                    // Replenish deck if empty (Endless Mode)
+                    this.deck = [...processData].sort(() => Math.random() - 0.5);
+                }
+
+                this.currentCard = this.deck.pop();
+                
+                // Reset Timer based on streak (faster as you go)
+                const speedModifier = Math.min(this.streak * 0.2, 5); // Max 5s reduction
+                this.maxTime = Math.max(10 - speedModifier, 3); // Min 3 seconds
+                this.currentTime = this.maxTime;
+                
+                // Animate Card
+                const cardEl = document.getElementById('active-card');
+                cardEl.classList.remove('card-enter', 'shake');
+                void cardEl.offsetWidth; // trigger reflow
+                cardEl.classList.add('card-enter');
+                
+                // Update Text
+                document.getElementById('card-text').textContent = this.currentCard.name;
+                
+                // Color hint (subtle border change or keep neutral)
+                cardEl.className = "absolute w-full max-w-md bg-white text-slate-900 rounded-2xl p-8 shadow-2xl flex flex-col items-center justify-center text-center transform transition-all duration-300 border-b-8 border-indigo-200";
+
+                this.startTimer();
+            },
+
+            startTimer: function() {
+                clearInterval(this.timerInterval);
+                const timerBar = document.getElementById('timer-bar');
+                
+                this.timerInterval = setInterval(() => {
+                    this.currentTime -= 0.1;
+                    const pct = (this.currentTime / this.maxTime) * 100;
+                    timerBar.style.width = `${pct}%`;
+                    
+                    if (pct < 30) timerBar.classList.replace('bg-blue-500', 'bg-red-500');
+                    else timerBar.classList.replace('bg-red-500', 'bg-blue-500');
+
+                    if (this.currentTime <= 0) {
+                        this.handleWrong("Time's Up!");
+                    }
+                }, 100);
+            },
+
+            submit: function(groupName) {
+                if (!this.isPlaying) return;
+                clearInterval(this.timerInterval);
+
+                if (groupName === this.currentCard.group) {
+                    this.handleCorrect();
+                } else {
+                    this.handleWrong();
+                }
+            },
+
+            handleCorrect: function() {
+                this.streak++;
+                this.stats.correct++;
+                
+                // Points calculation: Base (100) + Streak Bonus + Time Bonus
+                const timeBonus = Math.floor(this.currentTime * 10);
+                const streakBonus = this.streak * 10;
+                const points = 100 + timeBonus + streakBonus;
+                this.score += points;
+
+                // Visuals
+                this.showFloatingText(`+${points}`, 'text-green-400');
+                const cardEl = document.getElementById('active-card');
+                cardEl.classList.add('border-green-500', 'scale-105');
+                setTimeout(() => cardEl.classList.remove('scale-105'), 100);
+
+                this.updateHUD();
+                setTimeout(() => this.nextCard(), 400); // Slight delay to see green
+            },
+
+            handleWrong: function(reason) {
+                this.streak = 0;
+                this.lives--;
+                this.stats.wrong++;
+                
+                // Shake Animation
+                const cardEl = document.getElementById('active-card');
+                cardEl.classList.add('shake', 'border-red-500');
+                
+                // Show Correct Answer
+                const originalText = document.getElementById('card-text').textContent;
+                document.getElementById('card-text').innerHTML = `<span class="text-red-500 text-lg">Wrong! It was:</span><br/>${this.currentCard.group}`;
+                
+                this.updateHUD();
+                
+                setTimeout(() => {
+                    if (this.lives > 0) {
+                        this.nextCard();
+                    } else {
+                        this.endGame("Out of Lives!");
+                    }
+                }, 1500); // Longer delay to read correction
+            },
+
+            showFloatingText: function(text, colorClass) {
+                const hud = document.getElementById('score-display');
+                const el = document.createElement('div');
+                el.className = `absolute text-2xl font-bold ${colorClass} pop-score`;
+                el.style.left = `${hud.getBoundingClientRect().left + 20}px`;
+                el.style.top = `${hud.getBoundingClientRect().top}px`;
+                el.textContent = text;
+                document.body.appendChild(el);
+                setTimeout(() => el.remove(), 600);
+            },
+
+            endGame: function(reason) {
+                this.isPlaying = false;
+                clearInterval(this.timerInterval);
+                
+                // Update High Score
+                const best = localStorage.getItem('pmp_blitz_best') || 0;
+                if (this.score > best) {
+                    localStorage.setItem('pmp_blitz_best', this.score);
+                    document.getElementById('best-score').textContent = `Best: ${this.score}`;
+                }
+
+                // Show Modal
+                document.getElementById('final-reason').textContent = reason;
+                document.getElementById('final-score').textContent = this.score;
+                document.getElementById('final-correct').textContent = this.stats.correct;
+                document.getElementById('final-wrong').textContent = this.stats.wrong;
+                document.getElementById('modal-gameover').classList.remove('hidden');
+            }
+        };
+
+        // Init
+        game.init();
+
+    </script>
+</body>
+</html>
