@@ -87,19 +87,18 @@
         <!-- MENU SCREEN -->
         <div id="screen-menu" class="absolute inset-0 z-40 bg-slate-900 flex flex-col items-center justify-center p-6 overflow-y-auto">
             <div class="text-center space-y-2 mb-8 mt-12 md:mt-0">
-                <h1 class="text-5xl font-bold text-white mb-2">Select <span class="text-gradient">Game Mode</span></h1>
+                <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">Select <span class="text-gradient">Game Mode</span></h1>
                 <p class="text-slate-400">Choose your challenge to master the PMP</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-4xl">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full max-w-5xl">
                 <!-- Mode 1: Process Groups -->
                 <button onclick="game.selectMode('group')" class="group relative bg-slate-800 border border-slate-700 hover:border-indigo-500 p-6 rounded-2xl text-left transition-all hover:shadow-xl hover:shadow-indigo-500/10 hover:-translate-y-1">
                     <div class="absolute top-6 right-6 w-10 h-10 bg-indigo-500/10 rounded-lg flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-colors text-indigo-400">
                         <i data-lucide="layers" class="w-6 h-6"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-2">Process Groups</h3>
-                    <p class="text-slate-400 text-sm mb-4">Map processes to Initiating, Planning, Executing, M&C, or Closing.</p>
-                    <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">Blitz Mode</span>
+                    <h3 class="text-lg font-bold text-white mb-1">Process Groups</h3>
+                    <p class="text-slate-400 text-xs">Map to Initiating, Planning, Executing, M&C, Closing.</p>
                 </button>
 
                 <!-- Mode 2: Knowledge Areas -->
@@ -107,9 +106,8 @@
                     <div class="absolute top-6 right-6 w-10 h-10 bg-pink-500/10 rounded-lg flex items-center justify-center group-hover:bg-pink-500 group-hover:text-white transition-colors text-pink-400">
                         <i data-lucide="book-open" class="w-6 h-6"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-2">Knowledge Areas</h3>
-                    <p class="text-slate-400 text-sm mb-4">Match processes to Scope, Cost, Schedule, Risk, etc.</p>
-                    <span class="text-xs font-bold uppercase tracking-wider text-pink-400">Mastery Mode</span>
+                    <h3 class="text-lg font-bold text-white mb-1">Knowledge Areas</h3>
+                    <p class="text-slate-400 text-xs">Match to Scope, Cost, Schedule, Risk, etc.</p>
                 </button>
 
                 <!-- Mode 3: Process Flows -->
@@ -117,14 +115,40 @@
                     <div class="absolute top-6 right-6 w-10 h-10 bg-emerald-500/10 rounded-lg flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-colors text-emerald-400">
                         <i data-lucide="git-merge" class="w-6 h-6"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-2">Important Flows</h3>
-                    <p class="text-slate-400 text-sm mb-4">Sequence the steps correctly (e.g., Change Request Journey).</p>
-                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Sequence Mode</span>
+                    <h3 class="text-lg font-bold text-white mb-1">Important Flows</h3>
+                    <p class="text-slate-400 text-xs">Sequence the steps correctly.</p>
+                </button>
+
+                 <!-- Mode 4: Project Doctor (NEW) -->
+                 <button onclick="game.selectMode('doctor')" class="group relative bg-slate-800 border border-slate-700 hover:border-cyan-500 p-6 rounded-2xl text-left transition-all hover:shadow-xl hover:shadow-cyan-500/10 hover:-translate-y-1">
+                    <div class="absolute top-6 right-6 w-10 h-10 bg-cyan-500/10 rounded-lg flex items-center justify-center group-hover:bg-cyan-500 group-hover:text-white transition-colors text-cyan-400">
+                        <i data-lucide="stethoscope" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-1">Project Doctor</h3>
+                    <p class="text-slate-400 text-xs">Scenario-based Tool selection.</p>
+                </button>
+
+                <!-- Mode 5: Input or Output (NEW) -->
+                <button onclick="game.selectMode('io')" class="group relative bg-slate-800 border border-slate-700 hover:border-orange-500 p-6 rounded-2xl text-left transition-all hover:shadow-xl hover:shadow-orange-500/10 hover:-translate-y-1">
+                    <div class="absolute top-6 right-6 w-10 h-10 bg-orange-500/10 rounded-lg flex items-center justify-center group-hover:bg-orange-500 group-hover:text-white transition-colors text-orange-400">
+                        <i data-lucide="arrow-left-right" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-1">Input or Output?</h3>
+                    <p class="text-slate-400 text-xs">Rapid-fire Data Flow sorting.</p>
+                </button>
+
+                <!-- Mode 6: Reverse Engineer (NEW) -->
+                <button onclick="game.selectMode('reverse')" class="group relative bg-slate-800 border border-slate-700 hover:border-violet-500 p-6 rounded-2xl text-left transition-all hover:shadow-xl hover:shadow-violet-500/10 hover:-translate-y-1">
+                    <div class="absolute top-6 right-6 w-10 h-10 bg-violet-500/10 rounded-lg flex items-center justify-center group-hover:bg-violet-500 group-hover:text-white transition-colors text-violet-400">
+                        <i data-lucide="rotate-ccw" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-1">Reverse Engineer</h3>
+                    <p class="text-slate-400 text-xs">Identify the Process from the Output.</p>
                 </button>
             </div>
 
             <!-- Study Section -->
-            <div class="mt-8 w-full max-w-4xl border-t border-slate-800 pt-8 flex flex-col items-center">
+            <div class="mt-8 w-full max-w-4xl border-t border-slate-800 pt-8 flex flex-col items-center pb-8">
                 <p class="text-slate-500 mb-4 text-sm uppercase tracking-widest font-bold">Study Materials</p>
                 <button onclick="game.showFlowcharts()" class="flex items-center gap-3 text-slate-400 hover:text-white transition-colors bg-slate-800 hover:bg-slate-700 px-6 py-3 rounded-xl border border-slate-700 hover:border-slate-500">
                     <i data-lucide="map" class="w-5 h-5"></i>
@@ -269,7 +293,7 @@
 
     <script>
         // ==========================================
-        // DATA
+        // DATA SETS
         // ==========================================
         const processData = [
             // INITIATING (2)
@@ -367,16 +391,56 @@
             }
         ];
 
+        // NEW: PROJECT DOCTOR DATA
+        const doctorData = [
+            { scenario: "Need to reach a consensus with experts anonymously.", answer: "Delphi Technique", options: ["Brainstorming", "Focus Groups", "Interviews"] },
+            { scenario: "Need to find the root cause of a defect.", answer: "Fishbone Diagram", options: ["Pareto Chart", "Scatter Diagram", "Histogram"] },
+            { scenario: "Need to prioritize a large number of defects (80/20 rule).", answer: "Pareto Chart", options: ["Control Chart", "Flowchart", "Matrix Diagram"] },
+            { scenario: "Need to determine if a process is stable or has special cause variation.", answer: "Control Chart", options: ["Run Chart", "Scatter Diagram", "Checksheet"] },
+            { scenario: "Need to analyze internal strengths/weaknesses and external threats.", answer: "SWOT Analysis", options: ["Assumption Analysis", "Risk Data Quality Assessment", "Stakeholder Analysis"] },
+            { scenario: "Need to estimate duration with high uncertainty.", answer: "Three-Point Estimating", options: ["Parametric Estimating", "Analogous Estimating", "Bottom-Up Estimating"] },
+            { scenario: "Need to visualize workflow and limit Work in Progress.", answer: "Kanban Board", options: ["Gantt Chart", "Network Diagram", "Milestone Chart"] },
+            { scenario: "Need to visually track team progress in an iteration.", answer: "Burndown Chart", options: ["Burnup Chart", "Gantt Chart", "Histogram"] }
+        ];
+
+        // NEW: INPUT OR OUTPUT DATA
+        const ioData = [
+            { process: "Direct & Manage Project Work", item: "Work Performance Data", answer: "Output" },
+            { process: "Validate Scope", item: "Accepted Deliverables", answer: "Output" },
+            { process: "Develop Project Charter", item: "Business Case", answer: "Input" },
+            { process: "Close Project or Phase", item: "Final Report", answer: "Output" },
+            { process: "Control Quality", item: "Verified Deliverables", answer: "Output" },
+            { process: "Identify Stakeholders", item: "Stakeholder Register", answer: "Output" },
+            { process: "Develop Schedule", item: "Activity List", answer: "Input" },
+            { process: "Monitor Risks", item: "Work Performance Reports", answer: "Input" },
+            { process: "Control Costs", item: "Cost Forecasts", answer: "Output" },
+            { process: "Estimate Costs", item: "Risk Register", answer: "Input" }
+        ];
+
+        // NEW: REVERSE ENGINEER DATA
+        const reverseData = [
+            { output: "Accepted Deliverables", answer: "Validate Scope", options: ["Control Quality", "Close Project", "Direct & Manage Work"] },
+            { output: "Verified Deliverables", answer: "Control Quality", options: ["Validate Scope", "Manage Quality", "Direct & Manage Work"] },
+            { output: "Work Performance Data", answer: "Direct & Manage Project Work", options: ["Monitor & Control Work", "Manage Team", "Control Costs"] },
+            { output: "Project Charter", answer: "Develop Project Charter", options: ["Develop Project Management Plan", "Identify Stakeholders", "Plan Scope"] },
+            { output: "Stakeholder Register", answer: "Identify Stakeholders", options: ["Plan Stakeholder Engagement", "Manage Stakeholder Engagement", "Plan Communications"] },
+            { output: "Cost Baseline", answer: "Determine Budget", options: ["Estimate Costs", "Control Costs", "Plan Cost Management"] },
+            { output: "Quality Reports", answer: "Manage Quality", options: ["Control Quality", "Plan Quality", "Validate Scope"] },
+            { output: "Change Log", answer: "Perform Integrated Change Control", options: ["Monitor & Control Work", "Direct & Manage Work", "Close Project"] }
+        ];
+
         const allAreas = [
             "Integration", "Scope", "Schedule", "Cost", "Quality", 
             "Resource", "Communications", "Risk", "Procurement", "Stakeholder"
         ];
 
+        const allProcesses = processData.map(p => p.name);
+
         // ==========================================
         // GAME ENGINE
         // ==========================================
         const game = {
-            mode: 'group',
+            mode: 'group', // 'group' | 'area' | 'flow' | 'doctor' | 'io' | 'reverse'
             score: 0,
             streak: 0,
             lives: 3,
@@ -402,15 +466,27 @@
                 const startScreen = document.getElementById('screen-start');
                 startScreen.classList.remove('opacity-0', 'pointer-events-none', 'hidden');
                 
+                const titleEl = document.getElementById('start-title');
+                const descEl = document.getElementById('start-desc');
+
                 if(mode === 'group') {
-                    document.getElementById('start-title').innerHTML = "Process <span class='text-indigo-400'>Groups</span>";
-                    document.getElementById('start-desc').textContent = "Map processes to Initiating, Planning, Executing, M&C, or Closing.";
+                    titleEl.innerHTML = "Process <span class='text-indigo-400'>Groups</span>";
+                    descEl.textContent = "Map processes to Initiating, Planning, Executing, M&C, or Closing.";
                 } else if(mode === 'area') {
-                    document.getElementById('start-title').innerHTML = "Knowledge <span class='text-pink-400'>Areas</span>";
-                    document.getElementById('start-desc').textContent = "Identify the Knowledge Area (Scope, Cost, Risk, etc.) for each process.";
-                } else {
-                    document.getElementById('start-title').innerHTML = "Process <span class='text-emerald-400'>Flows</span>";
-                    document.getElementById('start-desc').textContent = "Tap the steps in the correct order to complete the sequence!";
+                    titleEl.innerHTML = "Knowledge <span class='text-pink-400'>Areas</span>";
+                    descEl.textContent = "Identify the Knowledge Area (Scope, Cost, Risk, etc.) for each process.";
+                } else if(mode === 'flow') {
+                    titleEl.innerHTML = "Process <span class='text-emerald-400'>Flows</span>";
+                    descEl.textContent = "Tap the steps in the correct order to complete the sequence!";
+                } else if(mode === 'doctor') {
+                    titleEl.innerHTML = "Project <span class='text-cyan-400'>Doctor</span>";
+                    descEl.textContent = "Read the scenario and prescribe the correct Tool & Technique.";
+                } else if(mode === 'io') {
+                    titleEl.innerHTML = "Input <span class='text-slate-400'>or</span> <span class='text-orange-400'>Output</span>";
+                    descEl.textContent = "Identify if the item is an Input or Output for the given Process.";
+                } else if(mode === 'reverse') {
+                    titleEl.innerHTML = "Reverse <span class='text-violet-400'>Engineer</span>";
+                    descEl.textContent = "Identify which Process created the specific Output shown.";
                 }
             },
 
@@ -465,13 +541,16 @@
                 this.stats = { correct: 0, wrong: 0 };
                 this.isPlaying = true;
                 
-                if (this.mode === 'flow') {
-                    this.deck = [...flowData].sort(() => Math.random() - 0.5);
-                    this.maxTime = 15;
-                } else {
-                    this.deck = [...processData].sort(() => Math.random() - 0.5);
-                    this.maxTime = 10;
-                }
+                // Select Deck
+                if (this.mode === 'flow') this.deck = [...flowData].sort(() => Math.random() - 0.5);
+                else if (this.mode === 'doctor') this.deck = [...doctorData].sort(() => Math.random() - 0.5);
+                else if (this.mode === 'io') this.deck = [...ioData].sort(() => Math.random() - 0.5);
+                else if (this.mode === 'reverse') this.deck = [...reverseData].sort(() => Math.random() - 0.5);
+                else this.deck = [...processData].sort(() => Math.random() - 0.5);
+
+                // Setup Time
+                if (this.mode === 'flow' || this.mode === 'doctor') this.maxTime = 15;
+                else this.maxTime = 10;
 
                 document.getElementById('screen-start').classList.add('opacity-0', 'pointer-events-none');
                 document.getElementById('modal-gameover').classList.add('hidden');
@@ -504,10 +583,29 @@
                         btn.innerHTML = `<div class="w-8 h-8 rounded-full bg-${g.color}-800 group-hover:bg-white/20 flex items-center justify-center mb-1"><span class="font-bold text-lg">${g.letter}</span></div><span class="font-medium ${g.id.length > 15 ? 'text-xs' : 'text-sm'} text-center leading-tight">${g.label}</span>`;
                         container.appendChild(btn);
                     });
-                } else if (this.mode === 'area') {
+                } else if (this.mode === 'io') {
+                    // Two big buttons
+                    container.className = "w-full grid grid-cols-2 gap-4 max-w-xl mx-auto opacity-100 transition-opacity duration-300";
+                    
+                    const btnIn = document.createElement('button');
+                    btnIn.onclick = () => this.submit('Input');
+                    btnIn.className = "bg-blue-900/40 hover:bg-blue-600 border border-blue-700/50 hover:border-blue-400 text-blue-200 hover:text-white p-8 rounded-2xl transition-all duration-200 text-2xl font-bold flex flex-col items-center gap-2";
+                    btnIn.innerHTML = `<i data-lucide="arrow-right-circle" class="w-8 h-8"></i> INPUT`;
+                    
+                    const btnOut = document.createElement('button');
+                    btnOut.onclick = () => this.submit('Output');
+                    btnOut.className = "bg-orange-900/40 hover:bg-orange-600 border border-orange-700/50 hover:border-orange-400 text-orange-200 hover:text-white p-8 rounded-2xl transition-all duration-200 text-2xl font-bold flex flex-col items-center gap-2";
+                    btnOut.innerHTML = `<i data-lucide="arrow-left-circle" class="w-8 h-8"></i> OUTPUT`;
+
+                    container.appendChild(btnIn);
+                    container.appendChild(btnOut);
+                    lucide.createIcons();
+                } else {
+                    // Dynamic grids for Area, Flow, Doctor, Reverse
                     container.className = "w-full grid grid-cols-1 md:grid-cols-2 gap-3 max-w-3xl opacity-100 transition-opacity duration-300";
-                } else if (this.mode === 'flow') {
-                    container.className = "w-full grid grid-cols-1 gap-3 max-w-lg mx-auto opacity-100 transition-opacity duration-300";
+                    if(this.mode === 'flow') {
+                        container.className = "w-full grid grid-cols-1 gap-3 max-w-lg mx-auto opacity-100 transition-opacity duration-300";
+                    }
                 }
             },
 
@@ -532,16 +630,22 @@
 
             nextCard: function() {
                 if (this.lives <= 0) return this.endGame("Out of Lives!");
+                
+                // Replenish deck if empty
                 if (this.deck.length === 0) {
                     if (this.mode === 'flow') this.deck = [...flowData].sort(() => Math.random() - 0.5);
+                    else if (this.mode === 'doctor') this.deck = [...doctorData].sort(() => Math.random() - 0.5);
+                    else if (this.mode === 'io') this.deck = [...ioData].sort(() => Math.random() - 0.5);
+                    else if (this.mode === 'reverse') this.deck = [...reverseData].sort(() => Math.random() - 0.5);
                     else this.deck = [...processData].sort(() => Math.random() - 0.5);
                 }
 
                 this.currentCard = this.deck.pop();
                 this.flowStep = 0;
                 
-                if (this.mode === 'flow') {
-                    this.maxTime = 20;
+                // Reset Timer
+                if (this.mode === 'flow' || this.mode === 'doctor') {
+                    this.maxTime = 15;
                 } else {
                     const speedModifier = Math.min(this.streak * 0.2, 5); 
                     this.maxTime = Math.max(10 - speedModifier, 3);
@@ -553,22 +657,53 @@
                 void cardEl.offsetWidth; 
                 cardEl.classList.add('card-enter');
                 
-                document.getElementById('card-text').textContent = this.currentCard.name;
-                
+                // Card Text Content Logic
+                const labelEl = document.getElementById('card-label');
+                const textEl = document.getElementById('card-text');
                 const flowHint = document.getElementById('flow-hint');
-                if (this.mode === 'flow') flowHint.classList.remove('hidden');
-                else flowHint.classList.add('hidden');
                 
+                flowHint.classList.add('hidden');
                 cardEl.className = "absolute w-full max-w-md bg-white text-slate-900 rounded-2xl p-8 shadow-2xl flex flex-col items-center justify-center text-center transform transition-all duration-300 border-b-8 border-indigo-200";
 
-                if(this.mode === 'area') {
-                    this.generateAreaOptions();
-                } else if(this.mode === 'flow') {
+                if (this.mode === 'doctor') {
+                    labelEl.textContent = "Scenario";
+                    textEl.innerHTML = `<span class="text-xl">${this.currentCard.scenario}</span>`;
+                    cardEl.classList.replace('border-indigo-200', 'border-cyan-200');
+                    this.generateDoctorOptions();
+                } else if (this.mode === 'io') {
+                    labelEl.textContent = "Classify Item";
+                    textEl.innerHTML = `
+                        <div class="text-3xl font-bold mb-2">${this.currentCard.item}</div>
+                        <div class="text-sm text-slate-500 font-medium bg-slate-100 px-3 py-1 rounded-full inline-block">Process: ${this.currentCard.process}</div>
+                    `;
+                    cardEl.classList.replace('border-indigo-200', 'border-orange-200');
+                    // Controls fixed in setup
+                } else if (this.mode === 'reverse') {
+                    labelEl.textContent = "Output Created By...";
+                    textEl.textContent = this.currentCard.output;
+                    cardEl.classList.replace('border-indigo-200', 'border-violet-200');
+                    this.generateReverseOptions();
+                } else if (this.mode === 'flow') {
+                    labelEl.textContent = "Sequence Order";
+                    textEl.textContent = this.currentCard.name;
+                    flowHint.classList.remove('hidden');
+                    cardEl.classList.replace('border-indigo-200', 'border-emerald-200');
                     this.generateFlowOptions();
+                } else if (this.mode === 'area') {
+                    labelEl.textContent = "Process Name";
+                    textEl.textContent = this.currentCard.name;
+                    cardEl.classList.replace('border-indigo-200', 'border-pink-200');
+                    this.generateAreaOptions();
+                } else {
+                    // Group mode
+                    labelEl.textContent = "Process Name";
+                    textEl.textContent = this.currentCard.name;
                 }
 
                 this.startTimer();
             },
+
+            // --- OPTION GENERATORS ---
 
             generateAreaOptions: function() {
                 const correct = this.currentCard.area;
@@ -598,6 +733,37 @@
                 });
             },
 
+            generateDoctorOptions: function() {
+                const correct = this.currentCard.answer;
+                const options = [correct, ...this.currentCard.options].sort(() => 0.5 - Math.random());
+                const container = document.getElementById('controls');
+                container.innerHTML = '';
+                options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.onclick = () => this.submit(opt);
+                    btn.className = "group relative bg-slate-800 border border-slate-700 hover:border-cyan-500 hover:bg-cyan-900/20 text-slate-300 hover:text-white p-4 rounded-xl transition-all duration-200 font-medium text-lg";
+                    btn.textContent = opt;
+                    container.appendChild(btn);
+                });
+            },
+
+            generateReverseOptions: function() {
+                const correct = this.currentCard.answer;
+                const options = [correct, ...this.currentCard.options].sort(() => 0.5 - Math.random());
+                const container = document.getElementById('controls');
+                container.innerHTML = '';
+                options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.onclick = () => this.submit(opt);
+                    btn.className = "group relative bg-slate-800 border border-slate-700 hover:border-violet-500 hover:bg-violet-900/20 text-slate-300 hover:text-white p-4 rounded-xl transition-all duration-200 font-medium text-lg";
+                    btn.textContent = opt;
+                    container.appendChild(btn);
+                });
+            },
+
+
+            // --- GAME LOOP ---
+
             startTimer: function() {
                 clearInterval(this.timerInterval);
                 const timerBar = document.getElementById('timer-bar');
@@ -620,7 +786,12 @@
                 if (!this.isPlaying || this.mode === 'flow') return;
                 clearInterval(this.timerInterval);
 
-                const correctAnswer = this.mode === 'group' ? this.currentCard.group : this.currentCard.area;
+                let correctAnswer = "";
+                if(this.mode === 'group') correctAnswer = this.currentCard.group;
+                else if(this.mode === 'area') correctAnswer = this.currentCard.area;
+                else if(this.mode === 'doctor') correctAnswer = this.currentCard.answer;
+                else if(this.mode === 'io') correctAnswer = this.currentCard.answer;
+                else if(this.mode === 'reverse') correctAnswer = this.currentCard.answer;
 
                 if (answer === correctAnswer) {
                     this.handleCorrect();
@@ -675,12 +846,17 @@
                 const cardEl = document.getElementById('active-card');
                 cardEl.classList.add('shake', 'border-red-500');
                 
+                // Show Answer Text
+                let msg = "";
                 if (this.mode === 'flow') {
-                    document.getElementById('card-text').innerHTML = `<span class="text-red-500 text-lg">Order Failed! Correct:</span><br/><div class="text-sm mt-2 space-y-1">${this.currentCard.steps.map((s,i) => `<div>${i+1}. ${s}</div>`).join('')}</div>`;
-                } else {
-                    const correctAnswer = this.mode === 'group' ? this.currentCard.group : this.currentCard.area;
-                    document.getElementById('card-text').innerHTML = `<span class="text-red-500 text-lg">Wrong! It was:</span><br/>${correctAnswer}`;
-                }
+                    msg = `<div class="text-sm mt-2 space-y-1">${this.currentCard.steps.map((s,i) => `<div>${i+1}. ${s}</div>`).join('')}</div>`;
+                } else if (this.mode === 'group') msg = this.currentCard.group;
+                else if (this.mode === 'area') msg = this.currentCard.area;
+                else if (this.mode === 'doctor') msg = this.currentCard.answer;
+                else if (this.mode === 'io') msg = this.currentCard.answer;
+                else if (this.mode === 'reverse') msg = this.currentCard.answer;
+
+                document.getElementById('card-text').innerHTML = `<span class="text-red-500 text-lg">Wrong! It was:</span><br/>${msg}`;
                 
                 this.updateHUD();
                 
