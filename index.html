@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PM Master | PMP, CAPM, PMI-ACP Prep</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+.pm-blue { color: #0056D2; }
+.hero-bg { background-color: #f3f4f6; }
+/* Simple fade animation for smoother transitions */
+.fade-in { animation: fadeIn 0.4s ease-in-out; }
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(5px); }
+to { opacity: 1; transform: translateY(0); }
+}
+/* Game specific animations */
+.slide-out-left { animation: slideOutLeft 0.5s forwards; }
+.slide-out-right { animation: slideOutRight 0.5s forwards; }
+@keyframes slideOutLeft { to { transform: translateX(-100%); opacity: 0; } }
+@keyframes slideOutRight { to { transform: translateX(100%); opacity: 0; } }
+
+/* Drag and Drop Styles */
+.draggable-item { cursor: grab; }
+.draggable-item:active { cursor: grabbing; }
+.drop-zone { transition: all 0.2s; }
+.drop-zone.drag-over { background-color: #e0f2fe; border-color: #3b82f6; transform: scale(1.02); }
+
+/* Kanban Card Animation */
+.kanban-card { transition: all 0.3s ease; }
+.kanban-card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+
+/* Stacey Matrix Styles */
+.stacey-zone { transition: all 0.2s ease; cursor: pointer; }
+.stacey-zone:hover { opacity: 0.9; transform: scale(1.02); }
+</style>
+</head>
+<body class="font-sans text-gray-800 bg-gray-50 flex flex-col min-h-screen">
+
+<!-- NAVIGATION -->
+<nav class="bg-white shadow-md sticky top-0 z-50">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between h-16">
+<div class="flex items-center cursor-pointer" onclick="loadPage('home')">
+<!-- Simple Logo Icon -->
+<svg class="w-8 h-8 text-blue-700 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+<span class="text-2xl font-bold pm-blue">PM Master</span>
+</div>
+<!-- Desktop Menu -->
+<div class="hidden md:flex items-center space-x-2">
+<button onclick="loadPage('home')" class="text-gray-600 hover:text-blue-600 font-medium transition px-3 py-2 rounded-md hover:bg-gray-50">Home</button>
+
+<!-- PMP Dropdown Menu -->
+<div class="relative group">
+<button onclick="loadPage('pmp')" class="flex items-center text-gray-600 hover:text-blue-600 font-medium transition px-3 py-2 rounded-md hover:bg-gray-50 focus:outline-none">
+PMP
+<svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+</button>
+<!-- Dropdown Content -->
+<div class="absolute left-0 mt-0 w-64 bg-white border border-gray-100 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform z-50 origin-top-left">
+<button onclick="loadPage('pmp-intro')" class="block w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 first:rounded-t-lg transition">Introduction</button>
+<button onclick="loadPage('pmp-foundation')" class="block w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 border-t border-gray-50 transition">Project Management Foundation</button>
+<button onclick="loadPage('pmp-value')" class="block w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 border-t border-gray-50 last:rounded-b-lg transition">A System for Value Delivery</button>
+</div>
+</div>
+
+<button onclick="loadPage('capm')" class="text-gray-600 hover:text-blue-600 font-medium transition px-3 py-2 rounded-md hover:bg-gray-50">CAPM</button>
+<button onclick="loadPage('acp')" class="text-gray-600 hover:text-blue-600 font-medium transition px-3 py-2 rounded-md hover:bg-gray-50">ACP</button>
+
+<div class="h-6 w-px bg-gray-300 mx-2"></div>
+
+<button onclick="loadPage('practice')" class="text-blue-700 hover:text-blue-900 font-bold transition px-3 py-2 rounded-md hover:bg-blue-50">Practice</button>
+<button onclick="loadPage('agile-mastery')" class="bg-purple-600 text-white hover:bg-purple-700 font-bold transition px-4 py-2 rounded-full shadow-sm text-sm">Agile Labs</button>
+</div>
+</div>
+</div>
+</nav>
+
+<!-- DYNAMIC CONTENT CONTAINER -->
+<main id="app-content" class="flex-grow">
+<!-- Content injects here automatically via JS -->
+</main>
+
+<!-- FOOTER -->
+<footer class="bg-slate-900 text-white py-8 mt-auto">
+<div class="max-w-7xl mx-auto px-4 text-center">
+<p class="font-semibold mb-2">PM Master Prep</p>
+<p class="text-gray-400 text-sm">&copy; 2026 PM Master. Educational content only. <br> "PMI", "PMP", "CAPM" and "PMI-ACP" are registered marks of the Project Management Institute, Inc.</p>
+</div>
+</footer>
+
+<!-- JAVASCRIPT LOGIC -->
+<script>
+// --- DATA SECTION ---
+// (Keeping existing data to ensure old games work)
+const foundationSorterData = [ { term: "Building a bridge", type: "project" }, { term: "Processing monthly payroll", type: "operation" }, { term: "Designing a new car prototype", type: "project" }, { term: "Manufacturing 1000 cars daily", type: "operation" }, { term: "Writing a book", type: "project" }, { term: "Running the helpdesk", type: "operation" }, { term: "Hosting the Olympics", type: "project" }, { term: "Maintaining server uptime", type: "operation" } ];
+const foundationScenarios = [ { q: "Your organization wants to launch a new product to meet a sudden change in consumer behavior. What is the reason for this project?", options: ["Regulatory Requirement", "Market Demand", "Technological Advance", "Internal Need"], correct: 1, explanation: "Projects initiated due to consumer behavior changes are driven by 'Market Demand'." }, { q: "A new hospital wing is built (Output). Patients now wait 50% less time (Outcome). Public health improves over 5 years. This long-term benefit is called:", options: ["Value", "Impact", "Deliverable", "Milestone"], correct: 1, explanation: "Impact refers to the long-term societal or organizational benefit derived from the project outcome." }, { q: "Who is primarily responsible for achieving the specific project objectives?", options: ["Project Sponsor", "Project Manager", "Functional Manager", "CEO"], correct: 1, explanation: "The Project Manager is the person assigned by the performing organization to lead the team that is responsible for achieving the project objectives." }, { q: "You are setting goals using 'Objectives and Key Results'. What does this help measure?", options: ["Financial Cost", "Value and Benefits", "Team Performance", "Schedule Adherence"], correct: 1, explanation: "OKRs are a framework for defining and tracking objectives and their outcomes (value)." } ];
+const foundationTrueFalse = [ { q: "A project is a permanent endeavor used to sustain business.", a: false, exp: "False. Projects are temporary." }, { q: "Organizational Governance provides the strategic direction for the company.", a: true, exp: "True. It sets the high-level strategy." }, { q: "Operations Management focuses on unique, one-time deliverables.", a: false, exp: "False. Operations focuses on repetitive, ongoing processes." }, { q: "Impact is the immediate product or service delivered by the project.", a: false, exp: "False. That is an Output. Impact is the broader effect." } ];
+const valueScenarios = [ { q: "A project team delivers a new software application on time and within budget (Output). However, the end-users refuse to adopt it because it is too complex. Has Value been delivered?", options: ["Yes, because the output was accepted.", "No, because value is realized through outcomes and utility.", "Yes, because the project constraints were met.", "No, because the budget was too high."], correct: 1, explanation: "Value is the net result of realized benefits. An output without utility or adoption fails to deliver value." }, { q: "Which of the following is an example of INTANGIBLE value?", options: ["Increased Revenue", "Market Share Growth", "Brand Recognition", "Cost Savings"], correct: 2, explanation: "Brand recognition, goodwill, and strategic alignment are intangible. Revenue and market share are tangible metrics." }, { q: "The 'System for Value Delivery' implies that projects exist within a larger ecosystem. Which component is responsible for maintenance after a project closes?", options: ["Project Team", "Operations", "Portfolio Management", "Sponsors"], correct: 1, explanation: "Operations maintains the deliverables and realizes the long-term value after the project is closed." }, { q: "Information flow in a System for Value Delivery should be:", options: ["Top-down only", "Bottom-up only", "Bi-directional/Multi-directional", "Restricted to senior management"], correct: 2, explanation: "Effective value delivery requires information to flow up from teams to strategy, and down from strategy to teams." } ];
+const envSorterData = [ { term: "Company Culture", type: "internal" }, { term: "Market Conditions", type: "external" }, { term: "Employee Capability/Skills", type: "internal" }, { term: "Government Regulations", type: "external" }, { term: "IT Software/Infrastructure", type: "internal" }, { term: "Competitors", type: "external" }, { term: "Resource Availability", type: "internal" }, { term: "Economic Climate", type: "external" } ];
+const sorterData = [ { term: "Sprint Retrospective", type: "adaptive" }, { term: "Gantt Chart", type: "predictive" }, { term: "Change Control Board (CCB)", type: "predictive" }, { term: "Daily Standup", type: "adaptive" }, { term: "Detailed Requirements Spec", type: "predictive" }, { term: "Servant Leadership", type: "adaptive" }, { term: "Critical Path Method", type: "predictive" }, { term: "User Stories", type: "adaptive" }, { term: "Work Breakdown Structure (WBS)", type: "predictive" }, { term: "Product Backlog", type: "adaptive" } ];
+const scenarios = [ { q: "During project execution, a key stakeholder asks for a change that is not in the scope. What should you do first?", options: ["Reject the request immediately as it's out of scope.", "Implement the change to keep the stakeholder happy.", "Analyze the impact of the change on constraints.", "Ask the project sponsor for permission."], correct: 2, explanation: "Always analyze the impact on scope, schedule, cost, and quality before making a decision or raising a change request." }, { q: "Your team is falling behind schedule due to a lack of skills in a new technology. How do you apply the 'Team' Principle?", options: ["Report the delay to the sponsor immediately.", "Provide training or coaching to the team members.", "Hire a vendor to take over the work.", "Ask the team to work overtime to catch up."], correct: 1, explanation: "The Principle of 'Team' involves supporting team growth. Training and coaching address the root cause effectively." }, { q: "Two senior team members are arguing over the best technical approach. It is affecting the project schedule. What is the best conflict resolution technique?", options: ["Force: Decide for them to save time.", "Withdraw: Let them sort it out themselves.", "Smooth: Tell them to focus on areas of agreement.", "Collaborate: Facilitate a discussion to find a solution."], correct: 3, explanation: "Collaborate (Problem Solve) is the best long-term solution as it addresses the root cause and builds consensus." }, { q: "A high-interest, high-power stakeholder is resistant to your project. How should you engage them?", options: ["Keep them informed via email.", "Manage closely and actively engage them.", "Monitor them occasionally.", "Ask the sponsor to talk to them."], correct: 1, explanation: "Stakeholders with High Power and High Interest must be 'Managed Closely' to ensure their needs are met and resistance is minimized." }, { q: "In an Agile project, the product owner requests a new feature during the middle of a Sprint. What should the team do?", options: ["Stop work and add the feature immediately.", "Add it to the backlog for the next Sprint planning.", "Reject the feature permanently.", "Ask the Scrum Master to decide."], correct: 1, explanation: "In Scrum, the Sprint scope is fixed. New requests go to the Product Backlog for prioritization in future sprints." }, { q: "You identify a new risk that could delay the project by 2 weeks. What is the immediate next step?", options: ["Update the Risk Register and analyze the risk.", "Tell the client the project is delayed.", "Use the management reserve to cover costs.", "Ignore it until it happens."], correct: 0, explanation: "First, document the risk in the Risk Register and then perform qualitative/quantitative analysis before taking action." }, { q: "The project has been delivered, but the client claims a minor requirement was missed. The contract is vague. What should you do?", options: ["Do the work for free to maintain relationship.", "Refuse to do the work.", "Negotiate a resolution with the client.", "File a lawsuit."], correct: 2, explanation: "When scope is ambiguous, negotiation is the preferred method to reach a mutually acceptable solution." }, { q: "Your CPI is 0.85 and SPI is 1.15. What does this mean?", options: ["Over budget and behind schedule.", "Under budget and ahead of schedule.", "Over budget and ahead of schedule.", "Under budget and behind schedule."], correct: 2, explanation: "CPI < 1 means Over Budget. SPI > 1 means Ahead of Schedule." }, { q: "A team member is consistently late to meetings. This is affecting morale. What should you do?", options: ["Fire the team member.", "Discuss the issue privately with the team member.", "Call them out in the next meeting.", "Report them to HR."], correct: 1, explanation: "Address behavioral issues privately first to understand the root cause and provide feedback." }, { q: "The project is complete. Deliverables are accepted. What is the final step?", options: ["Release the team.", "Pay the vendors.", "Update the lessons learned register.", "Archive project documents and close contracts."], correct: 3, explanation: "Archiving records and formally closing contracts ensures the project is officially closed and organizational knowledge is retained." } ];
+const dragItemsData = [ { id: 'd1', name: 'Develop Project Charter', group: 'initiating' }, { id: 'd2', name: 'Identify Stakeholders', group: 'initiating' }, { id: 'd3', name: 'Develop PM Plan', group: 'planning' }, { id: 'd4', name: 'Collect Requirements', group: 'planning' }, { id: 'd5', name: 'Define Scope', group: 'planning' }, { id: 'd6', name: 'Create WBS', group: 'planning' }, { id: 'd7', name: 'Direct & Manage Work', group: 'executing' }, { id: 'd8', name: 'Manage Quality', group: 'executing' }, { id: 'd9', name: 'Acquire Resources', group: 'executing' }, { id: 'd10', name: 'Develop Team', group: 'executing' }, { id: 'd11', name: 'Validate Scope', group: 'monitoring' }, { id: 'd12', name: 'Control Costs', group: 'monitoring' }, { id: 'd13', name: 'Monitor Risks', group: 'monitoring' }, { id: 'd14', name: 'Perform Change Control', group: 'monitoring' }, { id: 'd15', name: 'Close Project or Phase', group: 'closing' } ];
+
+// --- NEW DATA FOR AGILE LABS ---
+const agileManifestoData = [
+{ left: "Individuals and Interactions", right: "Processes and Tools" },
+{ left: "Working Software", right: "Comprehensive Documentation" },
+{ left: "Customer Collaboration", right: "Contract Negotiation" },
+{ left: "Responding to Change", right: "Following a Plan" }
+];
+
+const agilePrinciplesData = [
+{ id: 1, text: "Our highest priority is to satisfy the customer through early and continuous delivery of _____ software.", missing: "valuable", options: ["perfect", "valuable", "cheap"] },
+{ id: 2, text: "Welcome changing _____, even late in development.", missing: "requirements", options: ["technologies", "plans", "requirements"] },
+{ id: 3, text: "Deliver working software _____, from a couple of weeks to a couple of months.", missing: "frequently", options: ["rarely", "frequently", "occasionally"] },
+{ id: 4, text: "Business people and developers must work _____ daily throughout the project.", missing: "together", options: ["apart", "together", "remotely"] },
+{ id: 5, text: "Build projects around _____ individuals.", missing: "motivated", options: ["skilled", "motivated", "available"] },
+{ id: 6, text: "The most efficient method of conveying information is _____ conversation.", missing: "face-to-face", options: ["email", "face-to-face", "documented"] }
+];
+
+const staceyData = [
+{ q: "We are building a standard e-commerce site (Known Tech) but the client has no idea what features they want (Unknown Req).", a: "complex", hint: "Requirements are unclear, but tech is stable." },
+{ q: "We are building a house exactly like the blueprints we've used 50 times. (Known Req, Known Tech)", a: "simple", hint: "High certainty on both axes." },
+{ q: "A startup trying to create a new AI chip (Unknown Tech) for an undefined market need (Unknown Req).", a: "chaotic", hint: "Uncertainty is high everywhere." },
+{ q: "We know exactly what we need (Known Req), but we must use a brand new experimental framework (Unknown Tech).", a: "complicated", hint: "Requirements are agreed, but technology is uncertain." }
+];
+
+const leanWastes = [
+{ q: "Moving a patient from floor 1 to floor 5 unnecessarily.", a: "Transport" },
+{ q: "Creating a detailed report that no one reads.", a: "Overprocessing" },
+{ q: "A developer waiting for server access.", a: "Waiting" },
+{ q: "Building a feature the customer didn't ask for.", a: "Overproduction" },
+{ q: "A bug found in the code during testing.", a: "Defects" },
+{ q: "Having 6 months of raw material piled in the warehouse.", a: "Inventory" },
+{ q: "Walking back and forth to the printer 10 times a day.", a: "Motion" },
+{ q: "Partially done work sitting in a queue.", a: "Inventory" }
+];
+
+const leanPrinciplesData = [
+{ q: "Delaying decisions until the last responsible moment to use better information.", a: "Decide Late" },
+{ q: "Giving the team the authority and trust to make decisions about their work.", a: "Empower the Team" },
+{ q: "Releasing software frequently to get feedback and reduce risk.", a: "Deliver Fast" },
+{ q: "Testing early and often (TDD/CI) to prevent defects rather than finding them later.", a: "Build Integrity In" },
+{ q: "Optimizing the entire value stream (Concept to Cash), not just individual steps.", a: "See the Whole" },
+{ q: "Using short iterations and retrospectives to increase knowledge.", a: "Amplify Learning" },
+{ q: "Removing anything that does not add value to the customer.", a: "Eliminate Waste" }
+];
+
+const scrumOrder = [ "Sprint Planning", "Daily Scrum", "Sprint Review", "Sprint Retrospective" ];
+
+// NEW DATA: Kanban Quiz (Expanded to 10 Questions)
+const kanbanQuizData = [
+{ q: "What primary mechanism restricts the amount of work in a Kanban system?", options: ["Timeboxing", "WIP Limits", "Sprint Planning", "Velocity"], correct: 1, explanation: "Work In Progress (WIP) Limits prevent starting new work until current work is finished." },
+{ q: "Kanban operates on a _____ system, where work is moved only when capacity is available.", options: ["Push", "Pull", "Batch", "Queue"], correct: 1, explanation: "Kanban is a Pull system; work is pulled into the next stage only when there is an opening." },
+{ q: "Which chart is primarily used in Kanban to track flow stability, WIP, and lead time?", options: ["Burndown Chart", "Gantt Chart", "Cumulative Flow Diagram", "Burnup Chart"], correct: 2, explanation: "The Cumulative Flow Diagram (CFD) visualizes work in different states over time." },
+{ q: "Little's Law states the relationship between WIP, Throughput, and _____.", options: ["Cost", "Lead Time", "Quality", "Scope"], correct: 1, explanation: "Average Lead Time = Average WIP / Average Throughput." },
+{ q: "True or False: In pure Kanban, fixed-length iterations (Sprints) are mandatory.", options: ["True", "False"], correct: 1, explanation: "False. Kanban focuses on continuous flow, though iterations can be used if desired (Scrumban)." },
+{ q: "In Kanban, 'Lead Time' is measured from:", options: ["Work Started to Work Finished", "Request Made to Work Delivery", "Design to Testing", "Backlog to Ready"], correct: 1, explanation: "Lead Time is the total time from the customer's request until delivery. Cycle Time is when work actually starts." },
+{ q: "Which of these is NOT a core practice of the Kanban Method?", options: ["Visualize the workflow", "Limit WIP", "Daily Standup", "Manage Flow"], correct: 2, explanation: "While common, 'Daily Standup' is a Scrum event. Kanban encourages feedback loops but doesn't strictly mandate the standup format." },
+{ q: "On a Cumulative Flow Diagram (CFD), a widening vertical gap between arrival and departure lines indicates:", options: ["Increasing WIP", "Decreasing Cycle Time", "High Efficiency", "Empty Backlog"], correct: 0, explanation: "Vertical distance represents WIP. If it widens, WIP is increasing, potentially indicating a bottleneck." },
+{ q: "True or False: Kanban requires a 'Kanban Master' role.", options: ["True", "False"], correct: 1, explanation: "False. Kanban does not prescribe specific roles, unlike Scrum." },
+{ q: "What is the purpose of 'Explicit Policies' in Kanban?", options: ["To punish mistakes", "To define rules for work flow (e.g., Definition of Done)", "To create rigid bureaucracy", "To assign blame"], correct: 1, explanation: "Explicit policies (like 'Definition of Done' for a column) ensure everyone understands how work works." }
+];
+
+// NEW DATA: Scrum Quiz (Expanded to 10 Questions)
+const scrumQuizData = [
+{ q: "Who is accountable for maximizing the value of the product resulting from the work of the Scrum Team?", options: ["Scrum Master", "Product Owner", "Developers", "Project Sponsor"], correct: 1, explanation: "The Product Owner is accountable for maximizing the value of the product." },
+{ q: "Which event is for the Scrum Team to inspect itself and create a plan for improvements?", options: ["Sprint Review", "Daily Scrum", "Sprint Retrospective", "Sprint Planning"], correct: 2, explanation: "The Sprint Retrospective concludes the Sprint and focuses on process improvement." },
+{ q: "What are the three pillars of empiricism in Scrum?", options: ["Planning, Execution, Monitoring", "Transparency, Inspection, Adaptation", "Value, Quality, Speed", "Scope, Time, Cost"], correct: 1, explanation: "Scrum is founded on empiricism: Transparency, Inspection, and Adaptation." },
+{ q: "Who determines HOW the work will be accomplished during the Sprint?", options: ["The Scrum Master", "The Product Owner", "The Developers", "The Team Lead"], correct: 2, explanation: "Developers are self-managing and decide how to turn Product Backlog items into Increments." },
+{ q: "True or False: The Scrum Master manages the Developers.", options: ["True", "False"], correct: 1, explanation: "False. The Scrum Master serves the team and organization; Developers are self-managing." },
+{ q: "What is the maximum duration of a Sprint?", options: ["2 Weeks", "1 Month", "3 Months", "On Demand"], correct: 1, explanation: "Sprints are fixed length events of one month or less to create consistency." },
+{ q: "Which artifact represents the 'Commitment' for the Sprint Backlog?", options: ["Definition of Done", "Product Goal", "Sprint Goal", "Velocity Chart"], correct: 2, explanation: "The Sprint Goal is the commitment for the Sprint Backlog." },
+{ q: "Who has the authority to cancel a Sprint?", options: ["The Scrum Master", "The Developers", "The Product Owner", "The CEO"], correct: 2, explanation: "Only the Product Owner has the authority to cancel the Sprint, usually if the Sprint Goal becomes obsolete." },
+{ q: "When does a new Sprint begin?", options: ["The following Monday", "Immediately after the conclusion of the previous Sprint", "After the Sprint Planning meeting", "When the Product Owner says so"], correct: 1, explanation: "A new Sprint starts immediately after the conclusion of the previous Sprint." },
+{ q: "True or False: The Daily Scrum must happen at the same time and place every day.", options: ["True", "False"], correct: 0, explanation: "True. It is held at the same time and place to reduce complexity." }
+];
+
+// State Variables
+let currentSorterIndex = 0; let sorterScore = 0;
+let currentFoundationSorterIndex = 0; let foundationSorterScore = 0;
+let scenarioScore = 0; let currentScenarioIndex = 0;
+let foundationScenarioScore = 0; let currentFScenarioIndex = 0;
+let mapperScore = 0; let tfScore = 0; let currentTFIndex = 0;
+let valueScenarioScore = 0; let currentValueScenarioIndex = 0;
+let envSorterScore = 0; let currentEnvSorterIndex = 0;
+
+// Agile Lab States
+let kanbanWip = 0;
+let kanbanDone = 0;
+let leanScore = 0;
+let currentLeanIndex = 0;
+let principleIndex = 0;
+let principleScore = 0;
+let staceyIndex = 0;
+let staceyScore = 0;
+let leanPrincipleScore = 0;
+let currentLeanPrincipleIndex = 0;
+let kanbanQuizScore = 0;
+let currentKanbanQuizIndex = 0;
+let scrumQuizScore = 0;
+let currentScrumQuizIndex = 0;
+
+// --- CONTENT TEMPLATES ---
+const pageContent = {
+home: `
+<div class="fade-in">
+<section class="hero-bg py-20">
+<div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center">
+<div class="md:w-1/2 mb-10 md:mb-0">
+<span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded uppercase tracking-wide">Updated for 2026</span>
+<h1 class="text-4xl md:text-5xl font-bold mb-4 mt-2 leading-tight">
+Your Path to PMI Certification <br>
+<span class="pm-blue">Starts Here</span>
+</h1>
+<p class="text-lg text-gray-600 mb-8 max-w-lg">
+Interactive study tools for PMP, CAPM, and PMI-ACP based on the PMBOK Guide 8th Edition concepts.
+</p>
+<div class="flex space-x-4">
+<button onclick="loadPage('pmp')" class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition shadow-lg font-semibold">Start Learning</button>
+<button onclick="loadPage('practice')" class="bg-white text-blue-600 border border-blue-600 px-8 py-3 rounded-lg hover:bg-blue-50 transition font-semibold">Try Games</button>
+</div>
+</div>
+<div class="md:w-1/2 flex justify-center">
+<div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full border border-gray-100">
+<div class="flex items-center space-x-4 mb-4">
+<div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600 font-bold">SV</div>
+<div><p class="text-sm text-gray-500">Schedule Variance</p><p class="font-bold text-gray-800">+$4,500 (Ahead)</p></div>
+</div>
+<div class="flex items-center space-x-4 mb-4">
+<div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center text-red-600 font-bold">CV</div>
+<div><p class="text-sm text-gray-500">Cost Variance</p><p class="font-bold text-gray-800">-$1,200 (Over)</p></div>
+</div>
+<div class="h-2 bg-gray-200 rounded-full mt-4"><div class="h-2 bg-blue-600 rounded-full" style="width: 75%"></div></div>
+<p class="text-xs text-right mt-1 text-gray-500">Project Progress: 75%</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+`,
+'agile-mastery': `
+<div class="fade-in max-w-6xl mx-auto px-4 py-12">
+<div class="text-center mb-12">
+<h1 class="text-4xl font-bold text-gray-900 mb-4">Agile Labs</h1>
+<p class="text-lg text-gray-600">Master the Agile Landscape. Select a domain below.</p>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+
+<!-- AGILE MINDSET CARD -->
+<div onclick="loadPage('agile-mindset')" class="cursor-pointer bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition transform hover:-translate-y-1">
+<div class="bg-blue-600 h-2"></div>
+<div class="p-8 text-center">
+<div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">A</div>
+<h2 class="text-xl font-bold text-gray-900 mb-2">Agile Mindset</h2>
+<p class="text-gray-500 text-sm">Manifesto, Principles, and Complexity.</p>
+<button class="mt-4 text-blue-600 font-bold text-sm hover:underline">Enter Lab &rarr;</button>
+</div>
+</div>
+
+<!-- SCRUM CARD -->
+<div onclick="loadPage('scrum-lab')" class="cursor-pointer bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition transform hover:-translate-y-1">
+<div class="bg-green-600 h-2"></div>
+<div class="p-8 text-center">
+<div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">S</div>
+<h2 class="text-xl font-bold text-gray-900 mb-2">Scrum Framework</h2>
+<p class="text-gray-500 text-sm">Roles, Events, and Artifacts.</p>
+<button class="mt-4 text-green-600 font-bold text-sm hover:underline">Enter Lab &rarr;</button>
+</div>
+</div>
+
+<!-- KANBAN CARD -->
+<div onclick="loadPage('kanban-lab')" class="cursor-pointer bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition transform hover:-translate-y-1">
+<div class="bg-purple-600 h-2"></div>
+<div class="p-8 text-center">
+<div class="w-16 h-16 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">K</div>
+<h2 class="text-xl font-bold text-gray-900 mb-2">Kanban Method</h2>
+<p class="text-gray-500 text-sm">Flow, WIP Limits, and Pull Systems.</p>
+<button class="mt-4 text-purple-600 font-bold text-sm hover:underline">Enter Lab &rarr;</button>
+</div>
+</div>
+
+<!-- LEAN LAB CARD -->
+<div onclick="loadPage('lean-lab')" class="cursor-pointer bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition transform hover:-translate-y-1">
+<div class="bg-orange-600 h-2"></div>
+<div class="p-8 text-center">
+<div class="w-16 h-16 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">L</div>
+<h2 class="text-xl font-bold text-gray-900 mb-2">Lean Laboratory</h2>
+<p class="text-gray-500 text-sm">Eliminate Waste and Apply Principles.</p>
+<button class="mt-4 text-orange-600 font-bold text-sm hover:underline">Enter Lab &rarr;</button>
+</div>
+</div>
+
+</div>
+</div>
+`,
+'agile-mindset': `
+<div class="fade-in max-w-6xl mx-auto px-4 py-12">
+<div class="flex items-center space-x-2 text-sm text-gray-500 mb-6">
+<span class="cursor-pointer hover:text-blue-600" onclick="loadPage('agile-mastery')">Agile Labs</span>
+<span>/</span>
+<span class="font-bold text-gray-800">Agile Mindset</span>
+</div>
+<div class="text-center mb-12">
+<h1 class="text-3xl font-bold text-gray-900">Agile Mindset Lab</h1>
+<p class="text-gray-600 mt-2">Internalize the Values and Principles.</p>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+<!-- 1. AGILE MANIFESTO MATCH -->
+<div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+<div class="bg-gradient-to-r from-blue-600 to-blue-800 p-4 text-white">
+<h2 class="font-bold text-xl">Agile Manifesto Match</h2>
+<p class="text-blue-100 text-sm">We value items on the left OVER items on the right.</p>
+</div>
+<div class="p-6">
+<div id="manifesto-game" class="space-y-4"></div>
+<div id="manifesto-feedback" class="mt-4 text-center font-bold h-6"></div>
+<button onclick="checkManifesto()" class="w-full mt-4 bg-blue-600 text-white py-2 rounded-lg font-bold hover:bg-blue-700">Check Answers</button>
+</div>
+</div>
+
+<!-- 2. AGILE PRINCIPLES CIPHER -->
+<div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+<div class="bg-gradient-to-r from-teal-600 to-teal-800 p-4 text-white flex justify-between items-center">
+<h2 class="font-bold text-xl">The Agile Principles Cipher</h2>
+<span class="bg-teal-900 px-2 py-1 rounded text-xs">Score: <span id="principle-score">0</span></span>
+</div>
+<div class="p-6">
+<div class="mb-4 min-h-[80px]">
+<p class="text-gray-500 text-sm mb-2">Fill in the blank to complete the principle:</p>
+<p id="principle-text" class="text-lg font-bold text-gray-800">Loading...</p>
+</div>
+<div id="principle-options" class="grid grid-cols-3 gap-2"></div>
+<p id="principle-feedback" class="mt-4 text-center font-bold h-6 text-sm"></p>
+</div>
+</div>
+
+<!-- 3. STACEY MATRIX NAVIGATOR -->
+<div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden lg:col-span-2">
+<div class="bg-gradient-to-r from-indigo-600 to-indigo-800 p-4 text-white flex justify-between items-center">
+<div>
+<h2 class="font-bold text-xl">Stacey's Complexity Navigator</h2>
+<p class="text-indigo-200 text-sm">Classify the project scenario based on Requirements & Technology.</p>
+</div>
+<span class="bg-indigo-900 px-2 py-1 rounded text-xs">Score: <span id="stacey-score">0</span></span>
+</div>
+<div class="p-6 flex flex-col md:flex-row gap-8 items-center">
+<div class="md:w-1/3">
+<div class="bg-indigo-50 p-4 rounded border border-indigo-100 mb-4 min-h-[100px]">
+<p class="font-bold text-indigo-900 mb-2">Scenario:</p>
+<p id="stacey-q" class="text-gray-800">Loading...</p>
+</div>
+<p id="stacey-feedback" class="font-bold h-6 text-sm"></p>
+</div>
+<div class="md:w-2/3 w-full max-w-md">
+<div class="relative w-full aspect-square bg-gray-100 border-l-2 border-b-2 border-gray-800">
+<div class="absolute -left-8 top-1/2 -rotate-90 text-xs font-bold text-gray-600 tracking-widest">REQUIREMENTS AGREEMENT</div>
+<div class="absolute bottom-[-25px] left-1/2 -translate-x-1/2 text-xs font-bold text-gray-600 tracking-widest">TECHNICAL CERTAINTY</div>
+<div class="grid grid-cols-2 grid-rows-2 h-full w-full">
+<div onclick="checkStacey('complex')" class="stacey-zone bg-yellow-100 border border-white flex items-center justify-center text-yellow-800 font-bold hover:bg-yellow-200">COMPLEX</div>
+<div onclick="checkStacey('chaotic')" class="stacey-zone bg-red-100 border border-white flex items-center justify-center text-red-800 font-bold hover:bg-red-200">CHAOTIC</div>
+<div onclick="checkStacey('simple')" class="stacey-zone bg-green-100 border border-white flex items-center justify-center text-green-800 font-bold hover:bg-green-200">SIMPLE</div>
+<div onclick="checkStacey('complicated')" class="stacey-zone bg-blue-100 border border-white flex items-center justify-center text-blue-800 font-bold hover:bg-blue-200">COMPLICATED</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+`,
+'scrum-lab': `
+<div class="fade-in max-w-6xl mx-auto px-4 py-12">
+<div class="flex items-center space-x-2 text-sm text-gray-500 mb-6">
+<span class="cursor-pointer hover:text-blue-600" onclick="loadPage('agile-mastery')">Agile Labs</span>
+<span>/</span>
+<span class="font-bold text-gray-800">Scrum Framework</span>
+</div>
+<div class="text-center mb-12">
+<h1 class="text-3xl font-bold text-gray-900">Scrum Framework Lab</h1>
+<p class="text-gray-600 mt-2">Events, Roles, and Artifacts.</p>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+<!-- SCRUM SEQUENCE -->
+<div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+<div class="bg-gradient-to-r from-green-600 to-green-800 p-4 text-white">
+<h2 class="font-bold text-xl">Scrum Cycle Sequencer</h2>
+<p class="text-green-100 text-sm">Order the events within a Sprint.</p>
+</div>
+<div class="p-6">
+<p class="text-sm text-gray-500 mb-4">Drag/Select the events to put them in chronological order.</p>
+<div id="scrum-container" class="space-y-2 bg-gray-50 p-4 rounded-lg min-h-[200px]"></div>
+<div class="mt-4 flex space-x-2">
+<button onclick="resetScrum()" class="flex-1 bg-gray-200 text-gray-700 py-2 rounded font-bold hover:bg-gray-300">Reset</button>
+<button onclick="checkScrum()" class="flex-1 bg-green-600 text-white py-2 rounded font-bold hover:bg-green-700">Verify Order</button>
+</div>
+<p id="scrum-feedback" class="mt-2 text-center font-bold text-sm h-6"></p>
+</div>
+</div>
+
+<!-- SCRUM QUIZ -->
+<div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+<div class="bg-gradient-to-r from-teal-600 to-teal-800 p-4 text-white flex justify-between items-center">
+<h2 class="font-bold text-xl">Scrum Framework Quiz</h2>
+<span class="bg-teal-900 px-2 py-1 rounded text-xs">Score: <span id="scrum-quiz-score">0</span></span>
+</div>
+<div class="p-6">
+<div id="scrum-quiz-area">
+<div class="bg-teal-50 p-4 rounded-lg border border-teal-100 mb-4">
+<p id="scrum-quiz-q" class="font-medium text-gray-800 text-lg">Loading...</p>
+</div>
+<div id="scrum-quiz-options" class="grid grid-cols-1 gap-3"></div>
+</div>
+<div id="scrum-quiz-feedback" class="hidden mt-4 p-4 rounded-lg bg-indigo-50 border border-indigo-100">
+<p class="font-bold text-indigo-800" id="scrum-feedback-title"></p>
+<p class="text-sm text-indigo-700 mt-1" id="scrum-feedback-text"></p>
+<button onclick="nextScrumQuiz()" class="mt-3 text-sm bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700">Next Question</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+`,
+'kanban-lab': `
+<div class="fade-in max-w-6xl mx-auto px-4 py-12">
+<div class="flex items-center space-x-2 text-sm text-gray-500 mb-6">
+<span class="cursor-pointer hover:text-blue-600" onclick="loadPage('agile-mastery')">Agile Labs</span>
+<span>/</span>
+<span class="font-bold text-gray-800">Kanban System</span>
+</div>
+<div class="text-center mb-12">
+<h1 class="text-3xl font-bold text-gray-900">Kanban System Lab</h1>
+<p class="text-gray-600 mt-2">Flow, WIP Limits, and Pull Systems.</p>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+<!-- KANBAN FLOW SIMULATOR -->
+<div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+<div class="bg-gradient-to-r from-purple-600 to-purple-800 p-4 text-white flex justify-between items-center">
+<div>
+<h2 class="font-bold text-xl">Kanban Flow</h2>
+<p class="text-purple-100 text-sm">Manage flow. WIP Limit: 3</p>
+</div>
+<div class="text-right">
+<span class="block text-xs uppercase opacity-75">Completed</span>
+<span class="font-bold text-2xl" id="kanban-score">0</span>
+</div>
+</div>
+<div class="p-6">
+<div class="grid grid-cols-3 gap-2 text-center text-sm font-bold text-gray-500 mb-2">
+<div>Backlog</div>
+<div>In Progress (Max 3)</div>
+<div>Done</div>
+</div>
+<div class="grid grid-cols-3 gap-2 h-48">
+<div id="col-backlog" class="bg-gray-100 p-2 rounded-lg space-y-2 overflow-y-auto border border-gray-200">
+<button onclick="pullToDoing(this)" class="kanban-card w-full bg-white p-2 rounded shadow text-xs border-l-4 border-gray-500 text-left hover:bg-gray-50">Task A</button>
+<button onclick="pullToDoing(this)" class="kanban-card w-full bg-white p-2 rounded shadow text-xs border-l-4 border-gray-500 text-left hover:bg-gray-50">Task B</button>
+<button onclick="pullToDoing(this)" class="kanban-card w-full bg-white p-2 rounded shadow text-xs border-l-4 border-gray-500 text-left hover:bg-gray-50">Task C</button>
+<button onclick="pullToDoing(this)" class="kanban-card w-full bg-white p-2 rounded shadow text-xs border-l-4 border-gray-500 text-left hover:bg-gray-50">Task D</button>
+<button onclick="pullToDoing(this)" class="kanban-card w-full bg-white p-2 rounded shadow text-xs border-l-4 border-gray-500 text-left hover:bg-gray-50">Task E</button>
+</div>
+<div id="col-doing" class="bg-blue-50 p-2 rounded-lg space-y-2 border border-blue-100 relative">
+<div class="absolute bottom-1 right-2 text-xs font-bold text-blue-300">WIP: <span id="wip-count">0</span>/3</div>
+</div>
+<div id="col-done" class="bg-green-50 p-2 rounded-lg space-y-2 border border-green-100"></div>
+</div>
+<p id="kanban-msg" class="text-xs text-center mt-2 h-4 text-red-500 font-bold"></p>
+<button onclick="resetKanban()" class="text-xs text-gray-400 underline mt-2 w-full text-center">Reset Board</button>
+</div>
+</div>
+
+<!-- KANBAN CONCEPT QUIZ -->
+<div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+<div class="bg-gradient-to-r from-blue-700 to-blue-900 p-4 text-white flex justify-between items-center">
+<h2 class="font-bold text-xl">Kanban Concept Quiz</h2>
+<span class="bg-blue-950 px-2 py-1 rounded text-xs">Score: <span id="kanban-quiz-score">0</span></span>
+</div>
+<div class="p-6">
+<div id="kanban-quiz-area">
+<div class="bg-blue-50 p-4 rounded-lg border border-blue-100 mb-4">
+<p id="kanban-quiz-q" class="font-medium text-gray-800 text-lg">Loading...</p>
+</div>
+<div id="kanban-quiz-options" class="grid grid-cols-1 gap-3"></div>
+</div>
+<div id="kanban-quiz-feedback" class="hidden mt-4 p-4 rounded-lg bg-indigo-50 border border-indigo-100">
+<p class="font-bold text-indigo-800" id="kanban-feedback-title"></p>
+<p class="text-sm text-indigo-700 mt-1" id="kanban-feedback-text"></p>
+<button onclick="nextKanbanQuiz()" class="mt-3 text-sm bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700">Next Question</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+`,
+'lean-lab': `
+<div class="fade-in max-w-6xl mx-auto px-4 py-12">
+<div class="flex items-center space-x-2 text-sm text-gray-500 mb-6">
+<span class="cursor-pointer hover:text-blue-600" onclick="loadPage('agile-mastery')">Agile Labs</span>
+<span>/</span>
+<span class="font-bold text-gray-800">Lean Laboratory</span>
+</div>
+<div class="text-center mb-12">
+<h1 class="text-3xl font-bold text-gray-900">Lean Laboratory</h1>
+<p class="text-gray-600 mt-2">Identify Waste and Apply Lean Thinking.</p>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+<!-- 6. LEAN WASTE HUNTER -->
+<div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+<div class="bg-gradient-to-r from-orange-600 to-orange-800 p-4 text-white flex justify-between items-center">
+<h2 class="font-bold text-xl">Lean Waste Hunter</h2>
+<span class="bg-orange-900 px-2 py-1 rounded text-xs">Score: <span id="lean-score">0</span></span>
+</div>
+<div class="p-6">
+<div class="bg-orange-50 p-4 rounded border border-orange-100 mb-4 min-h-[80px] flex items-center justify-center text-center font-medium text-gray-800" id="lean-q">Loading...</div>
+<div class="grid grid-cols-2 gap-2" id="lean-options">
+<button onclick="checkLean('Transport')" class="p-2 border rounded hover:bg-gray-50 text-sm">Transport</button>
+<button onclick="checkLean('Inventory')" class="p-2 border rounded hover:bg-gray-50 text-sm">Inventory</button>
+<button onclick="checkLean('Motion')" class="p-2 border rounded hover:bg-gray-50 text-sm">Motion</button>
+<button onclick="checkLean('Waiting')" class="p-2 border rounded hover:bg-gray-50 text-sm">Waiting</button>
+<button onclick="checkLean('Overproduction')" class="p-2 border rounded hover:bg-gray-50 text-sm">Overproduction</button>
+<button onclick="checkLean('Overprocessing')" class="p-2 border rounded hover:bg-gray-50 text-sm">Overprocessing</button>
+<button onclick="checkLean('Defects')" class="p-2 border rounded hover:bg-gray-50 text-sm">Defects</button>
+<button onclick="checkLean('Skills')" class="p-2 border rounded hover:bg-gray-50 text-sm">Unused Skills</button>
+</div>
+<p id="lean-feedback" class="text-center font-bold text-sm mt-3 h-5"></p>
+</div>
+</div>
+
+<!-- 7. LEAN PRINCIPLES LOGIC (NEW) -->
+<div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+<div class="bg-gradient-to-r from-pink-600 to-pink-800 p-4 text-white flex justify-between items-center">
+<h2 class="font-bold text-xl">Lean Principles Logic</h2>
+<span class="bg-pink-900 px-2 py-1 rounded text-xs">Score: <span id="lean-principle-score">0</span></span>
+</div>
+<div class="p-6">
+<div class="bg-pink-50 p-4 rounded border border-pink-100 mb-4 min-h-[80px] flex items-center justify-center text-center font-medium text-gray-800" id="lean-principle-q">Loading...</div>
+<div class="grid grid-cols-2 gap-2" id="lean-principle-options"></div>
+<p id="lean-principle-feedback" class="text-center font-bold text-sm mt-3 h-5"></p>
+</div>
+</div>
+</div>
+</div>
+`,
+pmp: `
+<div class="fade-in max-w-4xl mx-auto px-4 py-12">
+<div class="flex justify-between items-center mb-6">
+<h1 class="text-3xl font-bold text-gray-900">PMP® Preparation Hub</h1>
+<span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">PMBOK 7th/8th Aligned</span>
+</div>
+<!-- Module Shortcuts -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+<button onclick="loadPage('pmp-intro')" class="bg-white p-4 rounded-lg shadow-sm border hover:border-blue-400 text-left transition">
+<span class="block text-sm text-gray-500 uppercase font-bold">Module 1</span><span class="font-bold text-blue-700">Introduction</span>
+</button>
+<button onclick="loadPage('pmp-foundation')" class="bg-white p-4 rounded-lg shadow-sm border hover:border-blue-400 text-left transition">
+<span class="block text-sm text-gray-500 uppercase font-bold">Module 2</span><span class="font-bold text-blue-700">PM Foundation</span>
+</button>
+<button onclick="loadPage('pmp-value')" class="bg-white p-4 rounded-lg shadow-sm border hover:border-blue-400 text-left transition">
+<span class="block text-sm text-gray-500 uppercase font-bold">Module 3</span><span class="font-bold text-blue-700">System for Value Delivery</span>
+</button>
+</div>
+<!-- EVM Calculator Tool -->
+<div class="bg-white p-8 rounded-xl shadow-lg border border-gray-100 mb-10">
+<h2 class="text-xl font-bold text-gray-800 mb-4">EVM Calculator</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+<input type="number" id="ev-input" placeholder="EV" class="border p-2 rounded">
+<input type="number" id="ac-input" placeholder="AC" class="border p-2 rounded">
+<input type="number" id="pv-input" placeholder="PV" class="border p-2 rounded">
+</div>
+<button onclick="calculateEVM()" class="bg-blue-600 text-white px-4 py-2 rounded font-bold hover:bg-blue-700">Calculate</button>
+<div id="evm-result" class="mt-4 hidden bg-gray-50 p-4 rounded border"></div>
+</div>
+</div>
+`,
+'pmp-intro': `<div class="fade-in max-w-4xl mx-auto px-4 py-12"><h1 class="text-3xl font-bold mb-4">Introduction to PMP</h1><p>Content coming soon...</p></div>`,
+'pmp-foundation': `<div class="fade-in max-w-4xl mx-auto px-4 py-12"><h1 class="text-3xl font-bold mb-4">Project Management Foundation</h1><p>Key foundational concepts.</p><button onclick="loadPage('practice-foundation')" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">Go to Practice Games</button></div>`,
+'pmp-value': `<div class="fade-in max-w-4xl mx-auto px-4 py-12"><div class="flex items-center space-x-2 text-sm text-gray-500 mb-6"><span class="cursor-pointer hover:text-blue-600" onclick="loadPage('pmp')">PMP Hub</span><span>/</span><span class="font-bold text-gray-800">Value Delivery</span></div><h1 class="text-3xl font-bold text-gray-900 mb-4">A System for Value Delivery</h1><div class="bg-white p-8 rounded-xl shadow-sm border border-gray-200"><div class="flex flex-col items-center justify-center text-center py-8"><h3 class="text-xl font-bold text-gray-800">Value Delivery Practice</h3><button onclick="loadPage('practice-value')" class="mt-4 bg-purple-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-purple-700 shadow-md">Start Value Delivery Games</button></div></div></div>`,
+capm: `<div class="fade-in max-w-4xl mx-auto px-4 py-12"><h1 class="text-3xl font-bold mb-4">CAPM Content</h1><p>Predictive vs Agile concepts.</p></div>`,
+acp: `<div class="fade-in max-w-4xl mx-auto px-4 py-12"><h1 class="text-3xl font-bold mb-4">PMI-ACP Content</h1><p>Scrum, Kanban, XP.</p></div>`,
+practice: `<div class="fade-in max-w-5xl mx-auto px-4 py-12"><div class="text-center mb-10"><h1 class="text-3xl font-bold text-gray-900">Interactive Learning Lab</h1><p class="text-gray-600 mt-2">Choose a practice area.</p><div class="mt-6 flex justify-center space-x-4 flex-wrap gap-4"><button onclick="loadPage('practice-foundation')" class="bg-teal-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-teal-700 shadow-md">PM Foundation Games</button><button onclick="loadPage('practice-value')" class="bg-purple-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-purple-700 shadow-md">Value Delivery Games</button><button onclick="loadPage('agile-mastery')" class="bg-purple-800 text-white px-6 py-2 rounded-lg font-bold hover:bg-purple-900 shadow-md">Agile Labs (New)</button></div></div></div>`,
+'practice-foundation': `<div class="fade-in max-w-5xl mx-auto px-4 py-12"><div class="flex items-center space-x-2 text-sm text-gray-500 mb-6"><span class="cursor-pointer hover:text-blue-600" onclick="loadPage('practice')">Practice Games</span><span>/</span><span class="font-bold text-gray-800">PM Foundations</span></div><div class="text-center mb-10"><h1 class="text-3xl font-bold text-gray-900">Project Management Foundation Lab</h1></div><div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8"><div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200"><div class="bg-teal-800 p-4 text-white flex justify-between items-center"><h2 class="font-bold text-lg">Project vs Operations</h2><span class="bg-teal-700 px-3 py-1 rounded text-sm">Score: <span id="f-sorter-score">0</span></span></div><div class="p-8 text-center"><p class="text-gray-500 mb-6 text-sm">Is this a Project (Temporary/Unique) or Operation (Ongoing)?</p><div id="f-sorter-card-container" class="h-32 flex items-center justify-center mb-6"><div id="f-sorter-card" class="bg-blue-50 border-2 border-blue-200 text-blue-900 text-xl font-bold p-6 rounded-xl shadow-sm w-full">Press Start</div></div><div class="grid grid-cols-2 gap-4" id="f-sorter-controls" style="display:none;"><button onclick="handleFoundationSort('project')" class="bg-blue-50 text-blue-700 border border-blue-200 font-bold py-3 rounded hover:bg-blue-100">Project</button><button onclick="handleFoundationSort('operation')" class="bg-orange-50 text-orange-700 border border-orange-200 font-bold py-3 rounded hover:bg-orange-100">Operation</button></div><button id="start-f-sorter-btn" onclick="initFoundationSorter()" class="bg-teal-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-teal-700">Start Game</button><p id="f-sorter-feedback" class="mt-4 font-bold h-6 text-sm"></p></div></div><div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200"><div class="bg-indigo-900 p-4 text-white flex justify-between items-center"><h2 class="font-bold text-lg">Foundation Scenarios</h2><span class="bg-indigo-800 px-3 py-1 rounded text-sm">Score: <span id="f-scenario-score">0</span>/4</span></div><div class="p-6"><div id="f-scenario-container"><div id="f-quiz-area"><div class="bg-gray-50 p-4 rounded-lg border mb-4"><p id="f-scenario-q" class="font-medium text-gray-800">Loading...</p></div><div id="f-scenario-options" class="space-y-2"></div></div><div id="f-quiz-feedback" class="hidden mt-4 p-4 rounded-lg bg-indigo-50 border border-indigo-100"><p class="font-bold text-indigo-800" id="f-feedback-title"></p><p class="text-sm text-indigo-700 mt-1" id="f-feedback-text"></p><button onclick="nextFoundationScenario()" class="mt-3 text-sm bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700">Next</button></div></div><button id="start-f-quiz-btn" onclick="initFoundationQuiz()" class="bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-indigo-700 mt-4">Start Challenge</button></div></div></div></div>`,
+'practice-value': `<div class="fade-in max-w-5xl mx-auto px-4 py-12"><div class="flex items-center space-x-2 text-sm text-gray-500 mb-6"><span class="cursor-pointer hover:text-blue-600" onclick="loadPage('practice')">Practice Games</span><span>/</span><span class="font-bold text-gray-800">Value Delivery</span></div><div class="text-center mb-10"><h1 class="text-3xl font-bold text-gray-900">Value Delivery Lab</h1></div><div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8"><div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200"><div class="bg-purple-900 p-4 text-white flex justify-between items-center"><h2 class="font-bold text-lg">Value & Outcomes</h2><span class="bg-purple-800 px-3 py-1 rounded text-sm">Score: <span id="v-scenario-score">0</span>/4</span></div><div class="p-6"><div id="v-scenario-container"><div id="v-quiz-area"><div class="bg-gray-50 p-4 rounded-lg border mb-4"><p id="v-scenario-q" class="font-medium text-gray-800">Loading...</p></div><div id="v-scenario-options" class="space-y-2"></div></div><div id="v-quiz-feedback" class="hidden mt-4 p-4 rounded-lg bg-purple-50 border border-purple-100"><p class="font-bold text-purple-800" id="v-feedback-title"></p><p class="text-sm text-purple-700 mt-1" id="v-feedback-text"></p><button onclick="nextValueScenario()" class="mt-3 text-sm bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700">Next</button></div></div><button id="start-v-quiz-btn" onclick="initValueQuiz()" class="bg-purple-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-purple-700 mt-4">Start Challenge</button></div></div><div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200"><div class="bg-orange-800 p-4 text-white flex justify-between items-center"><h2 class="font-bold text-lg">Environmental Factors</h2><span class="bg-orange-700 px-3 py-1 rounded text-sm">Score: <span id="env-sorter-score">0</span></span></div><div class="p-8 text-center"><p class="text-gray-500 mb-6 text-sm">Is this an Internal (EEF) or External (EEF) factor?</p><div id="env-sorter-card-container" class="h-32 flex items-center justify-center mb-6"><div id="env-sorter-card" class="bg-blue-50 border-2 border-blue-200 text-blue-900 text-xl font-bold p-6 rounded-xl shadow-sm w-full">Press Start</div></div><div class="grid grid-cols-2 gap-4" id="env-sorter-controls" style="display:none;"><button onclick="handleEnvSort('internal')" class="bg-blue-50 text-blue-700 border border-blue-200 font-bold py-3 rounded hover:bg-blue-100">Internal</button><button onclick="handleEnvSort('external')" class="bg-red-50 text-red-700 border border-red-200 font-bold py-3 rounded hover:bg-red-100">External</button></div><button id="start-env-sorter-btn" onclick="initEnvSorter()" class="bg-orange-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-orange-700">Start Game</button><p id="env-sorter-feedback" class="mt-4 font-bold h-6 text-sm"></p></div></div></div></div>`
+};
+
+// --- CORE NAVIGATION LOGIC ---
+const pageScripts = {
+practice: () => {
+document.getElementById('sorter-controls').style.display = 'none';
+document.getElementById('start-sorter-btn').style.display = 'inline-block';
+document.getElementById('start-quiz-btn').style.display = 'inline-block';
+document.getElementById('quiz-area').style.display = 'none';
+},
+'practice-foundation': () => {
+document.getElementById('f-sorter-controls').style.display = 'none';
+document.getElementById('start-f-sorter-btn').style.display = 'inline-block';
+document.getElementById('start-f-quiz-btn').style.display = 'inline-block';
+document.getElementById('f-quiz-area').style.display = 'none';
+document.getElementById('tf-controls').style.display = 'none';
+document.getElementById('start-tf-btn').style.display = 'inline-block';
+},
+'practice-value': () => {
+document.getElementById('v-quiz-area').style.display = 'none';
+document.getElementById('start-v-quiz-btn').style.display = 'inline-block';
+document.getElementById('env-sorter-controls').style.display = 'none';
+document.getElementById('start-env-sorter-btn').style.display = 'inline-block';
+},
+'agile-mastery': () => {
+// Menu only
+},
+'agile-mindset': () => {
+initAgileMindset();
+},
+'scrum-lab': () => {
+initScrumLab();
+},
+'kanban-lab': () => {
+initKanbanLab();
+},
+'lean-lab': () => {
+initLeanLab();
+}
+};
+
+function loadPage(pageKey) {
+const container = document.getElementById('app-content');
+if (!pageContent[pageKey]) pageKey = 'home';
+container.innerHTML = pageContent[pageKey];
+window.scrollTo(0, 0);
+if (pageScripts[pageKey]) pageScripts[pageKey]();
+}
+
+// --- AGILE LABS LOGIC ---
+function initAgileLabs() {
+// Kept for backward compatibility or direct calls
+initAgileMindset();
+initScrumLab();
+initKanbanLab();
+initLeanLab();
+}
+
+// 1. AGILE MINDSET INIT
+function initAgileMindset() {
+// Manifesto
+const manGame = document.getElementById('manifesto-game');
+if(manGame) {
+manGame.innerHTML = '';
+agileManifestoData.forEach((item, idx) => {
+manGame.innerHTML += `
+<div class="flex items-center space-x-2 bg-gray-50 p-2 rounded">
+<div class="flex-1 font-bold text-gray-700 text-right text-sm">${item.left}</div>
+<div class="text-xs text-gray-400 font-bold">OVER</div>
+<select id="man-select-${idx}" class="flex-1 border p-1 rounded text-sm bg-white">
+<option value="">Select...</option>
+<option value="Following a Plan">Following a Plan</option>
+<option value="Processes and Tools">Processes and Tools</option>
+<option value="Contract Negotiation">Contract Negotiation</option>
+<option value="Comprehensive Documentation">Comprehensive Documentation</option>
+</select>
+</div>
+`;
+});
+}
+
+// Principles
+initPrinciplesGame();
+
+// Stacey
+initStaceyGame();
+}
+
+// 2. SCRUM LAB INIT
+function initScrumLab() {
+// Scrum Sequence
+resetScrum();
+// Scrum Quiz
+initScrumQuiz();
+}
+
+// 3. KANBAN LAB INIT
+function initKanbanLab() {
+// Kanban Flow
+kanbanWip = 0; kanbanDone = 0;
+const wipEl = document.getElementById('wip-count');
+if(wipEl) wipEl.innerText = 0;
+const scoreEl = document.getElementById('kanban-score');
+if(scoreEl) scoreEl.innerText = 0;
+
+// Re-render Kanban tasks if empty
+const backlog = document.getElementById('col-backlog');
+if(backlog && backlog.children.length === 0) {
+backlog.innerHTML = `
+<button onclick="pullToDoing(this)" class="kanban-card w-full bg-white p-2 rounded shadow text-xs border-l-4 border-gray-500 text-left hover:bg-gray-50">Task A</button>
+<button onclick="pullToDoing(this)" class="kanban-card w-full bg-white p-2 rounded shadow text-xs border-l-4 border-gray-500 text-left hover:bg-gray-50">Task B</button>
+<button onclick="pullToDoing(this)" class="kanban-card w-full bg-white p-2 rounded shadow text-xs border-l-4 border-gray-500 text-left hover:bg-gray-50">Task C</button>
+<button onclick="pullToDoing(this)" class="kanban-card w-full bg-white p-2 rounded shadow text-xs border-l-4 border-gray-500 text-left hover:bg-gray-50">Task D</button>
+<button onclick="pullToDoing(this)" class="kanban-card w-full bg-white p-2 rounded shadow text-xs border-l-4 border-gray-500 text-left hover:bg-gray-50">Task E</button>
+`;
+}
+
+// Init Quiz
+initKanbanQuiz();
+}
+
+// 4. LEAN LAB INIT
+function initLeanLab() {
+initLeanGame();
+initLeanPrinciplesGame();
+}
+
+
+// -- Agile Principles Logic --
+function initPrinciplesGame() {
+principleIndex = 0;
+principleScore = 0;
+const scoreEl = document.getElementById('principle-score');
+if(scoreEl) scoreEl.innerText = '0';
+showPrinciple();
+}
+
+function showPrinciple() {
+if (principleIndex >= agilePrinciplesData.length) {
+const textEl = document.getElementById('principle-text');
+if(textEl) textEl.innerText = "All Principles Completed!";
+const opts = document.getElementById('principle-options');
+if(opts) opts.innerHTML = "";
+return;
+}
+const data = agilePrinciplesData[principleIndex];
+const textEl = document.getElementById('principle-text');
+if(textEl) textEl.innerText = data.text;
+const fb = document.getElementById('principle-feedback');
+if(fb) fb.innerText = "";
+const optsDiv = document.getElementById('principle-options');
+if(optsDiv) {
+optsDiv.innerHTML = "";
+// Randomize options
+const shuffled = [...data.options].sort(() => 0.5 - Math.random());
+shuffled.forEach(opt => {
+optsDiv.innerHTML += `<button onclick="checkPrinciple('${opt}')" class="bg-teal-50 border border-teal-200 text-teal-800 py-2 rounded hover:bg-teal-100 font-medium">${opt}</button>`;
+});
+}
+}
+
+function checkPrinciple(ans) {
+const data = agilePrinciplesData[principleIndex];
+const fb = document.getElementById('principle-feedback');
+if (ans === data.missing) {
+principleScore += 10;
+document.getElementById('principle-score').innerText = principleScore;
+fb.innerText = "Correct!";
+fb.className = "mt-4 text-center font-bold h-6 text-sm text-green-600";
+setTimeout(() => { principleIndex++; showPrinciple(); }, 1000);
+} else {
+fb.innerText = "Incorrect. Try again.";
+fb.className = "mt-4 text-center font-bold h-6 text-sm text-red-600";
+}
+}
+
+// -- Stacey Matrix Logic --
+function initStaceyGame() {
+staceyIndex = 0;
+staceyScore = 0;
+const scoreEl = document.getElementById('stacey-score');
+if(scoreEl) scoreEl.innerText = '0';
+showStacey();
+}
+
+function showStacey() {
+if (staceyIndex >= staceyData.length) {
+const qEl = document.getElementById('stacey-q');
+if(qEl) qEl.innerText = "Simulation Complete!";
+return;
+}
+const data = staceyData[staceyIndex];
+const qEl = document.getElementById('stacey-q');
+if(qEl) qEl.innerText = data.q;
+const fb = document.getElementById('stacey-feedback');
+if(fb) fb.innerText = "";
+}
+
+function checkStacey(zone) {
+if (staceyIndex >= staceyData.length) return;
+const data = staceyData[staceyIndex];
+const fb = document.getElementById('stacey-feedback');
+
+if (zone === data.a) {
+staceyScore += 10;
+document.getElementById('stacey-score').innerText = staceyScore;
+fb.innerText = "Correct! " + data.hint;
+fb.className = "font-bold h-6 text-sm text-green-600";
+setTimeout(() => { staceyIndex++; showStacey(); }, 1500);
+} else {
+fb.innerText = "Incorrect Zone. Try again.";
+fb.className = "font-bold h-6 text-sm text-red-600";
+}
+}
+
+// -- Agile Manifesto Logic --
+function checkManifesto() {
+let correctCount = 0;
+agileManifestoData.forEach((item, idx) => {
+const sel = document.getElementById(`man-select-${idx}`);
+if (sel.value === item.right) {
+sel.classList.add('border-green-500', 'bg-green-50');
+correctCount++;
+} else {
+sel.classList.add('border-red-500', 'bg-red-50');
+}
+});
+const fb = document.getElementById('manifesto-feedback');
+if (correctCount === 4) {
+fb.innerText = "Perfect! You know the 4 Values.";
+fb.className = "mt-4 text-center font-bold h-6 text-green-600";
+} else {
+fb.innerText = `${correctCount}/4 Correct. Try again.`;
+fb.className = "mt-4 text-center font-bold h-6 text-red-600";
+}
+}
+
+// -- Scrum Logic --
+function resetScrum() {
+const container = document.getElementById('scrum-container');
+if(!container) return;
+container.innerHTML = '';
+const shuffled = [...scrumOrder].sort(() => 0.5 - Math.random());
+shuffled.forEach(item => {
+container.innerHTML += `<div class="bg-white border p-3 rounded shadow-sm cursor-grab active:cursor-grabbing font-medium" draggable="true" ondragstart="scrumDragStart(event)" ondragover="allowDrop(event)" ondrop="scrumDrop(event)">${item}</div>`;
+});
+const fb = document.getElementById('scrum-feedback');
+if(fb) fb.innerText = "";
+}
+let scrumDraggedItem = null;
+function scrumDragStart(ev) { scrumDraggedItem = ev.target; ev.target.style.opacity = '0.5'; }
+function scrumDrop(ev) {
+ev.preventDefault();
+scrumDraggedItem.style.opacity = '1';
+if (ev.target.parentNode === scrumDraggedItem.parentNode && ev.target !== scrumDraggedItem) {
+const children = Array.from(scrumDraggedItem.parentNode.children);
+const fromIndex = children.indexOf(scrumDraggedItem);
+const toIndex = children.indexOf(ev.target);
+if (fromIndex < toIndex) { ev.target.after(scrumDraggedItem); } else { ev.target.before(scrumDraggedItem); }
+}
+}
+function checkScrum() {
+const items = document.querySelectorAll('#scrum-container div');
+let isCorrect = true;
+items.forEach((div, idx) => {
+if (div.innerText !== scrumOrder[idx]) isCorrect = false;
+});
+const fb = document.getElementById('scrum-feedback');
+if (isCorrect) {
+fb.innerText = "Correct! Planning -> Daily -> Review -> Retro";
+fb.className = "mt-2 text-center font-bold text-sm h-6 text-green-600";
+} else {
+fb.innerText = "Incorrect order. Remember the flow of a Sprint.";
+fb.className = "mt-2 text-center font-bold text-sm h-6 text-red-600";
+}
+}
+
+// -- Kanban Logic --
+function pullToDoing(btn) {
+const msg = document.getElementById('kanban-msg');
+msg.innerText = "";
+if (btn.parentNode.id === 'col-backlog') {
+if (kanbanWip < 3) {
+document.getElementById('col-doing').appendChild(btn);
+btn.className = "kanban-card w-full bg-blue-100 p-2 rounded shadow text-xs border-l-4 border-blue-500 text-left hover:bg-blue-200 cursor-pointer";
+kanbanWip++;
+document.getElementById('wip-count').innerText = kanbanWip;
+} else {
+msg.innerText = "WIP Limit Reached! Finish tasks first.";
+}
+} else if (btn.parentNode.id === 'col-doing') {
+document.getElementById('col-done').appendChild(btn);
+btn.className = "kanban-card w-full bg-green-100 p-2 rounded shadow text-xs border-l-4 border-green-500 text-left opacity-75 cursor-default";
+btn.onclick = null; // Disable click
+kanbanWip--;
+document.getElementById('wip-count').innerText = kanbanWip;
+kanbanDone++;
+document.getElementById('kanban-score').innerText = kanbanDone;
+}
+}
+function resetKanban() {
+initKanbanLab(); // Reset specifically for this module
+}
+
+// -- Lean Logic --
+function initLeanGame() {
+currentLeanIndex = 0; leanScore = 0;
+const scoreEl = document.getElementById('lean-score');
+if(scoreEl) scoreEl.innerText = '0';
+const opts = document.getElementById('lean-options');
+if(opts) opts.style.display = 'grid';
+showLeanQ();
+}
+function showLeanQ() {
+if (currentLeanIndex >= leanWastes.length) {
+const qEl = document.getElementById('lean-q');
+if(qEl) qEl.innerText = "All Wastes Identified!";
+const opts = document.getElementById('lean-options');
+if(opts) opts.style.display = 'none';
+return;
+}
+const qEl = document.getElementById('lean-q');
+if(qEl) qEl.innerText = leanWastes[currentLeanIndex].q;
+const fb = document.getElementById('lean-feedback');
+if(fb) fb.innerText = "";
+}
+function checkLean(ans) {
+const data = leanWastes[currentLeanIndex];
+const fb = document.getElementById('lean-feedback');
+if (ans === data.a) {
+leanScore += 10; document.getElementById('lean-score').innerText = leanScore;
+fb.innerText = "Correct!"; fb.className = "text-center font-bold text-sm mt-3 h-5 text-green-600";
+setTimeout(() => { currentLeanIndex++; showLeanQ(); }, 800);
+} else {
+fb.innerText = "Incorrect. Try again."; fb.className = "text-center font-bold text-sm mt-3 h-5 text-red-600";
+}
+}
+
+// -- Lean Principles Logic --
+function initLeanPrinciplesGame() {
+currentLeanPrincipleIndex = 0;
+leanPrincipleScore = 0;
+const scoreEl = document.getElementById('lean-principle-score');
+if(scoreEl) scoreEl.innerText = '0';
+const container = document.getElementById('lean-principle-options');
+if(container) container.style.display = 'grid';
+showLeanPrinciple();
+}
+
+function showLeanPrinciple() {
+if (currentLeanPrincipleIndex >= leanPrinciplesData.length) {
+const qEl = document.getElementById('lean-principle-q');
+if(qEl) qEl.innerText = "All Principles Mastered!";
+const container = document.getElementById('lean-principle-options');
+if(container) container.style.display = 'none';
+return;
+}
+const data = leanPrinciplesData[currentLeanPrincipleIndex];
+const qEl = document.getElementById('lean-principle-q');
+if(qEl) qEl.innerText = data.q;
+const fb = document.getElementById('lean-principle-feedback');
+if(fb) fb.innerText = "";
+
+const options = ["Decide Late", "Empower the Team", "Deliver Fast", "Build Integrity In", "See the Whole", "Amplify Learning", "Eliminate Waste"];
+const container = document.getElementById('lean-principle-options');
+if(container) {
+container.innerHTML = '';
+options.forEach(opt => {
+container.innerHTML += `<button onclick="checkLeanPrinciple('${opt}')" class="p-2 border rounded hover:bg-pink-50 text-sm font-medium transition">${opt}</button>`;
+});
+}
+}
+
+function checkLeanPrinciple(ans) {
+const data = leanPrinciplesData[currentLeanPrincipleIndex];
+const fb = document.getElementById('lean-principle-feedback');
+if (ans === data.a) {
+leanPrincipleScore += 10;
+document.getElementById('lean-principle-score').innerText = leanPrincipleScore;
+fb.innerText = "Correct!";
+fb.className = "text-center font-bold text-sm mt-3 h-5 text-green-600";
+setTimeout(() => { currentLeanPrincipleIndex++; showLeanPrinciple(); }, 800);
+} else {
+fb.innerText = "Incorrect. Try again.";
+fb.className = "text-center font-bold text-sm mt-3 h-5 text-red-600";
+}
+}
+
+// --- NEW SCRUM QUIZ LOGIC ---
+function initScrumQuiz() {
+currentScrumQuizIndex = 0;
+scrumQuizScore = 0;
+const s = document.getElementById('scrum-quiz-score');
+if(s) s.innerText = '0';
+const area = document.getElementById('scrum-quiz-area');
+if(area) area.innerHTML = `<div class="bg-teal-50 p-4 rounded-lg border border-teal-100 mb-4"><p id="scrum-quiz-q" class="font-medium text-gray-800 text-lg">Loading...</p></div><div id="scrum-quiz-options" class="grid grid-cols-1 gap-3"></div>`;
+const fb = document.getElementById('scrum-quiz-feedback');
+if(fb) fb.classList.add('hidden');
+showScrumQuiz();
+}
+
+function showScrumQuiz() {
+if (currentScrumQuizIndex >= scrumQuizData.length) {
+const area = document.getElementById('scrum-quiz-area');
+if(area) area.innerHTML = `<div class='text-center p-6'><p class='text-xl font-bold text-gray-800'>Quiz Complete!</p><p class='text-lg text-teal-600'>Score: ${scrumQuizScore}/${scrumQuizData.length}</p></div>`;
+const fb = document.getElementById('scrum-quiz-feedback');
+if(fb) fb.classList.add('hidden');
+return;
+}
+const data = scrumQuizData[currentScrumQuizIndex];
+const qEl = document.getElementById('scrum-quiz-q');
+if(qEl) qEl.innerText = data.q;
+
+const fb = document.getElementById('scrum-quiz-feedback');
+if(fb) fb.classList.add('hidden');
+
+const optsContainer = document.getElementById('scrum-quiz-options');
+if(optsContainer) {
+optsContainer.innerHTML = '';
+data.options.forEach((opt, idx) => {
+const btn = document.createElement('button');
+btn.className = "w-full text-left p-4 rounded border border-gray-200 bg-white hover:bg-teal-50 hover:border-teal-300 transition shadow-sm font-medium text-gray-700";
+btn.innerText = opt;
+btn.onclick = () => checkScrumQuiz(idx, btn);
+optsContainer.appendChild(btn);
+});
+}
+}
+
+function checkScrumQuiz(idx, btn) {
+const data = scrumQuizData[currentScrumQuizIndex];
+const feedbackBox = document.getElementById('scrum-quiz-feedback');
+
+const allBtns = document.querySelectorAll('#scrum-quiz-options button');
+allBtns.forEach(b => {
+b.disabled = true;
+if(b.innerText === data.options[data.correct]) {
+b.classList.add('bg-green-100', 'border-green-500', 'text-green-800');
+}
+});
+
+feedbackBox.classList.remove('hidden');
+
+if (idx === data.correct) {
+scrumQuizScore++;
+document.getElementById('scrum-quiz-score').innerText = scrumQuizScore;
+document.getElementById('scrum-feedback-title').innerText = "Correct!";
+document.getElementById('scrum-feedback-text').innerText = data.explanation;
+btn.classList.add('bg-green-100', 'border-green-500', 'text-green-800');
+} else {
+document.getElementById('scrum-feedback-title').innerText = "Incorrect";
+document.getElementById('scrum-feedback-text').innerText = data.explanation;
+btn.classList.add('bg-red-100', 'border-red-500', 'text-red-800');
+}
+}
+
+function nextScrumQuiz() {
+currentScrumQuizIndex++;
+showScrumQuiz();
+}
+
+// --- NEW KANBAN QUIZ LOGIC ---
+function initKanbanQuiz() {
+currentKanbanQuizIndex = 0;
+kanbanQuizScore = 0;
+const s = document.getElementById('kanban-quiz-score');
+if(s) s.innerText = '0';
+const area = document.getElementById('kanban-quiz-area');
+if(area) area.style.display = 'block';
+const fb = document.getElementById('kanban-quiz-feedback');
+if(fb) fb.classList.add('hidden');
+showKanbanQuiz();
+}
+
+function showKanbanQuiz() {
+if (currentKanbanQuizIndex >= kanbanQuizData.length) {
+const area = document.getElementById('kanban-quiz-area');
+if(area) area.innerHTML = `<div class='text-center p-6'><p class='text-xl font-bold text-gray-800'>Quiz Complete!</p><p class='text-lg text-blue-600'>Score: ${kanbanQuizScore}/${kanbanQuizData.length}</p></div>`;
+const fb = document.getElementById('kanban-quiz-feedback');
+if(fb) fb.classList.add('hidden');
+return;
+}
+const data = kanbanQuizData[currentKanbanQuizIndex];
+const qEl = document.getElementById('kanban-quiz-q');
+if(qEl) qEl.innerText = data.q;
+
+const fb = document.getElementById('kanban-quiz-feedback');
+if(fb) fb.classList.add('hidden');
+
+const optsContainer = document.getElementById('kanban-quiz-options');
+if(optsContainer) {
+optsContainer.innerHTML = '';
+data.options.forEach((opt, idx) => {
+const btn = document.createElement('button');
+btn.className = "w-full text-left p-4 rounded border border-gray-200 bg-white hover:bg-blue-50 hover:border-blue-300 transition shadow-sm font-medium text-gray-700";
+btn.innerText = opt;
+btn.onclick = () => checkKanbanQuiz(idx, btn);
+optsContainer.appendChild(btn);
+});
+}
+}
+
+function checkKanbanQuiz(idx, btn) {
+const data = kanbanQuizData[currentKanbanQuizIndex];
+const feedbackBox = document.getElementById('kanban-quiz-feedback');
+
+// Disable buttons
+const allBtns = document.querySelectorAll('#kanban-quiz-options button');
+allBtns.forEach(b => {
+b.disabled = true;
+if(b.innerText === data.options[data.correct]) {
+b.classList.add('bg-green-100', 'border-green-500', 'text-green-800');
+}
+});
+
+feedbackBox.classList.remove('hidden');
+
+if (idx === data.correct) {
+kanbanQuizScore++;
+document.getElementById('kanban-quiz-score').innerText = kanbanQuizScore;
+document.getElementById('kanban-feedback-title').innerText = "Correct!";
+document.getElementById('kanban-feedback-text').innerText = data.explanation;
+btn.classList.add('bg-green-100', 'border-green-500', 'text-green-800');
+} else {
+document.getElementById('kanban-feedback-title').innerText = "Incorrect";
+document.getElementById('kanban-feedback-text').innerText = data.explanation;
+btn.classList.add('bg-red-100', 'border-red-500', 'text-red-800');
+}
+}
+
+function nextKanbanQuiz() {
+currentKanbanQuizIndex++;
+showKanbanQuiz();
+}
+
+// --- LOGIC FOR FOUNDATION GAMES ---
+function initFoundationSorter() { currentFoundationSorterIndex = 0; foundationSorterScore = 0; document.getElementById('f-sorter-score').innerText = '0'; document.getElementById('start-f-sorter-btn').style.display = 'none'; document.getElementById('f-sorter-controls').style.display = 'grid'; showFoundationSorterCard(); }
+function showFoundationSorterCard() { const card = document.getElementById('f-sorter-card'); if (currentFoundationSorterIndex < foundationSorterData.length) { card.innerText = foundationSorterData[currentFoundationSorterIndex].term; card.className = "bg-blue-50 border-2 border-blue-200 text-blue-900 text-xl font-bold p-6 rounded-xl shadow-sm w-full transition-transform"; } else { card.innerText = "Game Over!"; card.className = "bg-teal-800 text-white text-xl font-bold p-6 rounded-xl shadow-sm w-full"; document.getElementById('f-sorter-controls').style.display = 'none'; document.getElementById('start-f-sorter-btn').innerText = "Play Again"; document.getElementById('start-f-sorter-btn').style.display = 'inline-block'; } }
+function handleFoundationSort(choice) { const currentItem = foundationSorterData[currentFoundationSorterIndex]; const feedback = document.getElementById('f-sorter-feedback'); const card = document.getElementById('f-sorter-card'); if (currentItem.type === choice) { foundationSorterScore += 10; document.getElementById('f-sorter-score').innerText = foundationSorterScore; feedback.innerText = "Correct!"; feedback.className = "mt-4 font-bold h-6 text-sm text-green-600"; card.classList.add(choice === 'project' ? 'slide-out-left' : 'slide-out-right'); } else { feedback.innerText = "Incorrect!"; feedback.className = "mt-4 font-bold h-6 text-sm text-red-600"; } setTimeout(() => { feedback.innerText = ""; currentFoundationSorterIndex++; showFoundationSorterCard(); }, 600); }
+
+function initFoundationQuiz() { currentFScenarioIndex = 0; foundationScenarioScore = 0; document.getElementById('f-scenario-score').innerText = '0'; document.getElementById('start-f-quiz-btn').style.display = 'none'; document.getElementById('f-quiz-area').style.display = 'block'; showFoundationScenario(); }
+function showFoundationScenario() { if (currentFScenarioIndex >= foundationScenarios.length) { document.getElementById('f-quiz-area').innerHTML = `<div class='text-center p-6'><p class='text-xl font-bold text-gray-800'>Challenge Complete!</p><p class='text-lg text-indigo-600'>Score: ${foundationScenarioScore}/${foundationScenarios.length}</p></div>`; return; } const data = foundationScenarios[currentFScenarioIndex]; document.getElementById('f-scenario-q').innerText = data.q; document.getElementById('f-quiz-feedback').classList.add('hidden'); const optsContainer = document.getElementById('f-scenario-options'); optsContainer.innerHTML = ''; data.options.forEach((opt, idx) => { const btn = document.createElement('button'); btn.className = "w-full text-left p-3 rounded border hover:bg-indigo-50 transition text-sm"; btn.innerText = opt; btn.onclick = () => checkFoundationScenario(idx, btn); optsContainer.appendChild(btn); }); }
+function checkFoundationScenario(idx, btn) { const data = foundationScenarios[currentFScenarioIndex]; const feedbackBox = document.getElementById('f-quiz-feedback'); document.querySelectorAll('#f-scenario-options button').forEach(b => b.disabled = true); feedbackBox.classList.remove('hidden'); if (idx === data.correct) { foundationScenarioScore++; document.getElementById('f-scenario-score').innerText = foundationScenarioScore; document.getElementById('f-feedback-title').innerText = "Correct!"; document.getElementById('f-feedback-text').innerText = data.explanation; btn.classList.add('bg-green-100', 'border-green-400'); } else { document.getElementById('f-feedback-title').innerText = "Incorrect"; document.getElementById('f-feedback-text').innerText = data.explanation; btn.classList.add('bg-red-100', 'border-red-400'); } }
+function nextFoundationScenario() { currentFScenarioIndex++; showFoundationScenario(); }
+function calculateEVM() { const ev = parseFloat(document.getElementById('ev-input').value); const ac = parseFloat(document.getElementById('ac-input').value); const pv = parseFloat(document.getElementById('pv-input').value); const r = document.getElementById('evm-result'); if (isNaN(ev)) return; const cpi = (ev/ac).toFixed(2); const spi = (ev/pv).toFixed(2); r.innerHTML = `CPI: ${cpi}, SPI: ${spi}`; r.classList.remove('hidden'); }
+
+// --- LOGIC FOR VALUE DELIVERY ---
+function initValueQuiz() { currentValueScenarioIndex = 0; valueScenarioScore = 0; document.getElementById('v-scenario-score').innerText = '0'; document.getElementById('start-v-quiz-btn').style.display = 'none'; document.getElementById('v-quiz-area').style.display = 'block'; showValueScenario(); }
+function showValueScenario() { if (currentValueScenarioIndex >= valueScenarios.length) { document.getElementById('v-quiz-area').innerHTML = `<div class='text-center p-6'><p class='text-xl font-bold text-gray-800'>Challenge Complete!</p><p class='text-lg text-purple-600'>Score: ${valueScenarioScore}/${valueScenarios.length}</p></div>`; return; } const data = valueScenarios[currentValueScenarioIndex]; document.getElementById('v-scenario-q').innerText = data.q; document.getElementById('v-quiz-feedback').classList.add('hidden'); const optsContainer = document.getElementById('v-scenario-options'); optsContainer.innerHTML = ''; data.options.forEach((opt, idx) => { const btn = document.createElement('button'); btn.className = "w-full text-left p-3 rounded border hover:bg-purple-50 transition text-sm"; btn.innerText = opt; btn.onclick = () => checkValueScenario(idx, btn); optsContainer.appendChild(btn); }); }
+function checkValueScenario(idx, btn) { const data = valueScenarios[currentValueScenarioIndex]; const feedbackBox = document.getElementById('v-quiz-feedback'); document.querySelectorAll('#v-scenario-options button').forEach(b => b.disabled = true); feedbackBox.classList.remove('hidden'); if (idx === data.correct) { valueScenarioScore++; document.getElementById('v-scenario-score').innerText = valueScenarioScore; document.getElementById('v-feedback-title').innerText = "Correct!"; document.getElementById('v-feedback-text').innerText = data.explanation; btn.classList.add('bg-green-100', 'border-green-400'); } else { document.getElementById('v-feedback-title').innerText = "Incorrect"; document.getElementById('v-feedback-text').innerText = data.explanation; btn.classList.add('bg-red-100', 'border-red-400'); } }
+function nextValueScenario() { currentValueScenarioIndex++; showValueScenario(); }
+function initEnvSorter() { currentEnvSorterIndex = 0; envSorterScore = 0; document.getElementById('env-sorter-score').innerText = '0'; document.getElementById('start-env-sorter-btn').style.display = 'none'; document.getElementById('env-sorter-controls').style.display = 'grid'; showEnvSorterCard(); }
+function showEnvSorterCard() { const card = document.getElementById('env-sorter-card'); if (currentEnvSorterIndex < envSorterData.length) { card.innerText = envSorterData[currentEnvSorterIndex].term; card.className = "bg-blue-50 border-2 border-blue-200 text-blue-900 text-xl font-bold p-6 rounded-xl shadow-sm w-full transition-transform"; } else { card.innerText = "Game Over!"; card.className = "bg-orange-800 text-white text-xl font-bold p-6 rounded-xl shadow-sm w-full"; document.getElementById('env-sorter-controls').style.display = 'none'; document.getElementById('start-env-sorter-btn').innerText = "Play Again"; document.getElementById('start-env-sorter-btn').style.display = 'inline-block'; } }
+function handleEnvSort(choice) { const currentItem = envSorterData[currentEnvSorterIndex]; const feedback = document.getElementById('env-sorter-feedback'); const card = document.getElementById('env-sorter-card'); if (currentItem.type === choice) { envSorterScore += 10; document.getElementById('env-sorter-score').innerText = envSorterScore; feedback.innerText = "Correct!"; feedback.className = "mt-4 font-bold h-6 text-sm text-green-600"; card.classList.add(choice === 'internal' ? 'slide-out-left' : 'slide-out-right'); } else { feedback.innerText = "Incorrect!"; feedback.className = "mt-4 font-bold h-6 text-sm text-red-600"; } setTimeout(() => { feedback.innerText = ""; currentEnvSorterIndex++; showEnvSorterCard(); }, 600); }
+
+// Initialize
+loadPage('home');
+</script>
+</body>
+</html>
