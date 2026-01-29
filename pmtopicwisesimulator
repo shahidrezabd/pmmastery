@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PMP Topic Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Sidebar Scrollbar */
+        .sidebar-scroll::-webkit-scrollbar { width: 5px; }
+        .sidebar-scroll::-webkit-scrollbar-track { background: #1e293b; }
+        .sidebar-scroll::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        
+        /* Animations */
+        .fade-in { animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .submenu-enter { max-height: 0; opacity: 0; overflow: hidden; transition: all 0.3s ease-in-out; }
+        .submenu-enter.open { max-height: 500px; opacity: 1; }
+        
+        .arrow-icon { transition: transform 0.3s ease; }
+        .arrow-icon.rotate { transform: rotate(180deg); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 h-screen flex overflow-hidden">
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="w-72 bg-slate-900 text-slate-300 flex flex-col shadow-xl z-20">
+        <!-- Brand -->
+        <div class="h-16 flex items-center px-6 border-b border-slate-800 bg-slate-900 shrink-0">
+            <div class="bg-blue-600 p-1.5 rounded-lg mr-3">
+                <i data-lucide="layout-grid" class="w-5 h-5 text-white"></i>
+            </div>
+            <span class="font-bold text-lg text-white tracking-tight">PM Simulator</span>
+        </div>
+
+        <!-- Menu Items -->
+        <nav class="flex-grow overflow-y-auto sidebar-scroll py-4 px-3 space-y-1" id="sidebar-menu">
+            <!-- Menus injected via JS -->
+        </nav>
+
+        <!-- Footer -->
+        <div class="p-4 border-t border-slate-800 text-xs text-slate-500 text-center shrink-0">
+            PMP Topic Master v1.1
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 flex flex-col relative overflow-hidden">
+        
+        <!-- Top Bar -->
+        <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
+            <h2 id="current-section-title" class="text-xl font-bold text-slate-800">Dashboard</h2>
+            <div class="flex items-center gap-4">
+                <div id="quiz-timer" class="hidden items-center bg-blue-50 text-blue-700 px-3 py-1 rounded-full font-mono font-medium text-sm">
+                    <i data-lucide="clock" class="w-4 h-4 mr-2"></i> <span>00:00</span>
+                </div>
+                <button onclick="app.resetToHome()" class="text-slate-500 hover:text-blue-600 transition-colors">
+                    <i data-lucide="home" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Scrollable Content Area -->
+        <div class="flex-grow overflow-y-auto p-6 md:p-10 bg-slate-50">
+            
+            <!-- VIEW: WELCOME / DASHBOARD -->
+            <div id="view-home" class="max-w-4xl mx-auto fade-in">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 md:p-12 text-center">
+                    <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6 text-blue-600">
+                        <i data-lucide="book-open-check" class="w-10 h-10"></i>
+                    </div>
+                    <h1 class="text-3xl font-bold text-slate-900 mb-4">Select a Topic to Start</h1>
+                    <p class="text-slate-600 max-w-lg mx-auto mb-8 text-lg">Use the sidebar to navigate through the project lifecycle. Select specific sub-topics to practice focused questions.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                            <div class="font-bold text-slate-800 mb-1">Targeted Practice</div>
+                            <div class="text-sm text-slate-500">Drill down into specific areas like "Conflict Resolution" or "Cost Management".</div>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                            <div class="font-bold text-slate-800 mb-1">Instant Rationale</div>
+                            <div class="text-sm text-slate-500">Get detailed explanations immediately after answering.</div>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                            <div class="font-bold text-slate-800 mb-1">Progress Tracking</div>
+                            <div class="text-sm text-slate-500">See your score for each specific micro-topic.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: QUIZ INTERFACE -->
+            <div id="view-quiz" class="max-w-3xl mx-auto fade-in hidden">
+                <!-- Progress Header -->
+                <div class="flex justify-between items-center mb-6">
+                    <span class="text-sm font-semibold text-slate-500 uppercase tracking-wider" id="quiz-topic-badge">Topic Name</span>
+                    <span class="text-sm font-bold text-slate-900" id="question-counter">1/10</span>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="w-full bg-slate-200 rounded-full h-2 mb-8">
+                    <div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+
+                <!-- Question Card -->
+                <div class="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
+                    <div class="p-8">
+                        <p class="text-xl font-medium text-slate-900 leading-relaxed mb-8" id="question-text">Loading...</p>
+                        <div id="options-container" class="space-y-3">
+                            <!-- Options Injected Here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Rationale Section (Hidden until answered) -->
+                    <div id="rationale-box" class="hidden bg-slate-50 border-t border-slate-200 p-6">
+                        <div class="flex items-start gap-3">
+                            <div class="mt-1 shrink-0">
+                                <i data-lucide="info" class="w-5 h-5 text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 mb-1">Explanation</h4>
+                                <p class="text-slate-600 text-sm leading-relaxed" id="rationale-text">Rationale goes here...</p>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex justify-end">
+                            <button onclick="app.nextQuestion()" id="btn-next" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+                                Next Question
+                            </button>
+                            <button onclick="app.finishQuiz()" id="btn-finish" class="hidden bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+                                Finish Topic
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: RESULTS -->
+            <div id="view-results" class="max-w-2xl mx-auto fade-in hidden">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-10 text-center">
+                    <div id="result-icon" class="w-24 h-24 mx-auto rounded-full flex items-center justify-center mb-6 text-white text-4xl font-bold shadow-lg">
+                        <!-- Icon/Score JS -->
+                    </div>
+                    <h2 class="text-3xl font-bold text-slate-900 mb-2">Topic Complete!</h2>
+                    <p class="text-slate-500 mb-8" id="result-topic">Topic Name</p>
+                    
+                    <div class="grid grid-cols-2 gap-4 max-w-xs mx-auto mb-8">
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <div class="text-2xl font-bold text-slate-900" id="res-correct">0</div>
+                            <div class="text-xs text-slate-500 uppercase font-bold">Correct</div>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <div class="text-2xl font-bold text-slate-900" id="res-wrong">0</div>
+                            <div class="text-xs text-slate-500 uppercase font-bold">Incorrect</div>
+                        </div>
+                    </div>
+
+                    <button onclick="app.resetToHome()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl transition-colors">
+                        Choose Another Topic
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // ==========================================
+        // DATA STRUCTURE: MENU & QUESTIONS
+        // ==========================================
+        
+        const menuStructure = [
+            {
+                id: 'assessments',
+                title: 'Assessments',
+                icon: 'clipboard-list',
+                submenus: [
+                    { id: 'pre_assessment', title: 'Pre-assessment' },
+                    { id: 'post_assessment', title: 'Post-assessment' }
+                ]
+            },
+            {
+                id: 'pre_project',
+                title: 'Pre-project Work',
+                icon: 'briefcase',
+                submenus: [
+                    { id: 'needs_assessment', title: 'Needs Assessment' },
+                    { id: 'business_case', title: 'Business Case & Benefits' }
+                ]
+            },
+            {
+                id: 'business_env',
+                title: 'Business Environment',
+                icon: 'globe',
+                submenus: [
+                    { id: 'compliance', title: 'Compliance & Regulations' },
+                    { id: 'org_change', title: 'Organizational Change' },
+                    { id: 'strategic_alignment', title: 'Strategic Alignment' },
+                    { id: 'governance', title: 'Project Governance' },
+                    { id: 'continuous_improvement', title: 'Continuous Improvement' },
+                    { id: 'value_delivery', title: 'Value Delivery System' },
+                    { id: 'benefits_values', title: 'Project Benefits and Values' },
+                    { id: 'culture_change', title: 'Org Culture & Change Mgmt' },
+                    { id: 'eef_opa', title: 'EEF and OPA' }
+                ]
+            },
+            {
+                id: 'start_project',
+                title: 'Start the Project',
+                icon: 'flag',
+                submenus: [
+                    { id: 'charter', title: 'Project Charter' },
+                    { id: 'stakeholders', title: 'Identify Stakeholders' },
+                    { id: 'team_formation', title: 'Team Formation' }
+                ]
+            },
+            {
+                id: 'plan_project',
+                title: 'Plan the Project',
+                icon: 'map',
+                submenus: [
+                    { id: 'scope_schedule', title: 'Scope & Schedule' },
+                    { id: 'cost_budget', title: 'Cost & Budget' },
+                    { id: 'risk_mgmt', title: 'Risk Management' },
+                    { id: 'procurement', title: 'Procurement Planning' }
+                ]
+            },
+            {
+                id: 'lead_team',
+                title: 'Lead the Team',
+                icon: 'users',
+                submenus: [
+                    { id: 'team_dev', title: 'Team Development' },
+                    { id: 'conflict', title: 'Conflict Resolution' },
+                    { id: 'virtual_teams', title: 'Virtual Teams' }
+                ]
+            },
+            {
+                id: 'implement',
+                title: 'Implement the Project',
+                icon: 'zap',
+                submenus: [
+                    { id: 'manage_quality', title: 'Manage Quality' },
+                    { id: 'knowledge', title: 'Knowledge Transfer' }
+                ]
+            },
+            {
+                id: 'monitor',
+                title: 'Monitor & Control',
+                icon: 'activity',
+                submenus: [
+                    { id: 'change_control', title: 'Integrated Change Control' },
+                    { id: 'variance', title: 'Variance Analysis' }
+                ]
+            },
+            {
+                id: 'close',
+                title: 'Closing the Project',
+                icon: 'check-circle',
+                submenus: [
+                    { id: 'transitions', title: 'Transitions & Sign-offs' },
+                    { id: 'lessons_learned', title: 'Lessons Learned' }
+                ]
+            }
+        ];
+
+        // Placeholder Question Database (Scalable)
+        const questionBank = {
+            'value_delivery': [
+                {
+                    q: "The collection of strategic business activities aimed at building, sustaining, and/or advancing an organization is known as:",
+                    opts: ["The Project Management Plan", "The Value Delivery System", "The Portfolio Hierarchy", "The Operations Framework"],
+                    correct: 1,
+                    rationale: "The Value Delivery System is the holistic structure of portfolios, programs, projects, products, and operations that work together to deliver value to the organization."
+                },
+                {
+                    q: "In a Value Delivery System, how does information typically flow?",
+                    opts: ["From projects up to strategy only.", "From strategy down to operations only.", "Bi-directionally: Strategy informs projects, and project updates inform strategy.", "Horizontally between project managers only."],
+                    correct: 2,
+                    rationale: "Information flows vertically and bi-directionally. Senior leadership sets strategy which guides projects, while project outcomes and data flow up to inform strategic adjustments."
+                },
+                {
+                    q: "Which component of the Value Delivery System focuses on doing the 'right' work (strategic alignment)?",
+                    opts: ["Project Management", "Program Management", "Portfolio Management", "Operations Management"],
+                    correct: 2,
+                    rationale: "Portfolio Management focuses on selecting and prioritizing the right programs and projects to align with organizational strategy (Doing the right work)."
+                },
+                {
+                    q: "Ultimately, the goal of a Value Delivery System is to:",
+                    opts: ["Create deliverables.", "Adhere to the schedule.", "Deliver business value.", "Minimize costs."],
+                    correct: 2,
+                    rationale: "While deliverables, schedule, and cost are important, the ultimate purpose of the entire system is to produce business value (benefits) for the organization and stakeholders."
+                },
+                {
+                    q: "Which of the following describes a 'System for Value Delivery' environment?",
+                    opts: ["Isolated teams working in silos.", "Integrated set of functions and processes to deliver value.", "A strict command-and-control hierarchy.", "A collection of unrelated projects."],
+                    correct: 1,
+                    rationale: "A system for value delivery creates an environment where various components (portfolios, programs, projects, operations) function as an integrated whole to deliver value."
+                }
+            ],
+            'benefits_values': [
+                {
+                    q: "What is the difference between a project output and a project outcome (value)?",
+                    opts: ["Output is the result (e.g., a new app); Outcome is the benefit realized (e.g., increased sales).", "Output is money; Outcome is a product.", "They are synonyms.", "Outcome happens before Output."],
+                    correct: 0,
+                    rationale: "Outputs are the artifacts produced (deliverables). Outcomes are the changes or benefits that result from using those outputs (Value)."
+                },
+                {
+                    q: "Which document defines the target benefits, the strategic alignment, and the timeframe for realizing benefits?",
+                    opts: ["Project Charter", "Benefits Management Plan", "Business Case", "Scope Management Plan"],
+                    correct: 1,
+                    rationale: "The Benefits Management Plan describes how and when the benefits of the project will be delivered and describes the mechanisms that should be in place to measure those benefits."
+                },
+                {
+                    q: "The 'Net Present Value' (NPV) is a financial metric used to:",
+                    opts: ["Calculate the exact duration of the project.", "Determine the current value of future cash flows.", "Measure team velocity.", "Estimate the budget at completion."],
+                    correct: 1,
+                    rationale: "NPV calculates the present value of future cash inflows minus outflows to determine if the project investment creates value in today's terms."
+                },
+                {
+                    q: "Who is primarily responsible for ensuring that the project benefits are realized, often long after the project closes?",
+                    opts: ["Project Manager", "Project Team", "Business/Benefit Owner", "Scrum Master"],
+                    correct: 2,
+                    rationale: "While the PM manages the outputs, the Benefit Owner (or Business Owner) is accountable for ensuring the outputs are used to generate the intended business value/benefits over time."
+                },
+                {
+                    q: "An example of an 'Intangible' value delivered by a project is:",
+                    opts: ["Increased revenue.", "Reduced maintenance costs.", "Higher brand reputation.", "Market share growth."],
+                    correct: 2,
+                    rationale: "Brand reputation, employee morale, and customer satisfaction are intangible values—they are real and important but harder to quantify directly in monetary terms compared to revenue or costs."
+                }
+            ],
+            'culture_change': [
+                {
+                    q: "The shared visions, mission, values, beliefs, and expectations of an organization make up its:",
+                    opts: ["Organizational Structure", "Organizational Culture", "Governance Framework", "Process Assets"],
+                    correct: 1,
+                    rationale: "Organizational Culture is the 'DNA' of the organization—the shared values and beliefs that influence how people behave and how work gets done."
+                },
+                {
+                    q: "Which model uses the stages 'Awareness, Desire, Knowledge, Ability, Reinforcement' to guide individual change?",
+                    opts: ["The ADKAR Model", "The Tuckman Ladder", "The Stacey Matrix", "The PDCA Cycle"],
+                    correct: 0,
+                    rationale: "ADKAR (by Prosci) is a goal-oriented change management model that guides individual and organizational change."
+                },
+                {
+                    q: "Why is 'Psychological Safety' critical for a culture of innovation and change?",
+                    opts: ["It ensures no one gets physically hurt.", "It allows team members to take risks and speak up without fear of punishment.", "It guarantees job security.", "It prevents conflict."],
+                    correct: 1,
+                    rationale: "Psychological safety creates an environment where team members feel safe to experiment, admit mistakes, and propose new ideas—essential for agility and navigating change."
+                },
+                {
+                    q: "A Project Manager is working in a 'Clan' culture (collaborative, family-like). Which leadership style would be most effective?",
+                    opts: ["Authoritarian / Directive", "Servant / Facilitative", "Transactional", "Bureaucratic"],
+                    correct: 1,
+                    rationale: "In a collaborative 'Clan' culture, a Servant or Facilitative leadership style that focuses on mentorship and consensus matches the cultural norms better than a directive style."
+                },
+                {
+                    q: "When introducing a major change, 'Desire' in the ADKAR model refers to:",
+                    opts: ["Knowing how to change.", "The willingness and motivation to participate in the change.", "The ability to implement the change.", "Understanding why the change is needed."],
+                    correct: 1,
+                    rationale: "Desire represents the personal choice and motivation to support and participate in the change."
+                }
+            ],
+            'eef_opa': [
+                {
+                    q: "Which of the following is considered an Enterprise Environmental Factor (EEF)?",
+                    opts: ["Templates from prior projects.", "Marketplace conditions.", "Lessons learned repository.", "Corporate knowledge base."],
+                    correct: 1,
+                    rationale: "EEFs are conditions outside the control of the project team that influence the project. Marketplace conditions (external) are a classic EEF. The others are Organizational Process Assets (OPAs)."
+                },
+                {
+                    q: "An organization's internal 'software tools' (e.g., a scheduling tool) are classified as:",
+                    opts: ["External EEFs", "Internal EEFs", "Processes and Procedures (OPA)", "Corporate Knowledge Base (OPA)"],
+                    correct: 1,
+                    rationale: "Internal EEFs include IT software, infrastructure, and resource availability. They are the 'environment' you work within."
+                },
+                {
+                    q: "Which of the following is an Organizational Process Asset (OPA)?",
+                    opts: ["Government Regulations", "Stakeholder Risk Tolerance", "Standardized Guidelines and Templates", "Political Climate"],
+                    correct: 2,
+                    rationale: "OPAs include plans, processes, policies, procedures, and knowledge bases specific to and used by the performing organization (like templates)."
+                },
+                {
+                    q: "Why is it important for a Project Manager to update OPAs at the end of a project?",
+                    opts: ["To increase the project budget.", "To ensure future projects benefit from this project's lessons learned and data.", "To comply with government laws.", "To pay the vendors."],
+                    correct: 1,
+                    rationale: "Updating OPAs (specifically the knowledge base and lessons learned) ensures that the organization learns and improves, helping future projects avoid the same mistakes."
+                },
+                {
+                    q: "If a project team is geographically dispersed (Virtual Team), this is primarily an example of:",
+                    opts: ["An Internal EEF.", "An OPA.", "A Risk Response.", "A Scope Constraint."],
+                    correct: 0,
+                    rationale: "Geographic distribution of facilities and resources is an Internal Enterprise Environmental Factor (EEF) that creates the environment the PM must manage within."
+                }
+            ],
+            'strategic_alignment': [
+                {
+                    q: "A project manager is reviewing the project charter and realizes that the project objectives do not align with the organization's new strategic direction announced yesterday. What should the PM do?",
+                    opts: ["Continue with the project as authorized in the charter.", "Immediately terminate the project.", "Request a meeting with the sponsor to review the alignment and business case.", "Update the strategic plan to match the project."],
+                    correct: 2,
+                    rationale: "Projects exist to deliver business value aligned with strategy. If strategy changes, the project's justification must be re-evaluated by the Sponsor to decide if it should continue, pivot, or stop."
+                },
+                {
+                    q: "Which document effectively links the project's work to the organization's strategic goals?",
+                    opts: ["Work Breakdown Structure", "Benefits Management Plan", "Risk Register", "Quality Management Plan"],
+                    correct: 1,
+                    rationale: "The Benefits Management Plan outlines how the project's outcomes will create value (benefits) that supports the organization's strategic goals."
+                },
+                {
+                    q: "Your organization focuses on 'Speed to Market' as its primary strategy. You have a choice between two vendors: Vendor A is cheaper but slower. Vendor B is expensive but guarantees instant delivery. Which should you choose?",
+                    opts: ["Vendor A, to save costs.", "Vendor B, to align with strategic objectives.", "Neither, look for a Vendor C.", "Split the work between them."],
+                    correct: 1,
+                    rationale: "Project decisions must align with organizational strategy. Since 'Speed to Market' is the priority, the costlier but faster option (Vendor B) aligns best with the business goal."
+                },
+                {
+                    q: "The executive board decides to pivot the company from a B2B model to a B2C model. Your current project is building a B2B sales portal and is 50% complete. What is the most appropriate action?",
+                    opts: ["Finish the project to save the investment.", "Pause the project and wait for instructions.", "Recommend terminating the project as it no longer aligns with strategy.", "Change the scope to B2C immediately without approval."],
+                    correct: 2,
+                    rationale: "Sunk costs should not drive decision making. If a project no longer aligns with the organization's strategy, the Project Manager has a responsibility to recommend termination to the governance board."
+                },
+                {
+                    q: "Which framework uses 'Objectives and Key Results' (OKRs) to ensure project deliverables contribute to high-level organizational goals?",
+                    opts: ["Strategic Alignment Framework", "Earned Value Management", "Waterfall Methodology", "Procurement Strategy"],
+                    correct: 0,
+                    rationale: "OKRs are a popular goal-setting framework used to define measurable goals (Objectives) and track their outcomes (Key Results), ensuring alignment between execution and strategy."
+                }
+            ],
+            'governance': [
+                {
+                    q: "Which body is typically responsible for establishing project management standards, providing resources, and ensuring governance across all projects in an organization?",
+                    opts: ["The Project Team", "The Project Management Office (PMO)", "The Steering Committee", "The Change Control Board"],
+                    correct: 1,
+                    rationale: "The PMO (Project Management Office) is responsible for standardizing governance processes and facilitating the sharing of resources, methodologies, tools, and techniques."
+                },
+                {
+                    q: "A project has reached the end of the Design Phase. Before moving to the Construction Phase, a formal review is required to verify that the phase met its goals. What is this review called?",
+                    opts: ["Phase Gate / Stage Gate", "Sprint Review", "Kickoff Meeting", "Status Update"],
+                    correct: 0,
+                    rationale: "A Phase Gate (or Stage Gate) is a review at the end of a phase in which a decision is made to continue to the next phase, continue with modification, or end the project."
+                },
+                {
+                    q: "Who is ultimately accountable for the success of the project and provides the financial resources and high-level governance?",
+                    opts: ["Project Manager", "Project Sponsor", "Functional Manager", "Team Lead"],
+                    correct: 1,
+                    rationale: "The Project Sponsor acts as the project's champion, provides resources/funding, and serves as the escalation point for decisions beyond the PM's authority (Governance)."
+                },
+                {
+                    q: "You need to determine if you have the authority to move budget funds from the 'Travel' cost account to the 'Training' cost account. Which document should you reference?",
+                    opts: ["Project Charter", "Project Governance Framework", "Stakeholder Register", "Risk Report"],
+                    correct: 1,
+                    rationale: "The Project Governance Framework (often part of the Project Management Plan) defines decision-making authority, escalation paths, and thresholds for budget and scope changes."
+                },
+                {
+                    q: "The Project Steering Committee has requested a change to the project's reporting frequency to ensure better oversight. This is an example of:",
+                    opts: ["Micromanagement", "Project Governance", "Scope Creep", "Stakeholder Interference"],
+                    correct: 1,
+                    rationale: "Governance involves establishing policies, procedures, and oversight mechanisms (like reporting) to ensure the project stays on track and delivers value."
+                }
+            ],
+            'continuous_improvement': [
+                {
+                    q: "Your team has identified a recurring bottleneck in the testing process. They decide to spend a sprint implementing an automated testing tool to fix it. This is an example of:",
+                    opts: ["Gold Plating", "Kaizen / Continuous Improvement", "Scope Creep", "Defect Repair"],
+                    correct: 1,
+                    rationale: "Kaizen (Continuous Improvement) involves making small, ongoing changes to improve efficiency and quality. Spending time to fix a process bottleneck is a proactive improvement."
+                },
+                {
+                    q: "Which cycle is the foundation of continuous improvement methodologies?",
+                    opts: ["Plan-Do-Check-Act (PDCA)", "Initiate-Plan-Execute-Close", "Storming-Forming-Norming", "Input-Tool-Output"],
+                    correct: 0,
+                    rationale: "The PDCA (Plan-Do-Check-Act) cycle, popularized by Deming, is the iterative framework used for continuous improvement in processes and products."
+                },
+                {
+                    q: "In an Agile project, when does the team formally reflect on what went well and what needs to improve?",
+                    opts: ["Daily Standup", "Sprint Review", "Sprint Retrospective", "Release Planning"],
+                    correct: 2,
+                    rationale: "The Sprint Retrospective is the dedicated time for the team to inspect their own processes and create a plan for improvements to be enacted during the next Sprint."
+                },
+                {
+                    q: "Which Lean technique involves mapping the flow of information and materials to identify waste and improvement opportunities?",
+                    opts: ["Value Stream Mapping", "Pareto Analysis", "Scatter Diagram", "Control Charting"],
+                    correct: 0,
+                    rationale: "Value Stream Mapping is a Lean management method for analyzing the current state and designing a future state for the series of events that take a product or service from its beginning to the customer."
+                },
+                {
+                    q: "Total Quality Management (TQM) emphasizes that quality is the responsibility of:",
+                    opts: ["The Quality Assurance Team", "The Project Manager", "Everyone in the organization", "The Project Sponsor"],
+                    correct: 2,
+                    rationale: "TQM is a management approach to long-term success through customer satisfaction, asserting that all members of an organization participate in improving processes, products, services, and the culture."
+                }
+            ],
+            'org_change': [
+                {
+                    q: "A new project aims to digitize the company's manual filing system. Several long-term employees are vocal about their refusal to use the new system, fearing job loss. What should the Project Manager do first?",
+                    opts: ["Report the employees to their functional managers.", "Ignore the resistance as it is outside the project scope.", "Engage the employees to understand their concerns and communicate the project's benefits and training plans.", "Update the Risk Register and proceed with the technical implementation."],
+                    correct: 2,
+                    rationale: "Managing organizational change requires addressing resistance. The PM must first listen to understand the root cause (fear of job loss) and address it through communication and education (ADKAR model: Awareness/Desire)."
+                },
+                {
+                    q: "Your organization is undergoing a merger with a competitor. Rumors suggest that your project might be cancelled. Team morale is low, and productivity has dropped. What is the best approach?",
+                    opts: ["Stop working until you get official confirmation.", "Communicate openly with the team about what is known and what is unknown, while maintaining focus on current goals.", "Tell the team that the project is safe to boost morale.", "Ask the team to work overtime to prove the project's value."],
+                    correct: 1,
+                    rationale: "In times of organizational uncertainty, transparency is key to maintaining trust. The PM should validate feelings but guide the team to focus on work that is currently authorized."
+                },
+                {
+                    q: "Which of the following is an input to the 'Manage Stakeholder Engagement' process that helps the project manager understand the organizational culture and political climate?",
+                    opts: ["Enterprise Environmental Factors (EEFs)", "Work Performance Data", "Change Log", "Benefits Management Plan"],
+                    correct: 0,
+                    rationale: "EEFs include organizational culture, structure, and political climate. Understanding these is crucial for navigating organizational change effectively."
+                },
+                {
+                    q: "The project deliverables will significantly change how the Operations department works. The Operations Manager was not involved in the planning phase and is now refusing to accept the deliverables. What should have been done differently?",
+                    opts: ["The Sponsor should have ordered the Operations Manager to accept the work.", "The Project Manager should have identified the Operations Manager as a key stakeholder and engaged them early in the project.", "The project should have been delayed until the Operations Manager retired.", "The team should have built a training manual."],
+                    correct: 1,
+                    rationale: "Organizational change fails when those affected are excluded. Identifying and engaging impacted stakeholders early (in Planning) creates buy-in and smoother transition."
+                },
+                {
+                    q: "You are implementing a change that requires a shift in company culture. Which approach is most effective for sustaining this change after the project closes?",
+                    opts: ["Handing over a final report.", "Ensuring knowledge transfer and training capabilities are fully transitioned to the business.", "Firing staff who do not comply.", "Archiving the project documents."],
+                    correct: 1,
+                    rationale: "For change to stick, the organization must have the capability to sustain it. Knowledge transfer and training ensure the business can operate the new state effectively after the project team leaves."
+                }
+            ],
+            'compliance': [
+                {
+                    q: "A new environmental regulation is passed while your project is midway through execution. Complying with this regulation will delay the project by three months and increase costs by 15%. What is the best course of action?",
+                    opts: ["Ignore the regulation since the project started before it was passed.", "Submit a change request to update the project baselines to accommodate the new regulation.", "Ask the sponsor to cancel the project.", "Use the management reserve to cover the costs without changing the baseline."],
+                    correct: 1,
+                    rationale: "Regulatory compliance is generally mandatory. When a constraint changes (new law), the PM must analyze the impact and execute the Integrated Change Control process to formally update the schedule and cost baselines."
+                },
+                {
+                    q: "During a quality audit, you discover that a sub-component used in your product violates a specific safety standard. The product is 95% complete. Fixing it will require significant rework. What should you do?",
+                    opts: ["Release the product and issue a patch later.", "Document the issue in the risk register and proceed.", "Immediately initiate a defect repair process to bring the product into compliance.", "Ask the legal department for a waiver."],
+                    correct: 2,
+                    rationale: "Safety and regulatory compliance are non-negotiable ethical obligations. Known violations cannot be ignored or deferred. The defect must be repaired before release."
+                },
+                {
+                    q: "Your project involves handling sensitive customer data. A stakeholder requests a feature that would make data access easier for marketing but potentially violates GDPR privacy laws. How should the Project Manager respond?",
+                    opts: ["Implement the feature to satisfy the stakeholder.", "Reject the request immediately.", " Consult with the organization's legal or compliance department to verify the implications before making a decision.", "Ask the team to vote on it."],
+                    correct: 2,
+                    rationale: "Project Managers are not usually lawyers. When faced with potential regulatory violations, the PM should seek expert judgment from legal/compliance subject matter experts before approving or rejecting the request."
+                },
+                {
+                    q: "Which of the following is an example of a 'External Enterprise Environmental Factor' related to compliance?",
+                    opts: ["Organizational policies on gift-giving.", "Standardized work instructions.", "Government safety standards.", "Lessons learned repository."],
+                    correct: 2,
+                    rationale: "Government standards, industry regulations, and market conditions are external Enterprise Environmental Factors (EEFs) that are outside the project team's control but influence the project."
+                },
+                {
+                    q: "You are managing a construction project in a foreign country. Local customs suggest paying a small 'facilitation fee' to government officials to speed up permit processing. Your company's home country laws strictly forbid bribery. What do you do?",
+                    opts: ["Pay the fee as it is a local custom.", "Refuse to pay and accept the schedule delay.", "Ask a local subcontractor to pay it so it doesn't appear on your books.", "Negotiate a lower fee."],
+                    correct: 1,
+                    rationale: "The PMI Code of Ethics requires PMs to adhere to the laws of their organization and home country. If the fee is considered a bribe (illegal), it must not be paid, even if it causes delays."
+                }
+            ],
+            'needs_assessment': [
+                {
+                    q: "A company is experiencing a significant decline in customer satisfaction. Before initiating a specific project to fix this, what should management perform first to understand the root cause and the gap between current and desired states?",
+                    opts: ["Develop a Project Charter", "Perform a Needs Assessment", "Create a Work Breakdown Structure", "Identify Stakeholders"],
+                    correct: 1,
+                    rationale: "A Needs Assessment precedes the business case and project charter. It involves understanding business goals and objectives, issues, and opportunities, and recommending proposals to address them."
+                },
+                {
+                    q: "Which tool is commonly used during a Needs Assessment to analyze internal strengths and weaknesses, as well as external opportunities and threats?",
+                    opts: ["Monte Carlo Simulation", "SWOT Analysis", "Pareto Chart", "Control Chart"],
+                    correct: 1,
+                    rationale: "SWOT Analysis (Strengths, Weaknesses, Opportunities, and Threats) is a strategic planning technique used to help identify these four critical elements during needs assessment."
+                },
+                {
+                    q: "You are analyzing the difference between the organization's 'Current State' and the desired 'Future State'. What is this technique called?",
+                    opts: ["Gap Analysis", "Variance Analysis", "Trend Analysis", "Earned Value Analysis"],
+                    correct: 0,
+                    rationale: "Gap Analysis compares the current state to the future state to identify the differences (gaps) that the project needs to address."
+                },
+                {
+                    q: "Who is typically responsible for performing the Needs Assessment before a project is formally authorized?",
+                    opts: ["The Project Manager", "The Project Team", "The Business Analyst", "The Regulatory Board"],
+                    correct: 2,
+                    rationale: "While roles vary, the Business Analyst is typically responsible for requirements management and needs assessment work prior to project initiation."
+                },
+                {
+                    q: "Which of the following is a primary trigger for conducting a Needs Assessment?",
+                    opts: ["The project budget is approved.", "A business problem or opportunity is identified.", "The Project Management Plan is signed.", "The team is assembled."],
+                    correct: 1,
+                    rationale: "Needs Assessments are triggered by business problems, opportunities, or changes in the market environment that require a strategic response."
+                }
+            ],
+            'business_case': [
+                {
+                    q: "Which document provides the necessary information from a business standpoint to determine whether the expected outcomes of the project justify the required investment?",
+                    opts: ["Project Charter", "Business Case", "Project Management Plan", "Scope Statement"],
+                    correct: 1,
+                    rationale: "The Business Case is a documented economic feasibility study used to establish the validity of the benefits of a selected component lacking sufficient definition and that is used as a basis for the authorization of further project management activities."
+                },
+                {
+                    q: "You are helping the Sponsor define how the project's tangible and intangible value will be measured, realized, and sustained. Which document are you creating?",
+                    opts: ["Requirements Traceability Matrix", "Benefits Management Plan", "Cost Management Plan", "Quality Management Plan"],
+                    correct: 1,
+                    rationale: "The Benefits Management Plan describes how and when the benefits of the project will be delivered and describes the mechanisms that should be in place to measure those benefits."
+                },
+                {
+                    q: "The project is executing perfectly on time and budget, but a competitor has released a product that makes your project deliverables obsolete. What should the Project Manager do?",
+                    opts: ["Continue to finish the project on time.", "Cut costs to make the project cheaper.", "Recommend project termination or pivot based on Business Case validity.", "Ignore the competitor and focus on scope."],
+                    correct: 2,
+                    rationale: "The Project Manager must ensure the project remains aligned with the Business Case. If the Business Case is no longer valid, the PM has an ethical duty to recommend termination or a strategic pivot."
+                },
+                {
+                    q: "Project A has a Net Present Value (NPV) of $50,000. Project B has an NPV of $80,000. Both take the same time to complete. Which project should be selected based on financial metrics?",
+                    opts: ["Project A", "Project B", "Neither", "Both"],
+                    correct: 1,
+                    rationale: "A higher Net Present Value (NPV) is better. It indicates that Project B creates more value for the organization."
+                },
+                {
+                    q: "Which of the following represents an 'Intangible' benefit in a Business Case?",
+                    opts: ["Cost savings of $10,000", "Revenue increase of 15%", "Improved Brand Recognition", "Reduction in material waste"],
+                    correct: 2,
+                    rationale: "Intangible benefits are difficult to quantify monetarily but provide value, such as brand equity, morale, or reputation. The other options are tangible (measurable in currency)."
+                }
+            ],
+            'pre_assessment': [
+                {
+                    q: "What is the primary document used to authorize a project?",
+                    opts: ["Business Case", "Project Charter", "Project Management Plan", "Statement of Work"],
+                    correct: 1,
+                    rationale: "The Project Charter is the document issued by the project initiator or sponsor that formally authorizes the existence of a project and provides the project manager with the authority to apply organizational resources to project activities."
+                },
+                {
+                    q: "Which PMP domain focuses on conflict resolution and team leadership?",
+                    opts: ["Process", "Business Environment", "People", "Integration"],
+                    correct: 2,
+                    rationale: "The 'People' domain (42% of the exam) covers tasks such as managing conflict, leading a team, and supporting team performance."
+                },
+                {
+                    q: "A project is defined as a __________ endeavor undertaken to create a unique product, service, or result.",
+                    opts: ["Ongoing", "Temporary", "Permanent", "Strategic"],
+                    correct: 1,
+                    rationale: "Projects are temporary; they have a distinct beginning and end. Operations are ongoing."
+                },
+                {
+                    q: "Who provides the financial resources for the project?",
+                    opts: ["Project Manager", "Project Team", "Project Sponsor", "Functional Manager"],
+                    correct: 2,
+                    rationale: "The Project Sponsor is responsible for providing resources and support for the project and is accountable for enabling success."
+                },
+                {
+                    q: "Which of the following is NOT a project constraint?",
+                    opts: ["Scope", "Cost", "Unlimited Resources", "Time"],
+                    correct: 2,
+                    rationale: "The 'Triple Constraint' includes Scope, Time, and Cost. Resources are always limited, never unlimited."
+                },
+                {
+                    q: "A stakeholder is best defined as:",
+                    opts: ["Anyone working on the project.", "The person paying for the project.", "Anyone affected by or who can affect the project.", "The end user."],
+                    correct: 2,
+                    rationale: "A stakeholder is an individual, group, or organization that may affect, be affected by, or perceive itself to be affected by a decision, activity, or outcome of a project."
+                },
+                {
+                    q: "Which organizational structure gives the Project Manager the LEAST authority?",
+                    opts: ["Strong Matrix", "Project-Oriented", "Functional", "Balanced Matrix"],
+                    correct: 2,
+                    rationale: "In a Functional organization, the PM has little to no authority; power lies with the Functional Manager."
+                },
+                {
+                    q: "In which process group is the Project Charter developed?",
+                    opts: ["Planning", "Initiating", "Executing", "Monitoring & Controlling"],
+                    correct: 1,
+                    rationale: "Developing the Project Charter is one of the two processes in the Initiating Process Group (the other being Identify Stakeholders)."
+                },
+                {
+                    q: "The Agile Manifesto values __________ over processes and tools.",
+                    opts: ["Comprehensive documentation", "Contract negotiation", "Individuals and interactions", "Following a plan"],
+                    correct: 2,
+                    rationale: "The Agile Manifesto states: 'Individuals and interactions over processes and tools.'"
+                },
+                {
+                    q: "Which PMI Code of Ethics value involves making decisions based on the best interests of society and the environment?",
+                    opts: ["Responsibility", "Respect", "Fairness", "Honesty"],
+                    correct: 0,
+                    rationale: "Responsibility includes our duty to take ownership for the decisions we make or fail to make, the actions we take or fail to take, and the consequences that result."
+                }
+            ],
+            'post_assessment': [
+                {
+                    q: "Which process involves formalizing acceptance of the project deliverables?",
+                    opts: ["Control Quality", "Validate Scope", "Close Project or Phase", "Direct and Manage Project Work"],
+                    correct: 1,
+                    rationale: "Validate Scope is the process of formalizing acceptance of the completed project deliverables. Note that 'Close Project' is about closing the project itself, while Validate Scope is about acceptance of the deliverables."
+                },
+                {
+                    q: "What is the primary output of the 'Close Project or Phase' process?",
+                    opts: ["Work Performance Reports", "Accepted Deliverables", "Final Product, Service, or Result Transition", "Change Requests"],
+                    correct: 2,
+                    rationale: "The Final Product, Service, or Result Transition is the formal handoff of the project's final output to the customer or operations."
+                },
+                {
+                    q: "If your Schedule Performance Index (SPI) is 0.8, what does this indicate?",
+                    opts: ["You are ahead of schedule.", "You are behind schedule.", "You are under budget.", "You are over budget."],
+                    correct: 1,
+                    rationale: "An SPI of less than 1.0 indicates that less work was completed than was planned, meaning the project is behind schedule."
+                },
+                {
+                    q: "Which risk strategy involves shifting the impact of a threat to a third party?",
+                    opts: ["Mitigate", "Avoid", "Transfer", "Accept"],
+                    correct: 2,
+                    rationale: "Transfer involves shifting ownership of a threat to a third party to manage the risk and to bear the impact if the threat occurs (e.g., Insurance)."
+                },
+                {
+                    q: "In the Critical Path Method, what is 'Total Float'?",
+                    opts: ["The amount of time a project can be delayed without delaying the external deadline.", "The amount of time an activity can be delayed without delaying the project finish date.", "The time difference between early start and late start.", "B and C."],
+                    correct: 3,
+                    rationale: "Total Float is the amount of time an activity can be delayed without delaying the project finish date. It is calculated as LS - ES or LF - EF."
+                },
+                {
+                    q: "You are leading a project using Scrum. The team wants to improve their process. Which meeting is best for this?",
+                    opts: ["Daily Standup", "Sprint Review", "Sprint Retrospective", "Backlog Refinement"],
+                    correct: 2,
+                    rationale: "The Sprint Retrospective is specifically designed for the team to inspect itself and create a plan for improvements to be enacted during the next Sprint."
+                },
+                {
+                    q: "A change request has been submitted. What is the FIRST thing you should do?",
+                    opts: ["Approve it.", "Reject it.", "Implement it.", "Analyze the impact."],
+                    correct: 3,
+                    rationale: "Before a change can be approved or rejected, the PM must analyze the impact on scope, schedule, cost, quality, and risk."
+                },
+                {
+                    q: "Which contract type places the highest risk on the seller (vendor)?",
+                    opts: ["Cost Plus Fixed Fee (CPFF)", "Time and Materials (T&M)", "Firm Fixed Price (FFP)", "Cost Plus Incentive Fee (CPIF)"],
+                    correct: 2,
+                    rationale: "In a Firm Fixed Price contract, the seller is obligated to complete the work for a set price, regardless of their actual costs. Cost overruns are borne by the seller."
+                },
+                {
+                    q: "What is the key difference between Manage Quality and Control Quality?",
+                    opts: ["Manage Quality is about the product; Control Quality is about the process.", "Manage Quality is about the process; Control Quality is about the product.", "There is no difference.", "Manage Quality happens at the end."],
+                    correct: 1,
+                    rationale: "Manage Quality (QA) focuses on the correctness of the processes used. Control Quality (QC) focuses on inspecting the actual deliverables (product) for defects."
+                },
+                {
+                    q: "As a Servant Leader, your primary goal regarding impediments is to:",
+                    opts: ["Ignore them.", "Report them to the sponsor.", "Remove them.", "Tell the team to work harder."],
+                    correct: 2,
+                    rationale: "A key responsibility of a Servant Leader (e.g., Scrum Master) is to remove impediments that are blocking the team's progress."
+                },
+                {
+                    q: "Your Cost Performance Index (CPI) is 1.2. What does this mean?",
+                    opts: ["You are getting $1.20 of work for every $1.00 spent.", "You are over budget.", "You are behind schedule.", "You have spent 20% more than planned."],
+                    correct: 0,
+                    rationale: "CPI > 1.0 indicates cost efficiency (Under Budget). A CPI of 1.2 means you are earning $1.20 of value for every dollar spent."
+                },
+                {
+                    q: "Which tool is used to classify stakeholders based on their power and interest?",
+                    opts: ["Salience Model", "Power/Interest Grid", "Stakeholder Cube", "Impact Matrix"],
+                    correct: 1,
+                    rationale: "The Power/Interest Grid groups stakeholders according to their level of authority (power) and their level of concern (interest)."
+                },
+                {
+                    q: "Resource Smoothing differs from Resource Leveling because Smoothing:",
+                    opts: ["Changes the critical path.", "Does NOT change the critical path.", "Is done before Leveling.", "Ignores float."],
+                    correct: 1,
+                    rationale: "Resource Leveling can change the critical path. Resource Smoothing adjusts activities only within their free and total float, so the completion date is not delayed."
+                },
+                {
+                    q: "In Agile, what is 'Velocity'?",
+                    opts: ["The speed of the server.", "The number of hours worked.", "A measure of the amount of work a team can tackle during a single Sprint.", "The number of defects found."],
+                    correct: 2,
+                    rationale: "Velocity is an empirical measure of the amount of work (usually in story points) a team completes during a sprint."
+                },
+                {
+                    q: "What is the main purpose of the Project Kickoff Meeting?",
+                    opts: ["To sign the contract.", "To authorize the project.", "To communicate project objectives and gain team commitment.", "To close the project."],
+                    correct: 2,
+                    rationale: "The Kickoff meeting brings the team and stakeholders together to outline the project goals, ensure alignment, and build commitment."
+                }
+            ],
+            'conflict': [
+                {
+                    q: "Two team members are arguing about a technical solution. The argument is getting personal. As a PM, what is your first step?",
+                    opts: ["Report them to HR.", "Separate them and speak to them individually.", "Let them fight it out.", "Pick the best solution yourself."],
+                    correct: 1,
+                    rationale: "Safety first. When conflict becomes personal/hostile, separate the parties to de-escalate before facilitating a resolution."
+                },
+                {
+                    q: "The team cannot agree on a design. Both options are valid. You are running out of time. Which technique is best?",
+                    opts: ["Smoothing", "Forcing", "Collaborating", "Withdrawal"],
+                    correct: 2,
+                    rationale: "While collaboration is usually best, 'Forcing' (Directing) is sometimes necessary when time is critical and a decision must be made to unblock the team."
+                }
+            ],
+            'charter': [
+                {
+                    q: "Who is responsible for authorizing the Project Charter?",
+                    opts: ["The Project Manager", "The Project Sponsor", "The Team", "The Customer"],
+                    correct: 1,
+                    rationale: "The Project Sponsor provides the authority and funding, thus they sign and authorize the charter."
+                }
+            ],
+            // Generic Fallback for empty topics to demonstrate functionality
+            'default': [
+                {
+                    q: "This is a placeholder question for this specific topic. In the real version, specific questions for this ID would be loaded.",
+                    opts: ["Option A", "Option B", "Correct Option", "Option D"],
+                    correct: 2,
+                    rationale: "This rationale explains the correct answer."
+                },
+                 {
+                    q: "A second placeholder question to demonstrate the quiz flow.",
+                    opts: ["Correct Option", "Option B", "Option C", "Option D"],
+                    correct: 0,
+                    rationale: "Logic for why the first option is correct."
+                }
+            ]
+        };
+
+        // ==========================================
+        // APP LOGIC
+        // ==========================================
+        
+        const app = {
+            currentQuiz: [],
+            currentQuestionIndex: 0,
+            score: 0,
+            
+            init: function() {
+                this.renderSidebar();
+                lucide.createIcons();
+            },
+
+            renderSidebar: function() {
+                const container = document.getElementById('sidebar-menu');
+                
+                menuStructure.forEach(menu => {
+                    // Main Menu Item
+                    const btn = document.createElement('div');
+                    btn.className = "flex items-center justify-between px-3 py-3 text-sm font-medium rounded-lg cursor-pointer hover:bg-slate-800 hover:text-white transition-colors group mb-1";
+                    btn.onclick = () => this.toggleSubmenu(menu.id);
+                    btn.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="${menu.icon}" class="w-5 h-5 text-slate-500 group-hover:text-blue-400 transition-colors"></i>
+                            <span>${menu.title}</span>
+                        </div>
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-slate-600 arrow-icon" id="arrow-${menu.id}"></i>
+                    `;
+                    container.appendChild(btn);
+
+                    // Submenu Container
+                    const subDiv = document.createElement('div');
+                    subDiv.id = `sub-${menu.id}`;
+                    subDiv.className = "submenu-enter pl-11 space-y-1 mb-1";
+                    
+                    menu.submenus.forEach(sub => {
+                        const subBtn = document.createElement('button');
+                        subBtn.className = "w-full text-left block px-3 py-2 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-md transition-colors border-l border-slate-700 hover:border-blue-500";
+                        subBtn.innerText = sub.title;
+                        subBtn.onclick = () => this.startQuiz(sub.id, sub.title);
+                        subDiv.appendChild(subBtn);
+                    });
+                    
+                    container.appendChild(subDiv);
+                });
+            },
+
+            toggleSubmenu: function(id) {
+                const sub = document.getElementById(`sub-${id}`);
+                const arrow = document.getElementById(`arrow-${id}`);
+                
+                // Close others (optional, feels cleaner)
+                document.querySelectorAll('.submenu-enter').forEach(el => {
+                    if (el.id !== `sub-${id}`) el.classList.remove('open');
+                });
+                document.querySelectorAll('.arrow-icon').forEach(el => {
+                    if (el.id !== `arrow-${id}`) el.classList.remove('rotate');
+                });
+
+                sub.classList.toggle('open');
+                arrow.classList.toggle('rotate');
+            },
+
+            resetToHome: function() {
+                document.getElementById('view-home').classList.remove('hidden');
+                document.getElementById('view-quiz').classList.add('hidden');
+                document.getElementById('view-results').classList.add('hidden');
+                document.getElementById('current-section-title').innerText = "Dashboard";
+                document.getElementById('quiz-timer').classList.remove('flex');
+                document.getElementById('quiz-timer').classList.add('hidden');
+            },
+
+            startQuiz: function(topicId, topicTitle) {
+                // Load questions (use fallback if topic specific ones don't exist)
+                this.currentQuiz = questionBank[topicId] || questionBank['default'];
+                this.currentQuestionIndex = 0;
+                this.score = 0;
+
+                // UI Update
+                document.getElementById('view-home').classList.add('hidden');
+                document.getElementById('view-results').classList.add('hidden');
+                document.getElementById('view-quiz').classList.remove('hidden');
+                
+                document.getElementById('current-section-title').innerText = "Topic Simulator";
+                document.getElementById('quiz-topic-badge').innerText = topicTitle;
+                
+                document.getElementById('quiz-timer').classList.remove('hidden');
+                document.getElementById('quiz-timer').classList.add('flex');
+
+                this.renderQuestion();
+            },
+
+            renderQuestion: function() {
+                const qData = this.currentQuiz[this.currentQuestionIndex];
+                const total = this.currentQuiz.length;
+
+                // Update Progress
+                document.getElementById('question-counter').innerText = `${this.currentQuestionIndex + 1}/${total}`;
+                document.getElementById('progress-bar').style.width = `${((this.currentQuestionIndex) / total) * 100}%`;
+                
+                // Reset State
+                document.getElementById('rationale-box').classList.add('hidden');
+                document.getElementById('question-text').innerText = qData.q;
+                
+                // Render Options
+                const container = document.getElementById('options-container');
+                container.innerHTML = '';
+
+                qData.opts.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = "w-full text-left p-4 rounded-lg border border-slate-200 hover:bg-blue-50 hover:border-blue-300 transition-all flex items-center group option-btn";
+                    btn.onclick = () => this.handleAnswer(idx, btn);
+                    btn.innerHTML = `
+                        <div class="w-6 h-6 rounded-full border-2 border-slate-300 mr-4 flex items-center justify-center group-hover:border-blue-500">
+                            <div class="w-2.5 h-2.5 rounded-full bg-blue-500 opacity-0 transition-opacity"></div>
+                        </div>
+                        <span class="text-slate-700 font-medium">${opt}</span>
+                    `;
+                    container.appendChild(btn);
+                });
+
+                // Button State
+                if (this.currentQuestionIndex === total - 1) {
+                    document.getElementById('btn-next').classList.add('hidden');
+                    document.getElementById('btn-finish').classList.remove('hidden');
+                } else {
+                    document.getElementById('btn-next').classList.remove('hidden');
+                    document.getElementById('btn-finish').classList.add('hidden');
+                }
+            },
+
+            handleAnswer: function(selectedIndex, btnElement) {
+                const qData = this.currentQuiz[this.currentQuestionIndex];
+                const allBtns = document.querySelectorAll('.option-btn');
+                
+                // Disable all buttons
+                allBtns.forEach(b => {
+                    b.disabled = true;
+                    b.classList.add('opacity-50', 'cursor-not-allowed');
+                });
+                
+                // Highlight Selected
+                btnElement.classList.remove('opacity-50');
+                
+                if (selectedIndex === qData.correct) {
+                    this.score++;
+                    btnElement.classList.add('bg-green-50', 'border-green-500');
+                    btnElement.querySelector('span').classList.add('text-green-700');
+                } else {
+                    btnElement.classList.add('bg-red-50', 'border-red-500');
+                    btnElement.querySelector('span').classList.add('text-red-700');
+                    
+                    // Highlight correct one
+                    const correctBtn = allBtns[qData.correct];
+                    correctBtn.classList.remove('opacity-50');
+                    correctBtn.classList.add('bg-green-50', 'border-green-500');
+                }
+
+                // Show Rationale
+                document.getElementById('rationale-text').innerText = qData.rationale;
+                document.getElementById('rationale-box').classList.remove('hidden');
+                
+                // Scroll to bottom
+                document.getElementById('rationale-box').scrollIntoView({behavior: 'smooth'});
+            },
+
+            nextQuestion: function() {
+                this.currentQuestionIndex++;
+                this.renderQuestion();
+                document.querySelector('main > div').scrollTo(0,0);
+            },
+
+            finishQuiz: function() {
+                document.getElementById('view-quiz').classList.add('hidden');
+                document.getElementById('view-results').classList.remove('hidden');
+                document.getElementById('quiz-timer').classList.add('hidden');
+                
+                const percentage = (this.score / this.currentQuiz.length) * 100;
+                const iconDiv = document.getElementById('result-icon');
+                
+                document.getElementById('result-topic').innerText = document.getElementById('quiz-topic-badge').innerText;
+                document.getElementById('res-correct').innerText = this.score;
+                document.getElementById('res-wrong').innerText = this.currentQuiz.length - this.score;
+
+                if (percentage >= 70) {
+                    iconDiv.className = "w-24 h-24 mx-auto rounded-full flex items-center justify-center mb-6 text-white text-4xl font-bold shadow-lg bg-green-500 shadow-green-200";
+                    iconDiv.innerHTML = `<i data-lucide="check"></i>`;
+                } else {
+                    iconDiv.className = "w-24 h-24 mx-auto rounded-full flex items-center justify-center mb-6 text-white text-4xl font-bold shadow-lg bg-orange-500 shadow-orange-200";
+                    iconDiv.innerHTML = `${Math.round(percentage)}%`;
+                }
+                
+                lucide.createIcons();
+            }
+        };
+
+        // Init
+        window.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
+
+    </script>
+</body>
+</html>
