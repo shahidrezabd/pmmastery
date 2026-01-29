@@ -8,7 +8,14 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Space Grotesk', sans-serif; user-select: none; }
+        /* UPDATE: Strengthen anti-selection css */
+        body { 
+            font-family: 'Space Grotesk', sans-serif; 
+            user-select: none; /* Prevents highlighting text */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
         
         .card-enter { animation: slideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
         @keyframes slideIn {
@@ -71,87 +78,89 @@
             <div class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center">
                 <i data-lucide="zap" class="text-white w-5 h-5"></i>
             </div>
-            <span class="font-bold text-xl tracking-wide">Process<span class="text-indigo-400">Blitz</span></span>
+            <span class="font-bold text-xl md:text-2xl tracking-wide">Process<span class="text-indigo-400">Blitz</span></span>
         </div>
         <div class="flex gap-4 text-sm font-medium">
-            <div class="flex items-center gap-1.5 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
+            <div class="flex items-center gap-1.5 bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700">
                 <i data-lucide="trophy" class="w-4 h-4 text-yellow-400"></i>
-                <span id="best-score">Best: 0</span>
+                <span id="best-score" class="md:text-base">Best: 0</span>
             </div>
         </div>
     </div>
 
-    <!-- Game Container -->
-    <main class="flex-grow relative flex flex-col items-center justify-center p-4 max-w-2xl mx-auto w-full">
+    <!-- Game Container: Increased max-width for desktop -->
+    <main class="flex-grow relative flex flex-col items-center justify-center p-4 w-full max-w-6xl mx-auto">
         
         <!-- MENU SCREEN -->
         <div id="screen-menu" class="absolute inset-0 z-40 bg-slate-900 flex flex-col items-center justify-center p-6 overflow-y-auto">
-            <div class="text-center space-y-2 mb-8 mt-12 md:mt-0">
-                <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">Select <span class="text-gradient">Game Mode</span></h1>
-                <p class="text-slate-400">Choose your challenge to master the PMP</p>
+            <div class="text-center space-y-3 mb-10 mt-12 md:mt-0">
+                <h1 class="text-4xl md:text-6xl font-bold text-white mb-2">Select <span class="text-gradient">Game Mode</span></h1>
+                <p class="text-slate-400 text-lg md:text-xl">Choose your challenge to master the Processess</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full max-w-5xl">
+            <!-- Responsive Grid: 1 col mobile, 2 col tablet, 3 col desktop -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl px-4">
+                
                 <!-- Mode 1: Process Groups -->
-                <button onclick="game.selectMode('group')" class="group relative bg-slate-800 border border-slate-700 hover:border-indigo-500 p-6 rounded-2xl text-left transition-all hover:shadow-xl hover:shadow-indigo-500/10 hover:-translate-y-1">
-                    <div class="absolute top-6 right-6 w-10 h-10 bg-indigo-500/10 rounded-lg flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-colors text-indigo-400">
-                        <i data-lucide="layers" class="w-6 h-6"></i>
+                <button onclick="game.selectMode('group')" class="group relative bg-slate-800 border border-slate-700 hover:border-indigo-500 p-6 rounded-2xl text-left transition-all hover:shadow-xl hover:shadow-indigo-500/10 hover:-translate-y-1 pr-16 h-full">
+                    <div class="absolute top-6 right-6 w-12 h-12 bg-indigo-500/10 rounded-xl flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-colors text-indigo-400">
+                        <i data-lucide="layers" class="w-7 h-7"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-white mb-1">Process Groups</h3>
-                    <p class="text-slate-400 text-xs">Map to Initiating, Planning, Executing, M&C, Closing.</p>
+                    <h3 class="text-xl md:text-2xl font-bold text-white mb-2">Process Groups</h3>
+                    <p class="text-slate-400 text-sm md:text-base">Map to Initiating, Planning, Executing, M&C, Closing.</p>
                 </button>
 
                 <!-- Mode 2: Knowledge Areas -->
-                <button onclick="game.selectMode('area')" class="group relative bg-slate-800 border border-slate-700 hover:border-pink-500 p-6 rounded-2xl text-left transition-all hover:shadow-xl hover:shadow-pink-500/10 hover:-translate-y-1">
-                    <div class="absolute top-6 right-6 w-10 h-10 bg-pink-500/10 rounded-lg flex items-center justify-center group-hover:bg-pink-500 group-hover:text-white transition-colors text-pink-400">
-                        <i data-lucide="book-open" class="w-6 h-6"></i>
+                <button onclick="game.selectMode('area')" class="group relative bg-slate-800 border border-slate-700 hover:border-pink-500 p-6 rounded-2xl text-left transition-all hover:shadow-xl hover:shadow-pink-500/10 hover:-translate-y-1 pr-16 h-full">
+                    <div class="absolute top-6 right-6 w-12 h-12 bg-pink-500/10 rounded-xl flex items-center justify-center group-hover:bg-pink-500 group-hover:text-white transition-colors text-pink-400">
+                        <i data-lucide="book-open" class="w-7 h-7"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-white mb-1">Knowledge Areas</h3>
-                    <p class="text-slate-400 text-xs">Match to Scope, Cost, Schedule, Risk, etc.</p>
+                    <h3 class="text-xl md:text-2xl font-bold text-white mb-2">Knowledge Areas</h3>
+                    <p class="text-slate-400 text-sm md:text-base">Match to Scope, Cost, Schedule, Risk, etc.</p>
                 </button>
 
                 <!-- Mode 3: Process Flows -->
-                <button onclick="game.selectMode('flow')" class="group relative bg-slate-800 border border-slate-700 hover:border-emerald-500 p-6 rounded-2xl text-left transition-all hover:shadow-xl hover:shadow-emerald-500/10 hover:-translate-y-1">
-                    <div class="absolute top-6 right-6 w-10 h-10 bg-emerald-500/10 rounded-lg flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-colors text-emerald-400">
-                        <i data-lucide="git-merge" class="w-6 h-6"></i>
+                <button onclick="game.selectMode('flow')" class="group relative bg-slate-800 border border-slate-700 hover:border-emerald-500 p-6 rounded-2xl text-left transition-all hover:shadow-xl hover:shadow-emerald-500/10 hover:-translate-y-1 pr-16 h-full">
+                    <div class="absolute top-6 right-6 w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-colors text-emerald-400">
+                        <i data-lucide="git-merge" class="w-7 h-7"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-white mb-1">Important Flows</h3>
-                    <p class="text-slate-400 text-xs">Sequence the steps correctly.</p>
+                    <h3 class="text-xl md:text-2xl font-bold text-white mb-2">Important Flows</h3>
+                    <p class="text-slate-400 text-sm md:text-base">Sequence the steps correctly.</p>
                 </button>
 
-                 <!-- Mode 4: Project Doctor (NEW) -->
-                 <button onclick="game.selectMode('doctor')" class="group relative bg-slate-800 border border-slate-700 hover:border-cyan-500 p-6 rounded-2xl text-left transition-all hover:shadow-xl hover:shadow-cyan-500/10 hover:-translate-y-1">
-                    <div class="absolute top-6 right-6 w-10 h-10 bg-cyan-500/10 rounded-lg flex items-center justify-center group-hover:bg-cyan-500 group-hover:text-white transition-colors text-cyan-400">
-                        <i data-lucide="stethoscope" class="w-6 h-6"></i>
+                 <!-- Mode 4: Project Doctor -->
+                 <button onclick="game.selectMode('doctor')" class="group relative bg-slate-800 border border-slate-700 hover:border-cyan-500 p-6 rounded-2xl text-left transition-all hover:shadow-xl hover:shadow-cyan-500/10 hover:-translate-y-1 pr-16 h-full">
+                    <div class="absolute top-6 right-6 w-12 h-12 bg-cyan-500/10 rounded-xl flex items-center justify-center group-hover:bg-cyan-500 group-hover:text-white transition-colors text-cyan-400">
+                        <i data-lucide="stethoscope" class="w-7 h-7"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-white mb-1">Project Doctor</h3>
-                    <p class="text-slate-400 text-xs">Scenario-based Tool selection.</p>
+                    <h3 class="text-xl md:text-2xl font-bold text-white mb-2">Project Doctor</h3>
+                    <p class="text-slate-400 text-sm md:text-base">Scenario-based Tool selection.</p>
                 </button>
 
-                <!-- Mode 5: Input or Output (NEW) -->
-                <button onclick="game.selectMode('io')" class="group relative bg-slate-800 border border-slate-700 hover:border-orange-500 p-6 rounded-2xl text-left transition-all hover:shadow-xl hover:shadow-orange-500/10 hover:-translate-y-1">
-                    <div class="absolute top-6 right-6 w-10 h-10 bg-orange-500/10 rounded-lg flex items-center justify-center group-hover:bg-orange-500 group-hover:text-white transition-colors text-orange-400">
-                        <i data-lucide="arrow-left-right" class="w-6 h-6"></i>
+                <!-- Mode 5: Input or Output -->
+                <button onclick="game.selectMode('io')" class="group relative bg-slate-800 border border-slate-700 hover:border-orange-500 p-6 rounded-2xl text-left transition-all hover:shadow-xl hover:shadow-orange-500/10 hover:-translate-y-1 pr-16 h-full">
+                    <div class="absolute top-6 right-6 w-12 h-12 bg-orange-500/10 rounded-xl flex items-center justify-center group-hover:bg-orange-500 group-hover:text-white transition-colors text-orange-400">
+                        <i data-lucide="arrow-left-right" class="w-7 h-7"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-white mb-1">Input or Output?</h3>
-                    <p class="text-slate-400 text-xs">Rapid-fire Data Flow sorting.</p>
+                    <h3 class="text-xl md:text-2xl font-bold text-white mb-2">Input or Output?</h3>
+                    <p class="text-slate-400 text-sm md:text-base">Rapid-fire Data Flow sorting.</p>
                 </button>
 
-                <!-- Mode 6: Reverse Engineer (NEW) -->
-                <button onclick="game.selectMode('reverse')" class="group relative bg-slate-800 border border-slate-700 hover:border-violet-500 p-6 rounded-2xl text-left transition-all hover:shadow-xl hover:shadow-violet-500/10 hover:-translate-y-1">
-                    <div class="absolute top-6 right-6 w-10 h-10 bg-violet-500/10 rounded-lg flex items-center justify-center group-hover:bg-violet-500 group-hover:text-white transition-colors text-violet-400">
-                        <i data-lucide="rotate-ccw" class="w-6 h-6"></i>
+                <!-- Mode 6: Reverse Engineer -->
+                <button onclick="game.selectMode('reverse')" class="group relative bg-slate-800 border border-slate-700 hover:border-violet-500 p-6 rounded-2xl text-left transition-all hover:shadow-xl hover:shadow-violet-500/10 hover:-translate-y-1 pr-16 h-full">
+                    <div class="absolute top-6 right-6 w-12 h-12 bg-violet-500/10 rounded-xl flex items-center justify-center group-hover:bg-violet-500 group-hover:text-white transition-colors text-violet-400">
+                        <i data-lucide="rotate-ccw" class="w-7 h-7"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-white mb-1">Reverse Engineer</h3>
-                    <p class="text-slate-400 text-xs">Identify the Process from the Output.</p>
+                    <h3 class="text-xl md:text-2xl font-bold text-white mb-2">Reverse Engineer</h3>
+                    <p class="text-slate-400 text-sm md:text-base">Identify the Process from the Output.</p>
                 </button>
             </div>
 
             <!-- Study Section -->
-            <div class="mt-8 w-full max-w-4xl border-t border-slate-800 pt-8 flex flex-col items-center pb-8">
+            <div class="mt-12 w-full max-w-4xl border-t border-slate-800 pt-8 flex flex-col items-center pb-8">
                 <p class="text-slate-500 mb-4 text-sm uppercase tracking-widest font-bold">Study Materials</p>
-                <button onclick="game.showFlowcharts()" class="flex items-center gap-3 text-slate-400 hover:text-white transition-colors bg-slate-800 hover:bg-slate-700 px-6 py-3 rounded-xl border border-slate-700 hover:border-slate-500">
-                    <i data-lucide="map" class="w-5 h-5"></i>
+                <button onclick="game.showFlowcharts()" class="flex items-center gap-3 text-slate-400 hover:text-white transition-colors bg-slate-800 hover:bg-slate-700 px-8 py-4 rounded-xl border border-slate-700 hover:border-slate-500 text-lg">
+                    <i data-lucide="map" class="w-6 h-6"></i>
                     <span>View Reference Flowcharts</span>
                 </button>
             </div>
@@ -185,78 +194,78 @@
 
         <!-- START SCREEN -->
         <div id="screen-start" class="absolute inset-0 flex flex-col items-center justify-center z-20 bg-slate-900/90 backdrop-blur-sm transition-opacity duration-300 pointer-events-none opacity-0">
-            <div class="text-center space-y-6 max-w-md px-6">
-                <div class="inline-block p-4 bg-indigo-500/10 rounded-full mb-4 ring-1 ring-indigo-500/50">
-                    <i data-lucide="brain-circuit" class="w-16 h-16 text-indigo-400"></i>
+            <div class="text-center space-y-6 max-w-2xl px-6 w-full">
+                <div class="inline-block p-6 bg-indigo-500/10 rounded-full mb-4 ring-1 ring-indigo-500/50">
+                    <i data-lucide="brain-circuit" class="w-20 h-20 text-indigo-400"></i>
                 </div>
-                <h1 class="text-4xl font-bold text-white mb-2" id="start-title">Ready?</h1>
-                <p class="text-slate-400 text-lg" id="start-desc">Sort as fast as you can. Speed builds your streak!</p>
+                <h1 class="text-5xl md:text-6xl font-bold text-white mb-2" id="start-title">Ready?</h1>
+                <p class="text-slate-400 text-xl md:text-2xl" id="start-desc">Sort as fast as you can. Speed builds your streak!</p>
                 
-                <div class="grid grid-cols-2 gap-4 text-left bg-slate-800 p-4 rounded-xl border border-slate-700">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded bg-green-900/50 text-green-400 flex items-center justify-center"><i data-lucide="check" class="w-4 h-4"></i></div>
-                        <span class="text-sm text-slate-300">+100 pts</span>
+                <div class="grid grid-cols-2 gap-4 text-left bg-slate-800 p-6 rounded-2xl border border-slate-700 max-w-xl mx-auto w-full">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded bg-green-900/50 text-green-400 flex items-center justify-center shrink-0"><i data-lucide="check" class="w-5 h-5"></i></div>
+                        <span class="text-base text-slate-300">+100 pts</span>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded bg-orange-900/50 text-orange-400 flex items-center justify-center"><i data-lucide="flame" class="w-4 h-4"></i></div>
-                        <span class="text-sm text-slate-300">Streak Bonus</span>
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded bg-orange-900/50 text-orange-400 flex items-center justify-center shrink-0"><i data-lucide="flame" class="w-5 h-5"></i></div>
+                        <span class="text-base text-slate-300">Streak Bonus</span>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded bg-red-900/50 text-red-400 flex items-center justify-center"><i data-lucide="heart-off" class="w-4 h-4"></i></div>
-                        <span class="text-sm text-slate-300">3 Lives</span>
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded bg-red-900/50 text-red-400 flex items-center justify-center shrink-0"><i data-lucide="heart-off" class="w-5 h-5"></i></div>
+                        <span class="text-base text-slate-300">3 Lives</span>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded bg-blue-900/50 text-blue-400 flex items-center justify-center"><i data-lucide="timer" class="w-4 h-4"></i></div>
-                        <span class="text-sm text-slate-300">Time Limit</span>
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded bg-blue-900/50 text-blue-400 flex items-center justify-center shrink-0"><i data-lucide="timer" class="w-5 h-5"></i></div>
+                        <span class="text-base text-slate-300">Time Limit</span>
                     </div>
                 </div>
 
-                <button onclick="game.start()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white text-xl font-bold py-4 rounded-xl shadow-lg shadow-indigo-900/50 transition-all transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
-                    Start Game <i data-lucide="play" class="w-5 h-5 fill-current"></i>
+                <button onclick="game.start()" class="w-full max-w-md mx-auto bg-indigo-600 hover:bg-indigo-500 text-white text-2xl font-bold py-5 rounded-2xl shadow-lg shadow-indigo-900/50 transition-all transform hover:scale-105 active:scale-95 flex items-center justify-center gap-3">
+                    Start Game <i data-lucide="play" class="w-6 h-6 fill-current"></i>
                 </button>
             </div>
         </div>
 
         <!-- GAME HUD -->
-        <div id="game-hud" class="w-full flex justify-between items-end mb-8 px-2 opacity-0 transition-opacity duration-300">
+        <div id="game-hud" class="w-full max-w-5xl flex justify-between items-end mb-8 px-4 opacity-0 transition-opacity duration-300">
             <div class="flex flex-col">
-                <span class="text-xs text-slate-400 uppercase tracking-wider font-bold">Score</span>
-                <span id="score-display" class="text-3xl font-bold font-mono">0</span>
+                <span class="text-xs md:text-sm text-slate-400 uppercase tracking-wider font-bold">Score</span>
+                <span id="score-display" class="text-3xl md:text-5xl font-bold font-mono">0</span>
             </div>
             
-            <div class="flex flex-col items-center">
-                <div class="bg-slate-800 px-4 py-1 rounded-full border border-slate-700 mb-1">
-                    <span id="streak-display" class="text-orange-400 font-bold text-sm flex items-center gap-1">
-                        <i data-lucide="flame" class="w-3 h-3"></i> 0 Streak
+            <div class="flex flex-col items-center flex-grow mx-8">
+                <div class="bg-slate-800 px-6 py-1.5 rounded-full border border-slate-700 mb-2">
+                    <span id="streak-display" class="text-orange-400 font-bold text-sm md:text-base flex items-center gap-2">
+                        <i data-lucide="flame" class="w-4 h-4"></i> 0 Streak
                     </span>
                 </div>
-                <div class="w-32 h-2 bg-slate-800 rounded-full overflow-hidden">
+                <div class="w-full max-w-md h-3 bg-slate-800 rounded-full overflow-hidden">
                     <div id="timer-bar" class="h-full bg-blue-500 transition-all duration-1000 ease-linear w-full"></div>
                 </div>
             </div>
 
-            <div class="flex gap-1" id="lives-display">
+            <div class="flex gap-1.5" id="lives-display">
                 <!-- Hearts injected here -->
             </div>
         </div>
 
         <!-- CARD AREA -->
-        <div id="card-container" class="relative w-full h-48 flex items-center justify-center mb-8 perspective-1000">
-            <!-- Cards will be injected here -->
-            <div id="active-card" class="absolute w-full max-w-md bg-white text-slate-900 rounded-2xl p-8 shadow-2xl flex flex-col items-center justify-center text-center transform transition-all duration-300 border-b-8 border-indigo-200">
-                <span class="text-xs font-bold text-indigo-500 uppercase tracking-widest mb-2" id="card-label">Process Name</span>
-                <h2 class="text-2xl md:text-3xl font-bold leading-tight" id="card-text">Loading...</h2>
-                <div id="flow-hint" class="hidden mt-2 text-sm text-slate-500 font-medium bg-slate-100 px-3 py-1 rounded-full">Tap the buttons in order!</div>
+        <div id="card-container" class="relative w-full h-64 flex items-center justify-center mb-10 perspective-1000 px-4">
+            <!-- Active Card -->
+            <div id="active-card" class="absolute w-full max-w-2xl bg-white text-slate-900 rounded-3xl p-10 md:p-14 shadow-2xl flex flex-col items-center justify-center text-center transform transition-all duration-300 border-b-[12px] border-indigo-200 min-h-[250px]">
+                <span class="text-sm md:text-base font-bold text-indigo-500 uppercase tracking-widest mb-4" id="card-label">Process Name</span>
+                <h2 class="text-3xl md:text-5xl font-bold leading-tight" id="card-text">Loading...</h2>
+                <div id="flow-hint" class="hidden mt-4 text-base md:text-lg text-slate-500 font-medium bg-slate-100 px-4 py-2 rounded-full">Tap the buttons in order!</div>
             </div>
         </div>
 
         <!-- FEEDBACK OVERLAY -->
         <div id="feedback-overlay" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none z-30 hidden">
-            <span class="text-4xl font-black text-white drop-shadow-lg" id="feedback-text">PERFECT!</span>
+            <span class="text-5xl md:text-7xl font-black text-white drop-shadow-lg" id="feedback-text">PERFECT!</span>
         </div>
 
         <!-- CONTROLS CONTAINER (Dynamic) -->
-        <div id="controls" class="w-full grid gap-3 max-w-3xl opacity-0 transition-opacity duration-300">
+        <div id="controls" class="w-full px-4 max-w-5xl opacity-0 transition-opacity duration-300 mb-8">
             <!-- Buttons injected by JS based on mode -->
         </div>
 
@@ -264,27 +273,27 @@
 
     <!-- GAME OVER MODAL -->
     <div id="modal-gameover" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-700 rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl transform scale-100 transition-transform">
-            <div class="mb-6">
-                <i data-lucide="flag" class="w-16 h-16 text-indigo-500 mx-auto mb-4"></i>
-                <h2 class="text-3xl font-bold text-white mb-1">Session Complete</h2>
-                <p class="text-slate-400" id="final-reason">Run out of time!</p>
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl p-8 md:p-12 max-w-md w-full text-center shadow-2xl transform scale-100 transition-transform">
+            <div class="mb-8">
+                <i data-lucide="flag" class="w-20 h-20 text-indigo-500 mx-auto mb-6"></i>
+                <h2 class="text-4xl font-bold text-white mb-2">Session Complete</h2>
+                <p class="text-slate-400 text-lg" id="final-reason">Run out of time!</p>
             </div>
 
-            <div class="bg-slate-800 rounded-xl p-6 mb-6">
-                <div class="text-xs text-slate-400 uppercase tracking-widest mb-2">Final Score</div>
-                <div class="text-5xl font-black text-white mb-2" id="final-score">0</div>
-                <div class="flex justify-center gap-4 text-sm text-slate-300">
-                    <span><i data-lucide="check" class="inline w-3 h-3 text-green-500"></i> <span id="final-correct">0</span> Correct</span>
-                    <span><i data-lucide="x" class="inline w-3 h-3 text-red-500"></i> <span id="final-wrong">0</span> Wrong</span>
+            <div class="bg-slate-800 rounded-xl p-8 mb-8">
+                <div class="text-sm text-slate-400 uppercase tracking-widest mb-2 font-bold">Final Score</div>
+                <div class="text-6xl font-black text-white mb-4" id="final-score">0</div>
+                <div class="flex justify-center gap-6 text-base text-slate-300 font-medium">
+                    <span><i data-lucide="check" class="inline w-5 h-5 text-green-500 mr-1"></i> <span id="final-correct">0</span> Correct</span>
+                    <span><i data-lucide="x" class="inline w-5 h-5 text-red-500 mr-1"></i> <span id="final-wrong">0</span> Wrong</span>
                 </div>
             </div>
 
-            <div class="space-y-3">
-                <button onclick="game.start()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition-colors">
+            <div class="space-y-4">
+                <button onclick="game.start()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-xl transition-colors text-lg">
                     Play Again
                 </button>
-                <button onclick="location.reload()" class="w-full bg-transparent hover:bg-slate-800 text-slate-400 hover:text-white font-medium py-3 rounded-xl transition-colors">
+                <button onclick="location.reload()" class="w-full bg-transparent hover:bg-slate-800 text-slate-400 hover:text-white font-medium py-4 rounded-xl transition-colors text-lg">
                     Back to Menu
                 </button>
             </div>
@@ -293,7 +302,23 @@
 
     <script>
         // ==========================================
-        // DATA SETS
+        // SECURITY: BASIC DETERRENTS
+        // ==========================================
+        
+        // 1. Disable Right Click
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+        // 2. Disable Common Developer Shortcuts (F12, Ctrl+Shift+I, Ctrl+U, etc.)
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123) { return false; } // F12
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) { return false; } // Ctrl+Shift+I
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) { return false; } // Ctrl+Shift+C
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) { return false; } // Ctrl+Shift+J
+            if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { return false; } // Ctrl+U
+        }
+
+        // ==========================================
+        // DATA SETS (Same as before)
         // ==========================================
         const processData = [
             // INITIATING (2)
@@ -567,7 +592,7 @@
                 container.innerHTML = '';
 
                 if (this.mode === 'group') {
-                    container.className = "w-full grid grid-cols-2 md:grid-cols-3 gap-3 max-w-3xl opacity-100 transition-opacity duration-300";
+                    container.className = "w-full grid grid-cols-2 md:grid-cols-3 gap-4 max-w-5xl mx-auto opacity-100 transition-opacity duration-300";
                     const groups = [
                         { id: 'Initiating', label: 'Initiating', letter: 'I', color: 'purple' },
                         { id: 'Planning', label: 'Planning', letter: 'P', color: 'blue' },
@@ -579,32 +604,32 @@
                     groups.forEach(g => {
                         const btn = document.createElement('button');
                         btn.onclick = () => this.submit(g.id);
-                        btn.className = `group-btn bg-${g.color}-900/40 hover:bg-${g.color}-600 border border-${g.color}-700/50 hover:border-${g.color}-400 text-${g.color}-200 hover:text-white p-4 rounded-xl transition-all duration-200 flex flex-col items-center gap-1 group ${g.span ? 'md:col-span-1.5' : ''}`;
-                        btn.innerHTML = `<div class="w-8 h-8 rounded-full bg-${g.color}-800 group-hover:bg-white/20 flex items-center justify-center mb-1"><span class="font-bold text-lg">${g.letter}</span></div><span class="font-medium ${g.id.length > 15 ? 'text-xs' : 'text-sm'} text-center leading-tight">${g.label}</span>`;
+                        btn.className = `group-btn bg-${g.color}-900/40 hover:bg-${g.color}-600 border border-${g.color}-700/50 hover:border-${g.color}-400 text-${g.color}-200 hover:text-white p-6 md:p-8 rounded-2xl transition-all duration-200 flex flex-col items-center gap-2 group ${g.span ? 'md:col-span-1' : ''}`; // Adjust col-span if needed for 3 cols layout
+                        btn.innerHTML = `<div class="w-12 h-12 rounded-full bg-${g.color}-800 group-hover:bg-white/20 flex items-center justify-center mb-1"><span class="font-bold text-2xl">${g.letter}</span></div><span class="font-medium text-base md:text-lg text-center leading-tight">${g.label}</span>`;
                         container.appendChild(btn);
                     });
                 } else if (this.mode === 'io') {
                     // Two big buttons
-                    container.className = "w-full grid grid-cols-2 gap-4 max-w-xl mx-auto opacity-100 transition-opacity duration-300";
+                    container.className = "w-full grid grid-cols-2 gap-6 max-w-2xl mx-auto opacity-100 transition-opacity duration-300";
                     
                     const btnIn = document.createElement('button');
                     btnIn.onclick = () => this.submit('Input');
-                    btnIn.className = "bg-blue-900/40 hover:bg-blue-600 border border-blue-700/50 hover:border-blue-400 text-blue-200 hover:text-white p-8 rounded-2xl transition-all duration-200 text-2xl font-bold flex flex-col items-center gap-2";
-                    btnIn.innerHTML = `<i data-lucide="arrow-right-circle" class="w-8 h-8"></i> INPUT`;
+                    btnIn.className = "bg-blue-900/40 hover:bg-blue-600 border border-blue-700/50 hover:border-blue-400 text-blue-200 hover:text-white p-10 rounded-3xl transition-all duration-200 text-3xl font-bold flex flex-col items-center gap-4";
+                    btnIn.innerHTML = `<i data-lucide="arrow-right-circle" class="w-12 h-12"></i> INPUT`;
                     
                     const btnOut = document.createElement('button');
                     btnOut.onclick = () => this.submit('Output');
-                    btnOut.className = "bg-orange-900/40 hover:bg-orange-600 border border-orange-700/50 hover:border-orange-400 text-orange-200 hover:text-white p-8 rounded-2xl transition-all duration-200 text-2xl font-bold flex flex-col items-center gap-2";
-                    btnOut.innerHTML = `<i data-lucide="arrow-left-circle" class="w-8 h-8"></i> OUTPUT`;
+                    btnOut.className = "bg-orange-900/40 hover:bg-orange-600 border border-orange-700/50 hover:border-orange-400 text-orange-200 hover:text-white p-10 rounded-3xl transition-all duration-200 text-3xl font-bold flex flex-col items-center gap-4";
+                    btnOut.innerHTML = `<i data-lucide="arrow-left-circle" class="w-12 h-12"></i> OUTPUT`;
 
                     container.appendChild(btnIn);
                     container.appendChild(btnOut);
                     lucide.createIcons();
                 } else {
                     // Dynamic grids for Area, Flow, Doctor, Reverse
-                    container.className = "w-full grid grid-cols-1 md:grid-cols-2 gap-3 max-w-3xl opacity-100 transition-opacity duration-300";
+                    container.className = "w-full grid grid-cols-1 md:grid-cols-2 gap-4 max-w-5xl mx-auto opacity-100 transition-opacity duration-300";
                     if(this.mode === 'flow') {
-                        container.className = "w-full grid grid-cols-1 gap-3 max-w-lg mx-auto opacity-100 transition-opacity duration-300";
+                        container.className = "w-full grid grid-cols-1 gap-4 max-w-2xl mx-auto opacity-100 transition-opacity duration-300";
                     }
                 }
             },
@@ -613,8 +638,8 @@
                 document.getElementById('score-display').textContent = this.score;
                 
                 const streakEl = document.getElementById('streak-display');
-                streakEl.innerHTML = `<i data-lucide="flame" class="w-3 h-3"></i> ${this.streak} Streak`;
-                streakEl.className = this.streak > 4 ? "text-orange-500 font-bold text-sm flex items-center gap-1 animate-pulse" : "text-slate-400 font-bold text-sm flex items-center gap-1";
+                streakEl.innerHTML = `<i data-lucide="flame" class="w-4 h-4"></i> ${this.streak} Streak`;
+                streakEl.className = this.streak > 4 ? "text-orange-500 font-bold text-sm md:text-base flex items-center gap-2 animate-pulse" : "text-slate-400 font-bold text-sm md:text-base flex items-center gap-2";
                 lucide.createIcons();
 
                 const livesContainer = document.getElementById('lives-display');
@@ -622,7 +647,7 @@
                 for(let i=0; i<3; i++) {
                     const heart = document.createElement('i');
                     heart.setAttribute('data-lucide', 'heart');
-                    heart.className = i < this.lives ? "w-6 h-6 text-red-500 fill-current" : "w-6 h-6 text-slate-700";
+                    heart.className = i < this.lives ? "w-6 h-6 md:w-8 md:h-8 text-red-500 fill-current" : "w-6 h-6 md:w-8 md:h-8 text-slate-700";
                     livesContainer.appendChild(heart);
                 }
                 lucide.createIcons();
@@ -663,18 +688,18 @@
                 const flowHint = document.getElementById('flow-hint');
                 
                 flowHint.classList.add('hidden');
-                cardEl.className = "absolute w-full max-w-md bg-white text-slate-900 rounded-2xl p-8 shadow-2xl flex flex-col items-center justify-center text-center transform transition-all duration-300 border-b-8 border-indigo-200";
+                cardEl.className = "absolute w-full max-w-2xl bg-white text-slate-900 rounded-3xl p-10 md:p-14 shadow-2xl flex flex-col items-center justify-center text-center transform transition-all duration-300 border-b-[12px] border-indigo-200 min-h-[250px]";
 
                 if (this.mode === 'doctor') {
                     labelEl.textContent = "Scenario";
-                    textEl.innerHTML = `<span class="text-xl">${this.currentCard.scenario}</span>`;
+                    textEl.innerHTML = `<span class="text-xl md:text-3xl leading-relaxed">${this.currentCard.scenario}</span>`;
                     cardEl.classList.replace('border-indigo-200', 'border-cyan-200');
                     this.generateDoctorOptions();
                 } else if (this.mode === 'io') {
                     labelEl.textContent = "Classify Item";
                     textEl.innerHTML = `
-                        <div class="text-3xl font-bold mb-2">${this.currentCard.item}</div>
-                        <div class="text-sm text-slate-500 font-medium bg-slate-100 px-3 py-1 rounded-full inline-block">Process: ${this.currentCard.process}</div>
+                        <div class="text-4xl md:text-6xl font-bold mb-4">${this.currentCard.item}</div>
+                        <div class="text-base md:text-lg text-slate-500 font-medium bg-slate-100 px-4 py-2 rounded-full inline-block">Process: ${this.currentCard.process}</div>
                     `;
                     cardEl.classList.replace('border-indigo-200', 'border-orange-200');
                     // Controls fixed in setup
@@ -714,7 +739,7 @@
                 options.forEach(opt => {
                     const btn = document.createElement('button');
                     btn.onclick = () => this.submit(opt);
-                    btn.className = "group relative bg-slate-800 border border-slate-700 hover:border-pink-500 hover:bg-pink-900/20 text-slate-300 hover:text-white p-6 rounded-xl transition-all duration-200 font-bold text-lg";
+                    btn.className = "group relative bg-slate-800 border border-slate-700 hover:border-pink-500 hover:bg-pink-900/20 text-slate-300 hover:text-white p-8 rounded-2xl transition-all duration-200 font-bold text-xl md:text-2xl h-full";
                     btn.textContent = opt;
                     container.appendChild(btn);
                 });
@@ -727,8 +752,8 @@
                 stepsShuffled.forEach((stepText) => {
                     const btn = document.createElement('button');
                     btn.onclick = (e) => this.submitFlow(stepText, e.currentTarget);
-                    btn.className = "group relative bg-slate-800 border border-slate-700 hover:border-emerald-500 hover:bg-emerald-900/20 text-slate-300 hover:text-white p-4 rounded-xl transition-all duration-200 font-medium text-lg flex items-center justify-between";
-                    btn.innerHTML = `<span>${stepText}</span><div class="w-6 h-6 rounded-full border-2 border-slate-600 flex items-center justify-center text-xs opacity-50">?</div>`;
+                    btn.className = "group relative bg-slate-800 border border-slate-700 hover:border-emerald-500 hover:bg-emerald-900/20 text-slate-300 hover:text-white p-6 rounded-2xl transition-all duration-200 font-medium text-lg md:text-xl flex items-center justify-between";
+                    btn.innerHTML = `<span>${stepText}</span><div class="w-8 h-8 rounded-full border-2 border-slate-600 flex items-center justify-center text-sm opacity-50">?</div>`;
                     container.appendChild(btn);
                 });
             },
@@ -741,7 +766,7 @@
                 options.forEach(opt => {
                     const btn = document.createElement('button');
                     btn.onclick = () => this.submit(opt);
-                    btn.className = "group relative bg-slate-800 border border-slate-700 hover:border-cyan-500 hover:bg-cyan-900/20 text-slate-300 hover:text-white p-4 rounded-xl transition-all duration-200 font-medium text-lg";
+                    btn.className = "group relative bg-slate-800 border border-slate-700 hover:border-cyan-500 hover:bg-cyan-900/20 text-slate-300 hover:text-white p-6 rounded-2xl transition-all duration-200 font-medium text-lg md:text-xl h-full";
                     btn.textContent = opt;
                     container.appendChild(btn);
                 });
@@ -755,7 +780,7 @@
                 options.forEach(opt => {
                     const btn = document.createElement('button');
                     btn.onclick = () => this.submit(opt);
-                    btn.className = "group relative bg-slate-800 border border-slate-700 hover:border-violet-500 hover:bg-violet-900/20 text-slate-300 hover:text-white p-4 rounded-xl transition-all duration-200 font-medium text-lg";
+                    btn.className = "group relative bg-slate-800 border border-slate-700 hover:border-violet-500 hover:bg-violet-900/20 text-slate-300 hover:text-white p-6 rounded-2xl transition-all duration-200 font-medium text-lg md:text-xl h-full";
                     btn.textContent = opt;
                     container.appendChild(btn);
                 });
@@ -808,7 +833,7 @@
                 if (answer === expectedStep) {
                     this.flowStep++;
                     btnElement.classList.add('btn-correct');
-                    btnElement.innerHTML = `<span>${answer}</span><div class="w-6 h-6 rounded-full bg-white text-green-600 flex items-center justify-center text-xs font-bold">${this.flowStep}</div>`;
+                    btnElement.innerHTML = `<span>${answer}</span><div class="w-8 h-8 rounded-full bg-white text-green-600 flex items-center justify-center text-sm font-bold">${this.flowStep}</div>`;
                     
                     if (this.flowStep >= this.currentCard.steps.length) {
                         clearInterval(this.timerInterval);
@@ -856,7 +881,7 @@
                 else if (this.mode === 'io') msg = this.currentCard.answer;
                 else if (this.mode === 'reverse') msg = this.currentCard.answer;
 
-                document.getElementById('card-text').innerHTML = `<span class="text-red-500 text-lg">Wrong! It was:</span><br/>${msg}`;
+                document.getElementById('card-text').innerHTML = `<span class="text-red-500 text-lg md:text-xl">Wrong! It was:</span><br/>${msg}`;
                 
                 this.updateHUD();
                 
@@ -872,8 +897,8 @@
             showFloatingText: function(text, colorClass) {
                 const hud = document.getElementById('score-display');
                 const el = document.createElement('div');
-                el.className = `absolute text-2xl font-bold ${colorClass} pop-score`;
-                el.style.left = `${hud.getBoundingClientRect().left + 20}px`;
+                el.className = `absolute text-4xl font-bold ${colorClass} pop-score`;
+                el.style.left = `${hud.getBoundingClientRect().left + 40}px`;
                 el.style.top = `${hud.getBoundingClientRect().top}px`;
                 el.textContent = text;
                 document.body.appendChild(el);
