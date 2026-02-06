@@ -25,6 +25,19 @@ const TEMPLATE_DATA = [
     icon: <Briefcase size={20} />,
     templates: [
       {
+        id: 'needs-assessment',
+        name: 'Needs Assessment',
+        description: 'Analyzes current business performance to identify the gap between the current and desired state.',
+        sections: [
+          { title: 'Problem or Opportunity Statement', type: 'textarea' },
+          { title: 'Current State (As-Is)', type: 'textarea' },
+          { title: 'Desired Future State (To-Be)', type: 'textarea' },
+          { title: 'Gap Analysis', type: 'textarea' },
+          { title: 'Root Cause Analysis', type: 'textarea' },
+          { title: 'Potential Solutions', type: 'table', columns: ['Solution Option', 'Feasibility', 'High-Level Cost', 'Recommendation'] }
+        ]
+      },
+      {
         id: 'business-case',
         name: 'Business Case',
         description: 'Justifies project expenditure, analyzing business needs and cost-benefit.',
