@@ -76,11 +76,51 @@ const TEMPLATE_DATA = [
         ]
       },
       {
+        id: 'team-charter',
+        name: 'Team Charter',
+        description: 'Document that records the team values, agreements, and operating guidelines.',
+        sections: [
+          { title: 'Team Values', type: 'textarea' },
+          { title: 'Communication Guidelines', type: 'textarea' },
+          { title: 'Decision-Making Process', type: 'textarea' },
+          { title: 'Conflict Resolution Process', type: 'textarea' },
+          { title: 'Meeting Guidelines', type: 'textarea' }
+        ]
+      },
+      {
         id: 'stakeholder-register',
         name: 'Stakeholder Register',
         description: 'Identifies stakeholders and analyzes their interest, influence, and impact.',
         sections: [
           { title: 'Stakeholder Analysis', type: 'table', columns: ['Name', 'Position', 'Role', 'Contact Info', 'Requirements', 'Expectations', 'Interest (H/L)', 'Power (H/L)', 'Classification (Int/Ext)'] }
+        ]
+      },
+      {
+        id: 'power-interest-grid',
+        name: 'Power/Interest Grid',
+        description: 'A technique to group stakeholders based on their level of authority (power) and their level of concern (interest).',
+        sections: [
+            { title: 'Stakeholder Analysis', type: 'table', columns: ['Stakeholder', 'Power (High/Low)', 'Interest (High/Low)', 'Quadrant', 'Management Strategy'] },
+            { title: 'Grid Analysis Notes', type: 'textarea' }
+        ]
+      },
+      {
+        id: 'salience-model',
+        name: 'Salience Model',
+        description: 'Describing classes of stakeholders based on their power (ability to impose their will), urgency (need for immediate attention), and legitimacy (their involvement is appropriate).',
+        sections: [
+            { title: 'Stakeholder Classification', type: 'table', columns: ['Stakeholder', 'Power (Y/N)', 'Urgency (Y/N)', 'Legitimacy (Y/N)', 'Class (e.g. Core, Dominant)', 'Priority'] },
+            { title: 'Engagement Approach', type: 'textarea' }
+        ]
+      },
+      {
+        id: 'stakeholder-engagement-matrix',
+        name: 'Stakeholder Engagement Assessment Matrix',
+        description: 'A matrix that compares current and desired stakeholder engagement levels.',
+        sections: [
+            { title: 'Assessment Matrix', type: 'table', columns: ['Stakeholder', 'Current Level (C)', 'Desired Level (D)', 'Strategy to Close Gap'] },
+             // Levels: Unaware, Resistant, Neutral, Supportive, Leading
+            { title: 'Communication Needs', type: 'textarea' }
         ]
       },
       {
@@ -100,6 +140,80 @@ const TEMPLATE_DATA = [
     icon: <FileText size={20} />,
     templates: [
       {
+        id: 'project-management-plan',
+        name: 'Project Management Plan',
+        description: 'The master document that defines how the project is executed, monitored, controlled, and closed.',
+        sections: [
+          { title: 'Project Lifecycle Description', type: 'textarea' },
+          { title: 'Development Approach (Predictive/Agile/Hybrid)', type: 'textarea' },
+          { 
+            title: 'Scope Baseline (Reference)', 
+            type: 'textarea',
+            placeholder: 'Example: Approved Version 1.0 includes:\n1. Project Scope Statement (Doc ID: PSS-001)\n2. WBS (Doc ID: WBS-001)\n3. WBS Dictionary (Doc ID: WBSD-001)\n\nKey deliverables defined: [List deliverables]'
+          },
+          { 
+            title: 'Schedule Baseline (Reference)', 
+            type: 'textarea',
+            placeholder: 'Example: Approved Project Schedule v1.0 (Gantt Chart).\nStart Date: Jan 1, 2024\nEnd Date: Dec 31, 2024\n\nKey Milestones:\n- Design Approved: Mar 15\n- MVP Release: Aug 20'
+          },
+          { 
+            title: 'Cost Baseline (Reference)', 
+            type: 'textarea',
+            placeholder: 'Example: Total Authorized Budget (BAC): $1,500,000.\n\nTime-Phased Budget:\n- Q1: $200k\n- Q2: $500k\n- Q3: $500k\n- Q4: $300k\n\nDoes not include Management Reserve of $150,000.'
+          },
+          { title: 'Subsidiary Plans List', type: 'textarea' },
+          { 
+            title: 'Performance Measurement Baseline', 
+            type: 'textarea',
+            placeholder: 'Example: Integrated Scope-Schedule-Cost baseline used for Earned Value Management (EVM).\n\nControl Accounts established at WBS Level 2.\nReporting Cycle: Monthly.\nVariance Thresholds: >10% Schedule or Cost variance requires corrective action plan.'
+          },
+          { title: 'Management Reviews', type: 'textarea' }
+        ]
+      },
+      {
+        id: 'scope-mgmt-plan',
+        name: 'Scope Management Plan',
+        description: 'Describes how the scope will be defined, developed, monitored, controlled, and validated.',
+        sections: [
+          { title: 'Process for Preparing Project Scope Statement', type: 'textarea' },
+          { title: 'Process for Creating WBS', type: 'textarea' },
+          { title: 'Process for Approving and Maintaining Scope Baseline', type: 'textarea' },
+          { title: 'Process for Formal Acceptance (Deliverables)', type: 'textarea' }
+        ]
+      },
+      {
+        id: 'req-mgmt-plan',
+        name: 'Requirements Management Plan',
+        description: 'Describes how project requirements will be analyzed, documented, and managed.',
+        sections: [
+          { title: 'Requirements Collection Method', type: 'textarea' },
+          { title: 'Prioritization Process', type: 'textarea' },
+          { title: 'Traceability Structure', type: 'textarea' },
+          { title: 'Configuration Management for Requirements', type: 'textarea' }
+        ]
+      },
+      {
+        id: 'req-documentation',
+        name: 'Requirements Documentation',
+        description: 'Describes how individual requirements meet the business need for the project.',
+        sections: [
+          { title: 'Business Requirements', type: 'textarea' },
+          { title: 'Stakeholder Requirements', type: 'textarea' },
+          { title: 'Solution Requirements (Functional)', type: 'textarea' },
+          { title: 'Solution Requirements (Non-Functional)', type: 'textarea' },
+          { title: 'Transition Requirements', type: 'textarea' },
+          { title: 'Assumptions and Dependencies', type: 'textarea' }
+        ]
+      },
+      {
+        id: 'req-trace-matrix',
+        name: 'Requirements Traceability Matrix (RTM)',
+        description: 'A grid that links product requirements from their origin to the deliverables that satisfy them.',
+        sections: [
+          { title: 'Traceability Matrix', type: 'table', columns: ['Req ID', 'Description', 'Business Need', 'WBS Deliverable', 'Product Design', 'Test Case', 'Status'] }
+        ]
+      },
+      {
         id: 'scope-statement',
         name: 'Project Scope Statement',
         description: 'Detailed description of the project scope, major deliverables, and exclusions.',
@@ -118,6 +232,22 @@ const TEMPLATE_DATA = [
         description: 'Hierarchical decomposition of the total scope of work.',
         sections: [
           { title: 'WBS Dictionary', type: 'table', columns: ['WBS Code', 'Work Package Name', 'Description of Work', 'Deliverables', 'Acceptance Criteria', 'Resources Req.', 'Cost Est.', 'Owner'] }
+        ]
+      },
+      {
+        id: 'activity-list',
+        name: 'Activity List',
+        description: 'A comprehensive list of all schedule activities required to complete the project.',
+        sections: [
+          { title: 'Activity List', type: 'table', columns: ['Activity ID', 'Activity Name', 'Description of Work', 'WBS Reference'] }
+        ]
+      },
+      {
+        id: 'activity-attributes',
+        name: 'Activity Attributes',
+        description: 'Detailed description of the attributes associated with each schedule activity.',
+        sections: [
+          { title: 'Activity Attributes', type: 'table', columns: ['Activity ID', 'Predecessors', 'Successors', 'Logical Relationship (FS/SS)', 'Leads/Lags', 'Resource Requirements', 'Constraints', 'Assumptions'] }
         ]
       },
       {
@@ -193,6 +323,19 @@ const TEMPLATE_DATA = [
         ]
       },
       {
+        id: 'procurement-plan',
+        name: 'Procurement Management Plan',
+        description: 'Describes how the project team will acquire goods and services from outside the performing organization.',
+        sections: [
+          { title: 'Procurement Strategy', type: 'textarea' },
+          { title: 'Contract Types (Fixed Price, T&M, Cost+)', type: 'textarea' },
+          { title: 'Procurement Phases', type: 'textarea' },
+          { title: 'Vendor Selection Criteria', type: 'table', columns: ['Criteria', 'Weight', 'Method of Evaluation'] },
+          { title: 'Procurement Risks', type: 'textarea' },
+          { title: 'Pre-qualified Sellers', type: 'textarea' }
+        ]
+      },
+      {
         id: 'stakeholder-engage-plan',
         name: 'Stakeholder Engagement Plan',
         description: 'Strategies to promote productive involvement of stakeholders.',
@@ -200,6 +343,29 @@ const TEMPLATE_DATA = [
           { title: 'Current vs Desired Engagement Levels', type: 'table', columns: ['Stakeholder', 'Current Level', 'Desired Level', 'Strategy to Close Gap'] },
           { title: 'Scope and Impact of Change to Stakeholders', type: 'textarea' },
           { title: 'Interrelationships Between Stakeholders', type: 'textarea' }
+        ]
+      },
+      {
+        id: 'change-mgmt-plan',
+        name: 'Change Management Plan',
+        description: 'Defines the process for managing changes to the project baselines.',
+        sections: [
+          { title: 'Change Control Process', type: 'textarea' },
+          { title: 'Change Control Board (CCB) Members', type: 'textarea' },
+          { title: 'CCB Roles & Responsibilities', type: 'textarea' },
+          { title: 'Change Request Tools', type: 'textarea' },
+          { title: 'Emergency Change Process', type: 'textarea' }
+        ]
+      },
+      {
+        id: 'config-mgmt-plan',
+        name: 'Configuration Management Plan',
+        description: 'Defines those items that are configurable, those that require formal change control, and the process for controlling changes to such items.',
+        sections: [
+          { title: 'Configurable Items (CIs)', type: 'textarea' },
+          { title: 'Version Control System', type: 'textarea' },
+          { title: 'Configuration Status Accounting', type: 'textarea' },
+          { title: 'Configuration Verification & Audits', type: 'textarea' }
         ]
       }
     ]
@@ -210,15 +376,29 @@ const TEMPLATE_DATA = [
     icon: <Activity size={20} />,
     templates: [
       {
-        id: 'team-charter',
-        name: 'Team Charter',
-        description: 'Document that records the team values, agreements, and operating guidelines.',
+        id: 'kickoff-agenda',
+        name: 'Kickoff Meeting Agenda',
+        description: 'Agenda for the meeting that formally initiates the execution phase of the project.',
         sections: [
-          { title: 'Team Values', type: 'textarea' },
-          { title: 'Communication Guidelines', type: 'textarea' },
-          { title: 'Decision-Making Process', type: 'textarea' },
-          { title: 'Conflict Resolution Process', type: 'textarea' },
-          { title: 'Meeting Guidelines', type: 'textarea' }
+          { title: 'Meeting Details (Date/Time/Location)', type: 'text' },
+          { title: 'Introductions & Icebreaker', type: 'textarea' },
+          { title: 'Project Vision & Goals', type: 'textarea' },
+          { title: 'Roles & Responsibilities Confirmation', type: 'textarea' },
+          { title: 'High-Level Timeline & Milestones', type: 'textarea' },
+          { title: 'Communication Plan Overview', type: 'textarea' },
+          { title: 'Q&A', type: 'textarea' }
+        ]
+      },
+      {
+        id: 'quality-report',
+        name: 'Quality Report',
+        description: 'Summarizes quality management issues, recommendations for process improvements, and quality metrics.',
+        sections: [
+          { title: 'Quality Status Summary', type: 'textarea' },
+          { title: 'Quality Metrics', type: 'table', columns: ['Metric', 'Target', 'Actual', 'Status (Pass/Fail)'] },
+          { title: 'Major Non-Conformities', type: 'textarea' },
+          { title: 'Process Improvement Recommendations', type: 'textarea' },
+          { title: 'Corrective Actions Status', type: 'textarea' }
         ]
       },
       {
@@ -256,6 +436,35 @@ const TEMPLATE_DATA = [
           { title: 'Recommendations for Improvement', type: 'textarea' },
           { title: 'Corrective Actions Required', type: 'textarea' }
         ]
+      },
+      {
+        id: 'team-performance',
+        name: 'Team Performance Assessment',
+        description: 'Evaluation of the project team\'s effectiveness and identifying areas for improvement.',
+        sections: [
+          { title: 'Evaluation Period', type: 'text' },
+          { title: 'Team Strengths', type: 'textarea' },
+          { title: 'Areas for Improvement', type: 'textarea' },
+          { title: 'Skill Gaps Identified', type: 'textarea' },
+          { title: 'Training/Development Plan', type: 'table', columns: ['Team Member', 'Training Activity', 'Target Date'] }
+        ]
+      },
+      {
+        id: 'quality-checklist',
+        name: 'Quality Checklist',
+        description: 'A structured tool used to verify that a set of required steps has been performed.',
+        sections: [
+          { title: 'Deliverable/Process Inspected', type: 'text' },
+          { title: 'Checklist Items', type: 'table', columns: ['Item Description', 'Criteria', 'Pass/Fail', 'Comments'] }
+        ]
+      },
+      {
+        id: 'physical-resource-assign',
+        name: 'Physical Resource Assignments',
+        description: 'Records the allocation of physical resources (materials, equipment, supplies) to project activities.',
+        sections: [
+          { title: 'Resource Assignments', type: 'table', columns: ['Resource Name', 'Type (Material/Equip)', 'Task/Activity', 'Date Required', 'Date Released', 'Location'] }
+        ]
       }
     ]
   },
@@ -275,6 +484,18 @@ const TEMPLATE_DATA = [
           { title: 'Milestones Planned Next Period', type: 'textarea' },
           { title: 'Key Issues & Risks', type: 'textarea' },
           { title: 'Financial Status (Budget vs Actual)', type: 'table', columns: ['Category', 'Budget', 'Actual', 'Variance'] }
+        ]
+      },
+      {
+        id: 'risk-report',
+        name: 'Risk Report',
+        description: 'Provides information on sources of overall project risk and summary information on identified individual project risks.',
+        sections: [
+          { title: 'Executive Summary (Overall Risk Exposure)', type: 'textarea' },
+          { title: 'Top Project Risks', type: 'table', columns: ['Rank', 'Risk ID', 'Risk Event', 'Current Score', 'Trend (Up/Down)'] },
+          { title: 'New Risks Identified This Period', type: 'textarea' },
+          { title: 'Closed Risks This Period', type: 'textarea' },
+          { title: 'Issues Realized', type: 'textarea' }
         ]
       },
       {
@@ -670,7 +891,7 @@ const TemplateContent = ({ template }) => {
             {section.type === 'textarea' && (
               <textarea 
                 className="w-full min-h-[120px] p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white resize-y print:bg-white print:border-none print:p-0 print:resize-none print:min-h-0"
-                placeholder={`Enter ${section.title}...`}
+                placeholder={section.placeholder || `Enter ${section.title}...`}
                 value={formData[section.title] || ''}
                 onChange={(e) => handleInputChange(section.title, e.target.value)}
               />
@@ -680,7 +901,7 @@ const TemplateContent = ({ template }) => {
               <input 
                 type="text" 
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white print:bg-white print:border-none print:p-0"
-                placeholder={`Enter ${section.title}...`}
+                placeholder={section.placeholder || `Enter ${section.title}...`}
                 value={formData[section.title] || ''}
                 onChange={(e) => handleInputChange(section.title, e.target.value)}
               />
@@ -740,7 +961,7 @@ const TemplateContent = ({ template }) => {
 
 // --- Main App Component ---
 
-export default function PMITemplateApp() {
+export default function App() {
   const [activeCategory, setActiveCategory] = useState('initiation');
   const [activeTemplateId, setActiveTemplateId] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
