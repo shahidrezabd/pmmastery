@@ -1,0 +1,864 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  Folder, 
+  FileText, 
+  ChevronDown, 
+  ChevronRight, 
+  Menu, 
+  X, 
+  Save, 
+  Printer, 
+  Briefcase,
+  CheckCircle,
+  Layout,
+  Activity,
+  Archive,
+  Zap,
+  Check
+} from 'lucide-react';
+
+// --- Data Structure for Templates ---
+const TEMPLATE_DATA = [
+  {
+    id: 'pre-project',
+    title: 'Pre-project Work',
+    icon: <Briefcase size={20} />,
+    templates: [
+      {
+        id: 'business-case',
+        name: 'Business Case',
+        description: 'Justifies project expenditure, analyzing business needs and cost-benefit.',
+        sections: [
+          { title: 'Executive Summary', type: 'textarea' },
+          { title: 'Business Problem / Opportunity', type: 'textarea' },
+          { title: 'Strategic Alignment', type: 'textarea' },
+          { title: 'Analysis of Alternatives', type: 'table', columns: ['Option', 'Pros', 'Cons', 'Estimated Cost', 'Risk Level'] },
+          { title: 'Financial Analysis', type: 'table', columns: ['Year', 'Investment Cost', 'Operational Cost', 'Revenue/Savings', 'Net Cash Flow'] },
+          { title: 'Recommendation', type: 'textarea' }
+        ]
+      },
+      {
+        id: 'benefits-plan',
+        name: 'Benefits Management Plan',
+        description: 'Defines how and when project benefits will be delivered and measured.',
+        sections: [
+          { title: 'Target Benefits', type: 'table', columns: ['Benefit Description', 'Metric/KPI', 'Baseline', 'Target Value', 'Timeline'] },
+          { title: 'Strategic Alignment', type: 'textarea' },
+          { title: 'Assumptions & Risks to Realization', type: 'textarea' },
+          { title: 'Benefits Owner', type: 'text' },
+          { title: 'Measurement Plan', type: 'textarea' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'initiation',
+    title: 'Initiation',
+    icon: <Layout size={20} />,
+    templates: [
+      {
+        id: 'project-charter',
+        name: 'Project Charter',
+        description: 'Formally authorizes the project, assigns the PM, and outlines high-level requirements.',
+        sections: [
+          { title: 'Project Title & Code', type: 'text' },
+          { title: 'Project Purpose & Justification', type: 'textarea' },
+          { title: 'High-Level Scope', type: 'textarea' },
+          { title: 'Out of Scope (Exclusions)', type: 'textarea' },
+          { title: 'Key Deliverables', type: 'textarea' },
+          { title: 'Success Criteria', type: 'textarea' },
+          { title: 'High-Level Risks', type: 'table', columns: ['Risk Category', 'Risk Description', 'Potential Impact'] },
+          { title: 'Summary Milestone Schedule', type: 'table', columns: ['Milestone', 'Target Date'] },
+          { title: 'Pre-Approved Financial Resources', type: 'text' },
+          { title: 'Key Stakeholders', type: 'textarea' },
+          { title: 'Project Manager Authority Level', type: 'textarea' },
+          { title: 'Sponsor Signature', type: 'text' }
+        ]
+      },
+      {
+        id: 'stakeholder-register',
+        name: 'Stakeholder Register',
+        description: 'Identifies stakeholders and analyzes their interest, influence, and impact.',
+        sections: [
+          { title: 'Stakeholder Analysis', type: 'table', columns: ['Name', 'Position', 'Role', 'Contact Info', 'Requirements', 'Expectations', 'Interest (H/L)', 'Power (H/L)', 'Classification (Int/Ext)'] }
+        ]
+      },
+      {
+        id: 'assumption-log',
+        name: 'Assumption Log',
+        description: 'Records all assumptions and constraints throughout the project lifecycle.',
+        sections: [
+          { title: 'Assumptions', type: 'table', columns: ['ID', 'Assumption Description', 'Validation Date', 'Status', 'Owner'] },
+          { title: 'Constraints', type: 'table', columns: ['ID', 'Constraint Description', 'Category (Scope/Time/Cost)', 'Impact'] }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'planning',
+    title: 'Planning',
+    icon: <FileText size={20} />,
+    templates: [
+      {
+        id: 'scope-statement',
+        name: 'Project Scope Statement',
+        description: 'Detailed description of the project scope, major deliverables, and exclusions.',
+        sections: [
+          { title: 'Project Scope Description', type: 'textarea' },
+          { title: 'Project Deliverables', type: 'textarea' },
+          { title: 'Acceptance Criteria', type: 'textarea' },
+          { title: 'Project Exclusions', type: 'textarea' },
+          { title: 'Constraints', type: 'textarea' },
+          { title: 'Assumptions', type: 'textarea' }
+        ]
+      },
+      {
+        id: 'wbs',
+        name: 'Work Breakdown Structure (WBS)',
+        description: 'Hierarchical decomposition of the total scope of work.',
+        sections: [
+          { title: 'WBS Dictionary', type: 'table', columns: ['WBS Code', 'Work Package Name', 'Description of Work', 'Deliverables', 'Acceptance Criteria', 'Resources Req.', 'Cost Est.', 'Owner'] }
+        ]
+      },
+      {
+        id: 'schedule-mgmt-plan',
+        name: 'Schedule Management Plan',
+        description: 'Establishes criteria and activities for developing, monitoring, and controlling the schedule.',
+        sections: [
+          { title: 'Scheduling Methodology', type: 'textarea' },
+          { title: 'Level of Accuracy', type: 'text' },
+          { title: 'Units of Measure', type: 'text' },
+          { title: 'Control Thresholds', type: 'textarea' },
+          { title: 'Performance Measurement Rules', type: 'textarea' },
+          { title: 'Reporting Formats', type: 'textarea' }
+        ]
+      },
+      {
+        id: 'cost-mgmt-plan',
+        name: 'Cost Management Plan',
+        description: 'Describes how project costs will be planned, structured, and controlled.',
+        sections: [
+          { title: 'Units of Measure', type: 'text' },
+          { title: 'Level of Precision', type: 'text' },
+          { title: 'Control Thresholds', type: 'textarea' },
+          { title: 'Performance Measurement (EVM) Rules', type: 'textarea' },
+          { title: 'Reporting Formats', type: 'textarea' }
+        ]
+      },
+      {
+        id: 'quality-mgmt-plan',
+        name: 'Quality Management Plan',
+        description: 'Identifies quality requirements and specifies how the project will demonstrate compliance.',
+        sections: [
+          { title: 'Quality Standards', type: 'textarea' },
+          { title: 'Quality Objectives', type: 'textarea' },
+          { title: 'Quality Roles & Responsibilities', type: 'textarea' },
+          { title: 'Quality Control Activities', type: 'table', columns: ['Deliverable', 'QC Activity', 'Frequency', 'Acceptance Criteria'] }
+        ]
+      },
+      {
+        id: 'resource-mgmt-plan',
+        name: 'Resource Management Plan',
+        description: 'Provides guidance on how project resources should be categorized, allocated, managed, and released.',
+        sections: [
+          { title: 'Identification of Resources', type: 'textarea' },
+          { title: 'Acquisition Strategy', type: 'textarea' },
+          { title: 'Roles and Responsibilities', type: 'table', columns: ['Role', 'Authority', 'Responsibility', 'Competence'] },
+          { title: 'Training Needs', type: 'textarea' },
+          { title: 'Recognition and Rewards', type: 'textarea' }
+        ]
+      },
+      {
+        id: 'comm-plan',
+        name: 'Communications Management Plan',
+        description: 'Outlines how, when, and by whom information will be administered.',
+        sections: [
+          { title: 'Stakeholder Communication Requirements', type: 'textarea' },
+          { title: 'Communication Matrix', type: 'table', columns: ['Stakeholder/Group', 'Information Needed', 'Frequency', 'Method/Technology', 'Sender', 'Receiver'] },
+          { title: 'Escalation Process', type: 'textarea' },
+          { title: 'Glossary of Common Terms', type: 'textarea' }
+        ]
+      },
+      {
+        id: 'risk-mgmt-plan',
+        name: 'Risk Management Plan',
+        description: 'Describes how risk management activities will be structured and performed.',
+        sections: [
+          { title: 'Risk Strategy', type: 'textarea' },
+          { title: 'Methodology', type: 'textarea' },
+          { title: 'Roles and Responsibilities', type: 'textarea' },
+          { title: 'Risk Categories (RBS)', type: 'textarea' },
+          { title: 'Risk Probability & Impact Matrix', type: 'textarea' },
+          { title: 'Stakeholder Risk Tolerances', type: 'textarea' }
+        ]
+      },
+      {
+        id: 'stakeholder-engage-plan',
+        name: 'Stakeholder Engagement Plan',
+        description: 'Strategies to promote productive involvement of stakeholders.',
+        sections: [
+          { title: 'Current vs Desired Engagement Levels', type: 'table', columns: ['Stakeholder', 'Current Level', 'Desired Level', 'Strategy to Close Gap'] },
+          { title: 'Scope and Impact of Change to Stakeholders', type: 'textarea' },
+          { title: 'Interrelationships Between Stakeholders', type: 'textarea' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'execution',
+    title: 'Execution',
+    icon: <Activity size={20} />,
+    templates: [
+      {
+        id: 'team-charter',
+        name: 'Team Charter',
+        description: 'Document that records the team values, agreements, and operating guidelines.',
+        sections: [
+          { title: 'Team Values', type: 'textarea' },
+          { title: 'Communication Guidelines', type: 'textarea' },
+          { title: 'Decision-Making Process', type: 'textarea' },
+          { title: 'Conflict Resolution Process', type: 'textarea' },
+          { title: 'Meeting Guidelines', type: 'textarea' }
+        ]
+      },
+      {
+        id: 'issue-log',
+        name: 'Issue Log',
+        description: 'Tracks obstacles that can impact project objectives.',
+        sections: [
+          { title: 'Issue Tracker', type: 'table', columns: ['ID', 'Type', 'Issue Description', 'Priority', 'Reported By', 'Assigned To', 'Target Resolution Date', 'Status'] }
+        ]
+      },
+      {
+        id: 'decision-log',
+        name: 'Decision Log',
+        description: 'A record of all significant decisions made during the project.',
+        sections: [
+          { title: 'Decisions', type: 'table', columns: ['ID', 'Decision Description', 'Date Made', 'Decision Maker', 'Rationale', 'Stakeholders Consulted', 'Status'] }
+        ]
+      },
+      {
+        id: 'change-log',
+        name: 'Change Log',
+        description: 'Used to track the status of change requests throughout the project.',
+        sections: [
+          { title: 'Change Requests', type: 'table', columns: ['CR ID', 'Date', 'Requestor', 'Description', 'Category', 'Impact Analysis', 'CCB Decision', 'Implementation Date'] }
+        ]
+      },
+      {
+        id: 'quality-audit',
+        name: 'Quality Audit Report',
+        description: 'Review to determine if project activities comply with organizational and project policies.',
+        sections: [
+          { title: 'Audit Details', type: 'table', columns: ['Audit Date', 'Auditor', 'Area/Process Audited'] },
+          { title: 'Good Practices Identified', type: 'textarea' },
+          { title: 'Non-Conformities / Gaps', type: 'textarea' },
+          { title: 'Recommendations for Improvement', type: 'textarea' },
+          { title: 'Corrective Actions Required', type: 'textarea' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'monitoring',
+    title: 'Monitoring & Control',
+    icon: <CheckCircle size={20} />,
+    templates: [
+      {
+        id: 'status-report',
+        name: 'Project Status Report',
+        description: 'Regular report communicating project status to stakeholders.',
+        sections: [
+          { title: 'Report Period', type: 'text' },
+          { title: 'Executive Summary (R/A/G Status)', type: 'textarea' },
+          { title: 'Milestones Completed This Period', type: 'textarea' },
+          { title: 'Milestones Planned Next Period', type: 'textarea' },
+          { title: 'Key Issues & Risks', type: 'textarea' },
+          { title: 'Financial Status (Budget vs Actual)', type: 'table', columns: ['Category', 'Budget', 'Actual', 'Variance'] }
+        ]
+      },
+      {
+        id: 'change-request',
+        name: 'Change Request Form',
+        description: 'Formal proposal to modify any document, deliverable, or baseline.',
+        sections: [
+          { title: 'Requestor Info', type: 'text' },
+          { title: 'Description of Change', type: 'textarea' },
+          { title: 'Reason for Change', type: 'textarea' },
+          { title: 'Alternatives Considered', type: 'textarea' },
+          { title: 'Impact Analysis', type: 'table', columns: ['Area', 'Impact Description'] }, // Rows: Scope, Schedule, Cost, Quality
+          { title: 'Resources Required', type: 'textarea' },
+          { title: 'Approver Signature', type: 'text' }
+        ]
+      },
+      {
+        id: 'risk-register',
+        name: 'Risk Register',
+        description: 'Repository for all identified project risks and their status.',
+        sections: [
+          { title: 'Active Risks', type: 'table', columns: ['ID', 'Risk Event', 'Category', 'Probability (1-5)', 'Impact (1-5)', 'Risk Score', 'Owner', 'Response Strategy', 'Response Plan', 'Status'] }
+        ]
+      },
+      {
+        id: 'evm-report',
+        name: 'Earned Value Analysis',
+        description: 'Quantitative analysis of project performance.',
+        sections: [
+          { title: 'Data Date', type: 'text' },
+          { title: 'EVM Metrics', type: 'table', columns: ['Metric', 'Value', 'Interpretation'] }, // PV, EV, AC, SV, CV, SPI, CPI
+          { title: 'Forecasts', type: 'table', columns: ['Metric', 'Value'] }, // BAC, ETC, EAC, VAC, TCPI
+          { title: 'Variance Explanation', type: 'textarea' },
+          { title: 'Corrective Actions', type: 'textarea' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'closing',
+    title: 'Closing',
+    icon: <Archive size={20} />,
+    templates: [
+      {
+        id: 'final-report',
+        name: 'Final Project Report',
+        description: 'Summary of project performance and confirmation of success.',
+        sections: [
+          { title: 'Project Summary', type: 'textarea' },
+          { title: 'Scope Objectives Validation', type: 'textarea' },
+          { title: 'Schedule Objectives Validation', type: 'textarea' },
+          { title: 'Cost Objectives Validation', type: 'textarea' },
+          { title: 'Summary of Risks Encountered', type: 'textarea' },
+          { title: 'Project Acceptance', type: 'text' }
+        ]
+      },
+      {
+        id: 'lessons-learned',
+        name: 'Lessons Learned Register',
+        description: 'Records knowledge gained during the project for future use.',
+        sections: [
+          { title: 'Lessons Learned', type: 'table', columns: ['Category', 'What Happened', 'What Went Well', 'What Went Wrong', 'Root Cause', 'Recommendation for Future'] }
+        ]
+      },
+      {
+        id: 'transition-plan',
+        name: 'Project Transition Plan',
+        description: 'Plan to transition the project product to operations or the client.',
+        sections: [
+          { title: 'Transition Strategy', type: 'textarea' },
+          { title: 'Operational Readiness Criteria', type: 'textarea' },
+          { title: 'Training & Knowledge Transfer', type: 'textarea' },
+          { title: 'Warranty & Support Period', type: 'text' },
+          { title: 'Handover Sign-off', type: 'text' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'agile',
+    title: 'Agile Artifacts',
+    icon: <Zap size={20} />,
+    templates: [
+      {
+        id: 'product-vision',
+        name: 'Product Vision Board',
+        description: 'High-level visualization of the product goals and target audience.',
+        sections: [
+          { title: 'Target Group', type: 'textarea' },
+          { title: 'Customer Needs', type: 'textarea' },
+          { title: 'Product Features (USP)', type: 'textarea' },
+          { title: 'Business Goals', type: 'textarea' }
+        ]
+      },
+      {
+        id: 'lean-canvas',
+        name: 'Lean Canvas',
+        description: '1-page business plan template that helps you deconstruct your idea into its key assumptions.',
+        sections: [
+            { title: 'Problem', type: 'textarea' },
+            { title: 'Solution', type: 'textarea' },
+            { title: 'Unique Value Proposition', type: 'textarea' },
+            { title: 'Unfair Advantage', type: 'textarea' },
+            { title: 'Customer Segments', type: 'textarea' },
+            { title: 'Key Metrics', type: 'textarea' },
+            { title: 'Channels', type: 'textarea' },
+            { title: 'Cost Structure', type: 'textarea' },
+            { title: 'Revenue Streams', type: 'textarea' }
+        ]
+      },
+      {
+        id: 'okr-template',
+        name: 'OKRs (Objectives & Key Results)',
+        description: 'Collaborative goal-setting tool used to set challenging, ambitious goals with measurable results.',
+        sections: [
+          { title: 'Objective', type: 'textarea' },
+          { title: 'Cycle / Timeframe', type: 'text' },
+          { title: 'Owner', type: 'text' },
+          { title: 'Key Results', type: 'table', columns: ['Key Result (Outcome)', 'Metric', 'Start Value', 'Target Value', 'Current Value', 'Status'] },
+          { title: 'Initiatives (Outputs to achieve KR)', type: 'textarea' }
+        ]
+      },
+      {
+        id: 'impact-mapping',
+        name: 'Impact Mapping',
+        description: 'Strategic planning technique that prevents organizations from getting lost while building products and delivering projects.',
+        sections: [
+            { title: 'Goal (Why are we doing this?)', type: 'textarea' },
+            { title: 'Mapping Matrix', type: 'table', columns: ['Actor (Who)', 'Impact (How behavior changes)', 'Deliverable (What we do)', 'Priority'] }
+        ]
+      },
+      {
+        id: 'user-persona',
+        name: 'User Persona',
+        description: 'Fictional character created to represent a user type that might use a site, brand, or product in a similar way.',
+        sections: [
+            { title: 'Name & Role', type: 'text' },
+            { title: 'Demographics (Age, Location, Education)', type: 'text' },
+            { title: 'Bio / Background', type: 'textarea' },
+            { title: 'Goals & Motivations', type: 'textarea' },
+            { title: 'Frustrations & Pain Points', type: 'textarea' },
+            { title: 'Tech Proficiency & Behavior', type: 'textarea' }
+        ]
+      },
+      {
+        id: 'empathy-map',
+        name: 'Empathy Map',
+        description: 'Collaborative visualization used to articulate what we know about a particular type of user.',
+        sections: [
+            { title: 'Target User', type: 'text' },
+            { title: 'SAYS (What are some quotes and defining words?)', type: 'textarea' },
+            { title: 'THINKS (What is occupying their thoughts?)', type: 'textarea' },
+            { title: 'DOES (What actions do they take?)', type: 'textarea' },
+            { title: 'FEELS (What is their emotional state?)', type: 'textarea' },
+            { title: 'PAINS (Fears, frustrations, obstacles)', type: 'textarea' },
+            { title: 'GAINS (Hopes, dreams, wins)', type: 'textarea' }
+        ]
+      },
+      {
+        id: 'agile-roadmap',
+        name: 'Product Roadmap',
+        description: 'Strategic plan that describes the likely development path.',
+        sections: [
+          { title: 'Milestones / Releases', type: 'table', columns: ['Timeframe', 'Goal/Theme', 'Key Features/Epics', 'Status'] }
+        ]
+      },
+      {
+        id: 'release-plan',
+        name: 'Release Plan',
+        description: 'Outlines the schedule, scope, and execution steps for an upcoming product release.',
+        sections: [
+          { title: 'Release Version & Target Date', type: 'text' },
+          { title: 'Release Goal / Theme', type: 'textarea' },
+          { title: 'Scope (Features / Epics)', type: 'table', columns: ['Feature ID', 'Feature Name', 'Priority', 'Owner', 'Status'] },
+          { title: 'Deployment Strategy', type: 'textarea' },
+          { title: 'Release Criteria (Go/No-Go)', type: 'textarea' },
+          { title: 'Rollback Plan', type: 'textarea' },
+          { title: 'Communication Plan', type: 'textarea' }
+        ]
+      },
+      {
+        id: 'user-story',
+        name: 'User Story Card',
+        description: 'Smallest unit of work in an agile framework, INVEST compliant.',
+        sections: [
+          { title: 'Title & ID', type: 'text' },
+          { title: 'Narrative (As a... I want to... So that...)', type: 'textarea' },
+          { title: 'Acceptance Criteria (Gherkin/Checklist)', type: 'textarea' },
+          { title: 'Priority (MoSCoW)', type: 'text' },
+          { title: 'Story Points', type: 'text' },
+          { title: 'Dependencies', type: 'text' }
+        ]
+      },
+      {
+        id: 'definition-of-ready',
+        name: 'Definition of Ready (DoR)',
+        description: 'Criteria that a specific user story has to meet before being accepted into a sprint.',
+        sections: [
+            { title: 'General Story Criteria (e.g. INVEST)', type: 'textarea' },
+            { title: 'Readiness Checklist', type: 'table', columns: ['Criteria', 'Description', 'Required? (Y/N)', 'Status'] },
+            { title: 'Dependencies & Risks', type: 'textarea' }
+        ]
+      },
+      {
+        id: 'product-backlog',
+        name: 'Product Backlog',
+        description: 'Prioritized list of work for the development team.',
+        sections: [
+          { title: 'Backlog Items', type: 'table', columns: ['Rank', 'Item Name', 'Description', 'Value/Priority', 'Estimate (Pts)', 'Sprint'] }
+        ]
+      },
+      {
+        id: 'sprint-backlog',
+        name: 'Sprint Backlog',
+        description: 'Set of backlog items selected for the sprint.',
+        sections: [
+          { title: 'Sprint Goal', type: 'textarea' },
+          { title: 'Tasks', type: 'table', columns: ['User Story Ref', 'Task Description', 'Owner', 'Est. Hours', 'Status (Todo/Doing/Done)'] }
+        ]
+      },
+      {
+        id: 'definition-of-done',
+        name: 'Definition of Done (DoD)',
+        description: 'Agreed upon set of items that must be completed before a user story is considered done.',
+        sections: [
+          { title: 'Code Quality Criteria', type: 'textarea' },
+          { title: 'Testing Criteria', type: 'textarea' },
+          { title: 'Documentation Criteria', type: 'textarea' },
+          { title: 'Security/Compliance Criteria', type: 'textarea' }
+        ]
+      },
+      {
+        id: 'retrospective',
+        name: 'Sprint Retrospective',
+        description: 'Meeting to discuss what went well and what can be improved.',
+        sections: [
+          { title: 'Sprint Details', type: 'text' },
+          { title: 'What went well?', type: 'textarea' },
+          { title: 'What did not go well?', type: 'textarea' },
+          { title: 'Action Items', type: 'table', columns: ['Action', 'Owner', 'Due Date'] }
+        ]
+      }
+    ]
+  }
+];
+
+// --- Sub-Components ---
+
+// Refactored to be a Controlled Component
+const TableInput = ({ columns, data, onChange }) => {
+  // Ensure data is always an array
+  const rows = Array.isArray(data) && data.length > 0 ? data : [{}];
+
+  const addRow = () => {
+    onChange([...rows, {}]);
+  };
+
+  const updateCell = (rowIndex, col, value) => {
+    const newRows = [...rows];
+    newRows[rowIndex] = { ...newRows[rowIndex], [col]: value };
+    onChange(newRows);
+  };
+
+  const removeRow = (rowIndex) => {
+    if (rows.length > 1) {
+      const newRows = rows.filter((_, idx) => idx !== rowIndex);
+      onChange(newRows);
+    }
+  };
+
+  return (
+    <div className="overflow-x-auto border border-gray-200 rounded-lg print:border-black print:border-2">
+      <table className="w-full text-sm text-left text-gray-500 print:text-black">
+        <thead className="text-xs text-gray-700 uppercase bg-gray-50 print:bg-gray-200 print:text-black">
+          <tr>
+            {columns.map((col) => (
+              <th key={col} className="px-6 py-3 border-r border-gray-200 last:border-0 print:border-black min-w-[150px]">{col}</th>
+            ))}
+            <th className="px-2 py-3 w-10 print:hidden"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, rowIndex) => (
+            <tr key={rowIndex} className="bg-white border-b hover:bg-gray-50 print:border-black">
+              {columns.map((col) => (
+                <td key={col} className="px-2 py-2 border-r border-gray-200 last:border-0 print:border-black">
+                  <input
+                    type="text"
+                    className="w-full p-1 border-none focus:ring-0 bg-transparent print:text-black"
+                    placeholder="..."
+                    value={row[col] || ''}
+                    onChange={(e) => updateCell(rowIndex, col, e.target.value)}
+                  />
+                </td>
+              ))}
+               <td className="px-2 py-2 text-center print:hidden">
+                 {rows.length > 1 && (
+                   <button 
+                     onClick={() => removeRow(rowIndex)}
+                     className="text-gray-400 hover:text-red-500"
+                   >
+                     <X size={14} />
+                   </button>
+                 )}
+               </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <button 
+        onClick={addRow}
+        className="w-full py-2 text-sm text-blue-600 font-medium hover:bg-blue-50 transition-colors print:hidden"
+      >
+        + Add Row
+      </button>
+    </div>
+  );
+};
+
+const TemplateContent = ({ template }) => {
+  const [formData, setFormData] = useState({});
+  const [saveStatus, setSaveStatus] = useState('idle'); // 'idle', 'saving', 'saved'
+
+  // Load data from localStorage when template changes
+  useEffect(() => {
+    if (template) {
+      setSaveStatus('idle');
+      const savedData = localStorage.getItem(`pmi_template_${template.id}`);
+      if (savedData) {
+        try {
+          setFormData(JSON.parse(savedData));
+        } catch (e) {
+          console.error("Error parsing saved data", e);
+          setFormData({});
+        }
+      } else {
+        setFormData({});
+      }
+    }
+  }, [template]);
+
+  const handleInputChange = (sectionTitle, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [sectionTitle]: value
+    }));
+    if (saveStatus === 'saved') setSaveStatus('idle');
+  };
+
+  const handleSave = () => {
+    if (!template) return;
+    setSaveStatus('saving');
+    
+    // Simulate a small delay for better UX
+    setTimeout(() => {
+      localStorage.setItem(`pmi_template_${template.id}`, JSON.stringify(formData));
+      setSaveStatus('saved');
+      
+      // Reset status after 3 seconds
+      setTimeout(() => setSaveStatus('idle'), 3000);
+    }, 500);
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  if (!template) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-gray-400 print:hidden">
+        <FileText size={64} className="mb-4 text-gray-200" />
+        <p className="text-lg">Select a template from the sidebar to begin</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-xl overflow-hidden min-h-[800px] flex flex-col print:shadow-none print:min-h-0 print:block">
+      {/* Header */}
+      <div className="bg-blue-700 text-white p-8 print:bg-white print:text-black print:p-0 print:mb-6 print:border-b-2 print:border-black">
+        <h1 className="text-3xl font-bold mb-2 print:text-4xl">{template.name}</h1>
+        <p className="text-blue-100 opacity-90 print:text-gray-600 print:italic">{template.description}</p>
+      </div>
+
+      {/* Form Body */}
+      <div className="p-8 space-y-8 flex-grow print:p-0 print:space-y-6">
+        {template.sections.map((section, idx) => (
+          <div key={idx} className="space-y-3 print:break-inside-avoid">
+            <label className="block text-sm font-bold text-gray-700 uppercase tracking-wide border-b border-gray-200 pb-1 print:text-black print:border-black">
+              {section.title}
+            </label>
+            
+            {section.type === 'textarea' && (
+              <textarea 
+                className="w-full min-h-[120px] p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white resize-y print:bg-white print:border-none print:p-0 print:resize-none print:min-h-0"
+                placeholder={`Enter ${section.title}...`}
+                value={formData[section.title] || ''}
+                onChange={(e) => handleInputChange(section.title, e.target.value)}
+              />
+            )}
+            
+            {section.type === 'text' && (
+              <input 
+                type="text" 
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white print:bg-white print:border-none print:p-0"
+                placeholder={`Enter ${section.title}...`}
+                value={formData[section.title] || ''}
+                onChange={(e) => handleInputChange(section.title, e.target.value)}
+              />
+            )}
+
+            {section.type === 'table' && (
+              <TableInput 
+                columns={section.columns} 
+                data={formData[section.title]}
+                onChange={(newData) => handleInputChange(section.title, newData)}
+              />
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Footer Actions */}
+      <div className="bg-gray-50 p-6 border-t border-gray-100 flex justify-between items-center print:hidden">
+        
+        {/* Save Status Indicator */}
+        <div className="flex items-center gap-2 h-8">
+           {saveStatus === 'saved' && (
+             <span className="flex items-center gap-2 text-green-600 text-sm font-medium animate-in fade-in slide-in-from-bottom-2">
+               <CheckCircle size={16} /> Saved to Local Storage
+             </span>
+           )}
+           {saveStatus === 'saving' && (
+             <span className="text-gray-400 text-sm">Saving...</span>
+           )}
+        </div>
+
+        <div className="flex gap-3">
+          <button 
+            onClick={handlePrint}
+            className="flex items-center gap-2 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors shadow-sm active:scale-95 transform"
+          >
+            <Printer size={16} />
+            Print / PDF
+          </button>
+          
+          <button 
+            onClick={handleSave}
+            disabled={saveStatus === 'saving'}
+            className={`
+              flex items-center gap-2 px-6 py-2 rounded-lg text-white shadow-md transition-all active:scale-95 transform
+              ${saveStatus === 'saved' ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'}
+            `}
+          >
+            {saveStatus === 'saved' ? <Check size={16} /> : <Save size={16} />}
+            {saveStatus === 'saved' ? 'Saved' : 'Save Draft'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- Main App Component ---
+
+export default function PMITemplateApp() {
+  const [activeCategory, setActiveCategory] = useState('initiation');
+  const [activeTemplateId, setActiveTemplateId] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  const toggleCategory = (id) => {
+    setActiveCategory(activeCategory === id ? null : id);
+  };
+
+  const handleTemplateClick = (templateId) => {
+    setActiveTemplateId(templateId);
+    // On mobile, close sidebar after selection
+    if (window.innerWidth < 768) {
+      setIsSidebarOpen(false);
+    }
+  };
+
+  const currentTemplate = TEMPLATE_DATA
+    .flatMap(cat => cat.templates)
+    .find(t => t.id === activeTemplateId);
+
+  return (
+    <div className="flex h-screen bg-gray-100 text-slate-900 font-sans overflow-hidden print:h-auto print:overflow-visible">
+      
+      {/* Mobile Header - Hidden on Print */}
+      <div className="md:hidden fixed top-0 w-full bg-blue-800 text-white z-20 flex items-center p-4 shadow-md print:hidden">
+        <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-1 mr-4">
+          <Menu size={24} />
+        </button>
+        <h1 className="font-bold text-lg">PMBOK Toolkit</h1>
+      </div>
+
+      {/* Sidebar - Hidden on Print */}
+      <aside 
+        className={`
+          fixed md:static inset-y-0 left-0 z-10
+          w-72 bg-slate-900 text-slate-300 flex flex-col
+          transform transition-transform duration-300 ease-in-out
+          ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+          md:translate-x-0 shadow-2xl
+          print:hidden
+        `}
+      >
+        <div className="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-950">
+          <div className="flex items-center gap-3 text-white">
+            <div className="bg-blue-600 p-2 rounded-lg">
+              <Folder size={20} />
+            </div>
+            <div>
+              <h1 className="font-bold text-lg leading-tight">PM Templates</h1>
+              <span className="text-xs text-slate-400">Standard & Agile</span>
+            </div>
+          </div>
+          <button onClick={() => setIsSidebarOpen(false)} className="md:hidden text-white">
+            <X size={24} />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto py-4 custom-scrollbar">
+          {TEMPLATE_DATA.map((category) => (
+            <div key={category.id} className="mb-1">
+              <button
+                onClick={() => toggleCategory(category.id)}
+                className={`
+                  w-full flex items-center justify-between px-6 py-3 text-sm font-medium transition-colors
+                  ${activeCategory === category.id ? 'text-white bg-slate-800 border-l-4 border-blue-500' : 'hover:text-white hover:bg-slate-800/50 border-l-4 border-transparent'}
+                `}
+              >
+                <div className="flex items-center gap-3">
+                  {category.icon}
+                  <span>{category.title}</span>
+                </div>
+                {activeCategory === category.id ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+              </button>
+
+              {/* Submenu */}
+              {activeCategory === category.id && (
+                <div className="bg-slate-950/30 py-2">
+                  {category.templates.map((template) => (
+                    <button
+                      key={template.id}
+                      onClick={() => handleTemplateClick(template.id)}
+                      className={`
+                        w-full text-left pl-14 pr-6 py-2 text-sm transition-all
+                        flex items-center gap-2
+                        ${activeTemplateId === template.id 
+                          ? 'text-blue-400 bg-blue-900/20 font-medium' 
+                          : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/30'}
+                      `}
+                    >
+                      <FileText size={14} />
+                      {template.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+        
+        <div className="p-4 border-t border-slate-800 text-xs text-slate-500 text-center">
+          © 2026 PM Toolkit v1.0
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 overflow-y-auto pt-16 md:pt-0 relative print:overflow-visible print:h-auto print:pt-0">
+        <div className="p-4 md:p-8 min-h-full print:p-0">
+           <TemplateContent template={currentTemplate} />
+        </div>
+      </main>
+
+      {/* Overlay for mobile when sidebar is open */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-0 md:hidden print:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+    </div>
+  );
+}
