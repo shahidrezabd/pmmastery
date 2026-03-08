@@ -1,0 +1,463 @@
+import React, { useState, useEffect, useMemo } from 'react';
+import { 
+  Shuffle, 
+  RotateCcw, 
+  CheckCircle, 
+  HelpCircle, 
+  Trophy, 
+  ChevronRight, 
+  ChevronLeft,
+  Lightbulb,
+  Layers,
+  Zap,
+  Target,
+  Users,
+  BarChart3,
+  TrendingDown,
+  Anchor,
+  Compass,
+  Map,
+  Shield,
+  Activity,
+  Award
+} from 'lucide-react';
+
+// Define custom icons first
+const Clock = ({ className }) => (
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+  </svg>
+);
+
+const Rocket = ({ className }) => (
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/>
+    <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/>
+    <path d="M9 12H4s.5-1 1-4c1.5 0 3 .5 3 .5L9 12z"/>
+    <path d="M15 15v5s-1-.5-4-1c0-1.5.5-3 .5-3L15 15z"/>
+    <line x1="11.5" y1="15.5" x2="15.5" y2="11.5"/>
+  </svg>
+);
+
+const topicsData = [
+  // ORIGINAL 50 ITEMS (IDs 1-50)
+  { id: 1, category: "Scrum", title: "Product Owner", text: "The 'Value Maximizer.' Accountable for the Product Backlog and ensuring the team builds the right thing.", icon: <Target className="text-red-500" />, color: "bg-red-50 border-red-200" },
+  { id: 2, category: "Scrum", title: "Scrum Master", text: "The 'Servant Leader.' Accountable for establishing Scrum and the team's effectiveness.", icon: <Users className="text-red-500" />, color: "bg-red-50 border-red-200" },
+  { id: 3, category: "Scrum", title: "The Developers", text: "The people committed to creating any aspect of a usable Increment each Sprint.", icon: <Layers className="text-red-500" />, color: "bg-red-50 border-red-200" },
+  { id: 4, category: "Scrum", title: "Sprint", text: "A fixed-length event of one month or less to create consistency. The heartbeat of Scrum.", icon: <RotateCcw className="text-red-500" />, color: "bg-red-50 border-red-200" },
+  { id: 5, category: "Scrum", title: "Sprint Planning", text: "Sets the 'Why, What, and How' of the Sprint. Results in the Sprint Goal and Sprint Backlog.", icon: <Lightbulb className="text-red-500" />, color: "bg-red-50 border-red-200" },
+  { id: 6, category: "Scrum", title: "Daily Scrum", text: "15-minute event for Developers to inspect progress toward the Sprint Goal and adapt the plan.", icon: <Clock className="text-red-500" />, color: "bg-red-50 border-red-200" },
+  { id: 7, category: "Scrum", title: "Sprint Review", text: "Purpose: To inspect the outcome of the Sprint and determine future adaptations with stakeholders.", icon: <CheckCircle className="text-red-500" />, color: "bg-red-50 border-red-200" },
+  { id: 8, category: "Scrum", title: "Sprint Retrospective", text: "Purpose: To plan ways to increase quality and effectiveness. Focuses on people, process, and tools.", icon: <RotateCcw className="text-red-500" />, color: "bg-red-50 border-red-200" },
+  { id: 9, category: "Scrum", title: "Product Backlog", text: "An emergent, ordered list of what is needed to improve the product.", icon: <Layers className="text-red-500" />, color: "bg-red-50 border-red-200" },
+  { id: 10, category: "Scrum", title: "Sprint Backlog", text: "The set of Product Backlog items selected for the Sprint, plus the plan for delivering them.", icon: <Layers className="text-red-500" />, color: "bg-red-50 border-red-200" },
+  { id: 11, category: "Scrum", title: "Increment", text: "A concrete stepping stone toward the Product Goal. Must be usable and meet the Definition of Done.", icon: <Zap className="text-red-500" />, color: "bg-red-50 border-red-200" },
+  { id: 12, category: "Scrum", title: "Definition of Done", text: "A formal description of the state of the Increment when it meets the quality measures required.", icon: <CheckCircle className="text-red-500" />, color: "bg-red-50 border-red-200" },
+  { id: 13, category: "Lean", title: "Muda (Waste)", text: "Anything that does not add value for the customer. Lean aims to eliminate this.", icon: <TrendingDown className="text-emerald-500" />, color: "bg-emerald-50 border-emerald-200" },
+  { id: 14, category: "Lean", title: "Value Stream Mapping", text: "Visualizing the flow from concept to cash to identify bottlenecks and delays.", icon: <BarChart3 className="text-emerald-500" />, color: "bg-emerald-50 border-emerald-200" },
+  { id: 15, category: "Lean", title: "Kaizen", text: "The philosophy of continuous, incremental improvement by everyone, everywhere.", icon: <Zap className="text-emerald-500" />, color: "bg-emerald-50 border-emerald-200" },
+  { id: 16, category: "Lean", title: "WIP Limits", text: "Work-In-Progress limits. Used to optimize flow and highlight bottlenecks in Kanban.", icon: <Layers className="text-emerald-500" />, color: "bg-emerald-50 border-emerald-200" },
+  { id: 17, category: "Lean", title: "Pull System", text: "Work is only started when there is demand/capacity, rather than being 'pushed' into the system.", icon: <ChevronRight className="text-emerald-500" />, color: "bg-emerald-50 border-emerald-200" },
+  { id: 18, category: "Lean", title: "Just-In-Time", text: "Producing only what is needed, when it is needed, and in the amount needed.", icon: <Clock className="text-emerald-500" />, color: "bg-emerald-50 border-emerald-200" },
+  { id: 19, category: "Lean", title: "Poka-Yoke", text: "Error-proofing. Designing a process so that mistakes are impossible or easily detected.", icon: <CheckCircle className="text-emerald-500" />, color: "bg-emerald-50 border-emerald-200" },
+  { id: 20, category: "Lean", title: "Gemba", text: "The 'real place' where work happens. Lean leaders go here to understand reality.", icon: <Users className="text-emerald-500" />, color: "bg-emerald-50 border-emerald-200" },
+  { id: 21, category: "Lean", title: "Lead Time", text: "Total time from customer request to delivery.", icon: <BarChart3 className="text-emerald-500" />, color: "bg-emerald-50 border-emerald-200" },
+  { id: 22, category: "Lean", title: "Cycle Time", text: "The time it takes to complete a specific task once work has actually started.", icon: <BarChart3 className="text-emerald-500" />, color: "bg-emerald-50 border-emerald-200" },
+  { id: 23, category: "XP", title: "Pair Programming", text: "Two developers working at one workstation. Improves quality and knowledge sharing.", icon: <Users className="text-blue-500" />, color: "bg-blue-50 border-blue-200" },
+  { id: 24, category: "XP", title: "TDD", text: "Test-Driven Development. Write a failing test, then code to pass it, then refactor.", icon: <Zap className="text-blue-500" />, color: "bg-blue-50 border-blue-200" },
+  { id: 25, category: "XP", title: "Refactoring", text: "Improving the internal structure of code without changing its external behavior.", icon: <RotateCcw className="text-blue-500" />, color: "bg-blue-50 border-blue-200" },
+  { id: 26, category: "XP", title: "Continuous Integration", text: "Merging all developer working copies to a shared mainline several times a day.", icon: <Layers className="text-blue-500" />, color: "bg-blue-50 border-blue-200" },
+  { id: 27, category: "XP", title: "Collective Ownership", text: "Anyone on the team can improve any part of the code at any time.", icon: <Users className="text-blue-500" />, color: "bg-blue-50 border-blue-200" },
+  { id: 28, category: "XP", title: "Simple Design", text: "Code should pass tests, communicate intent, have no duplication, and minimize elements.", icon: <Lightbulb className="text-blue-500" />, color: "bg-blue-50 border-blue-200" },
+  { id: 29, category: "XP", title: "Sustainable Pace", text: "The team should be able to maintain their work speed indefinitely without burnout.", icon: <Zap className="text-blue-500" />, color: "bg-blue-50 border-blue-200" },
+  { id: 30, category: "XP", title: "Coding Standards", text: "Agreed-upon rules for writing code to ensure consistency and readability.", icon: <CheckCircle className="text-blue-500" />, color: "bg-blue-50 border-blue-200" },
+  { id: 31, category: "XP", title: "User Stories", text: "Short descriptions of a feature from the perspective of the person who desires the capability.", icon: <Users className="text-blue-500" />, color: "bg-blue-50 border-blue-200" },
+  { id: 32, category: "XP", title: "Small Releases", text: "Deploying software to users as frequently as possible to get real feedback.", icon: <Rocket className="text-blue-500" />, color: "bg-blue-50 border-blue-200" },
+  { id: 33, category: "Culture", title: "Psychological Safety", text: "The belief that one will not be punished for making a mistake or asking a question.", icon: <Users className="text-purple-500" />, color: "bg-purple-50 border-purple-200" },
+  { id: 34, category: "Culture", title: "Servant Leadership", text: "Focusing on the needs of the team before your own. Removing impediments.", icon: <Users className="text-purple-500" />, color: "bg-purple-50 border-purple-200" },
+  { id: 35, category: "Culture", title: "Self-Organization", text: "Teams deciding internally who does what, when, and how to achieve goals.", icon: <RotateCcw className="text-purple-500" />, color: "bg-purple-50 border-purple-200" },
+  { id: 36, category: "Culture", title: "T-Shaped Skills", text: "Broad general knowledge across many areas, and deep expertise in one specific area.", icon: <Target className="text-purple-500" />, color: "bg-purple-50 border-purple-200" },
+  { id: 37, category: "Culture", title: "Growth Mindset", text: "Believing that abilities can be developed through dedication and hard work.", icon: <Zap className="text-purple-500" />, color: "bg-purple-50 border-purple-200" },
+  { id: 38, category: "Culture", title: "Radical Transparency", text: "Making all information (good and bad) visible so the team can inspect and adapt.", icon: <Lightbulb className="text-purple-500" />, color: "bg-purple-50 border-purple-200" },
+  { id: 39, category: "Culture", title: "Empowerment", text: "Giving the team the authority and resources to make their own decisions.", icon: <Users className="text-purple-500" />, color: "bg-purple-50 border-purple-200" },
+  { id: 40, category: "Culture", title: "Collaboration", text: "The act of working together to produce something, rather than just coordinating tasks.", icon: <Users className="text-purple-500" />, color: "bg-purple-50 border-purple-200" },
+  { id: 41, category: "Culture", title: "Fail Fast", text: "Learning quickly through early experimentation rather than slow, safe failure.", icon: <Zap className="text-purple-500" />, color: "bg-purple-50 border-purple-200" },
+  { id: 42, category: "Culture", title: "Agile Manifesto", text: "4 Values and 12 Principles that form the foundation of the Agile mindset.", icon: <Target className="text-purple-500" />, color: "bg-purple-50 border-purple-200" },
+  { id: 43, category: "Metrics", title: "Velocity", text: "Measure of the amount of work a team can tackle during a single Sprint.", icon: <BarChart3 className="text-orange-500" />, color: "bg-orange-50 border-orange-200" },
+  { id: 44, category: "Metrics", title: "Burndown Chart", text: "Visualizes work remaining vs. time in a Sprint. Ideal for Daily Scrums.", icon: <TrendingDown className="text-orange-500" />, color: "bg-orange-50 border-orange-200" },
+  { id: 45, category: "Metrics", title: "Burnup Chart", text: "Visualizes total work completed against total scope. Great for project tracking.", icon: <BarChart3 className="text-orange-500" />, color: "bg-orange-50 border-orange-200" },
+  { id: 46, category: "Metrics", title: "Throughput", text: "The number of items completed in a specific time unit (e.g., stories per week).", icon: <Zap className="text-orange-500" />, color: "bg-orange-50 border-orange-200" },
+  { id: 47, category: "Scaling", title: "SAFe", text: "Scaled Agile Framework. A provider of integrated principles for large enterprises.", icon: <Layers className="text-orange-500" />, color: "bg-orange-50 border-orange-200" },
+  { id: 48, category: "Scaling", title: "LeSS", text: "Large-Scale Scrum. Scrum applied to many teams working together on one product.", icon: <Layers className="text-orange-500" />, color: "bg-orange-50 border-orange-200" },
+  { id: 49, category: "Scaling", title: "Spotify Model", text: "Autonomous Squads, Tribes, Chapters, and Guilds for organizational scaling.", icon: <Users className="text-orange-500" />, color: "bg-orange-50 border-orange-200" },
+  { id: 50, category: "General", title: "Technical Debt", text: "The implied cost of additional rework caused by choosing an easy solution now.", icon: <TrendingDown className="text-gray-500" />, color: "bg-gray-50 border-gray-200" },
+
+  // NEXT 50 ITEMS (IDs 51-100) from Agile Practice Guide
+  { id: 51, category: "Technique", title: "MoSCoW", text: "Must-have, Should-have, Could-have, and Won't-have. A method for requirements prioritization.", icon: <Anchor className="text-pink-500" />, color: "bg-pink-50 border-pink-200" },
+  { id: 52, category: "Technique", title: "Kano Model", text: "Classifies requirements into Basic, Performance, and Excitement needs.", icon: <Award className="text-pink-500" />, color: "bg-pink-50 border-pink-200" },
+  { id: 53, category: "Technique", title: "Planning Poker", text: "Consensus-based technique for estimating effort using Fibonacci-scaled cards.", icon: <Shuffle className="text-pink-500" />, color: "bg-pink-50 border-pink-200" },
+  { id: 54, category: "Technique", title: "User Story Mapping", text: "Arranging user stories to create a skeletal view of the whole system/backlog.", icon: <Map className="text-pink-500" />, color: "bg-pink-50 border-pink-200" },
+  { id: 55, category: "Strategy", title: "MVP", text: "Minimum Viable Product. Smallest collection of features that can be released to get feedback.", icon: <Rocket className="text-cyan-500" />, color: "bg-cyan-50 border-cyan-200" },
+  { id: 56, category: "Technique", title: "Dot Voting", text: "Fast method for a group to prioritize a long list of options using sticky dots.", icon: <CheckCircle className="text-pink-500" />, color: "bg-pink-50 border-pink-200" },
+  { id: 57, category: "Culture", title: "Shu-Ha-Ri", text: "A Japanese martial arts concept describing the stages of learning: Follow, Break, Transcend.", icon: <Award className="text-purple-500" />, color: "bg-purple-50 border-purple-200" },
+  { id: 58, category: "Strategy", title: "Information Radiator", text: "Big, visible displays that show the team's current status (Kanban, charts, etc.).", icon: <Activity className="text-cyan-500" />, color: "bg-cyan-50 border-cyan-200" },
+  { id: 59, category: "Culture", title: "Caves and Commons", text: "Office layout providing public workspace (Commons) and private space (Caves).", icon: <Users className="text-purple-500" />, color: "bg-purple-50 border-purple-200" },
+  { id: 60, category: "Scrum", title: "Definition of Ready", text: "Checklist to ensure a story is well-defined enough for the team to start work.", icon: <Shield className="text-red-500" />, color: "bg-red-50 border-red-200" },
+  { id: 61, category: "XP", title: "Spike", text: "A quick, time-boxed research project to reduce technical or functional uncertainty.", icon: <Zap className="text-blue-500" />, color: "bg-blue-50 border-blue-200" },
+  { id: 62, category: "Technique", title: "INVEST", text: "Criteria for good stories: Independent, Negotiable, Valuable, Estimable, Small, Testable.", icon: <Shield className="text-pink-500" />, color: "bg-pink-50 border-pink-200" },
+  { id: 63, category: "Strategy", title: "Agile PMO", text: "A PMO focused on servant leadership, value-based metrics, and removing roadblocks.", icon: <Compass className="text-cyan-500" />, color: "bg-cyan-50 border-cyan-200" },
+  { id: 64, category: "Lean", title: "Jidoka", text: "Building quality into the process; stopping the line as soon as a problem occurs.", icon: <Zap className="text-emerald-500" />, color: "bg-emerald-50 border-emerald-200" },
+  { id: 65, category: "Strategy", title: "Agile Roadmap", text: "High-level visual summary of the product's direction and features over time.", icon: <Map className="text-cyan-500" />, color: "bg-cyan-50 border-cyan-200" },
+  { id: 66, category: "Technique", title: "Wideband Delphi", text: "Group-based estimation technique intended to prevent anchoring/bias.", icon: <Users className="text-pink-500" />, color: "bg-pink-50 border-pink-200" },
+  { id: 67, category: "XP", title: "ATDD", text: "Acceptance Test-Driven Development. Collaboration between team and customer on tests.", icon: <CheckCircle className="text-blue-500" />, color: "bg-blue-50 border-blue-200" },
+  { id: 68, category: "Strategy", title: "Osmotic Comm.", text: "Indirect information sharing that happens when a team works in a common space.", icon: <Activity className="text-cyan-500" />, color: "bg-cyan-50 border-cyan-200" },
+  { id: 69, category: "Metrics", title: "CFD", text: "Cumulative Flow Diagram. Shows work status over time, revealing bottlenecks.", icon: <TrendingDown className="text-orange-500" />, color: "bg-orange-50 border-orange-200" },
+  { id: 70, category: "Culture", title: "High-Perf Team", text: "Teams characterized by deep trust, shared goals, and extreme collaboration.", icon: <Trophy className="text-purple-500" />, color: "bg-purple-50 border-purple-200" },
+  { id: 71, category: "Strategy", title: "Agile Chartering", text: "Collaborative event to establish team purpose, values, and working agreements.", icon: <Anchor className="text-cyan-500" />, color: "bg-cyan-50 border-cyan-200" },
+  { id: 72, category: "Technique", title: "3 C's", text: "User stories consist of: Card, Conversation, and Confirmation.", icon: <Layers className="text-pink-500" />, color: "bg-pink-50 border-pink-200" },
+  { id: 73, category: "Culture", title: "Standard Work", text: "Best-known way to do a task, used as a baseline for continuous improvement.", icon: <Award className="text-purple-500" />, color: "bg-purple-50 border-purple-200" },
+  { id: 74, category: "Strategy", title: "Release Plan", text: "The plan for when and how the product increments will be made available to users.", icon: <Rocket className="text-cyan-500" />, color: "bg-cyan-50 border-cyan-200" },
+  { id: 75, category: "Lean", title: "Little's Law", text: "Mathematical relationship between Lead Time, Throughput, and WIP.", icon: <Activity className="text-emerald-500" />, color: "bg-emerald-50 border-emerald-200" },
+  { id: 76, category: "XP", title: "Mob Programming", text: "Entire team working on the same task, at the same time, on the same computer.", icon: <Users className="text-blue-500" />, color: "bg-blue-50 border-blue-200" },
+  { id: 77, category: "Technique", title: "Affinity Est.", text: "Grouping user stories by relative size (T-shirt sizes) rather than numbers.", icon: <Layers className="text-pink-500" />, color: "bg-pink-50 border-pink-200" },
+  { id: 78, category: "Strategy", title: "Backlog Refinement", text: "Ongoing process of reviewing, splitting, and re-estimating items in the backlog.", icon: <Lightbulb className="text-cyan-500" />, color: "bg-cyan-50 border-cyan-200" },
+  { id: 79, category: "Culture", title: "Team Agreement", text: "A living document defining how the team works together (rules, rituals, behaviors).", icon: <Shield className="text-purple-500" />, color: "bg-purple-50 border-purple-200" },
+  { id: 80, category: "XP", title: "Continuous Deploy.", text: "Automating the entire release process so that code changes can go to users instantly.", icon: <Rocket className="text-blue-500" />, color: "bg-blue-50 border-blue-200" },
+  { id: 81, category: "Metrics", title: "Cycle Time Hist.", text: "A graph showing the distribution of cycle times, used for predictability analysis.", icon: <BarChart3 className="text-orange-500" />, color: "bg-orange-50 border-orange-200" },
+  { id: 82, category: "Technique", title: "MoSCoW Rules", text: "Must have (60%), Should have (20%), Could have (20%) for a balanced release.", icon: <Shield className="text-pink-500" />, color: "bg-pink-50 border-pink-200" },
+  { id: 83, category: "Culture", title: "Servant Leader Fac.", text: "Helping the team reach consensus without exerting formal authority.", icon: <Users className="text-purple-500" />, color: "bg-purple-50 border-purple-200" },
+  { id: 84, category: "Lean", title: "Hoshin Kanri", text: "Method to ensure the strategic goals of the company drive every action in the team.", icon: <Target className="text-emerald-500" />, color: "bg-emerald-50 border-emerald-200" },
+  { id: 85, category: "Strategy", title: "Empirical Control", text: "Making decisions based on observed reality (transparency, inspection, adaptation).", icon: <Lightbulb className="text-cyan-500" />, color: "bg-cyan-50 border-cyan-200" },
+  { id: 86, category: "Technique", title: "Story Points", text: "Relative unit of measure for expressing overall size/effort of a user story.", icon: <Layers className="text-pink-500" />, color: "bg-pink-50 border-pink-200" },
+  { id: 87, category: "Strategy", title: "Product Vision", text: "The 'North Star' for the product. Why we are building it and who it is for.", icon: <Compass className="text-cyan-500" />, color: "bg-cyan-50 border-cyan-200" },
+  { id: 88, category: "Culture", title: "Obstacle Removal", text: "The primary daily duty of a servant leader to ensure flow for the team.", icon: <RotateCcw className="text-purple-500" />, color: "bg-purple-50 border-purple-200" },
+  { id: 89, category: "Technique", title: "Planning Poker Fib.", text: "Using Fibonacci (1, 2, 3, 5, 8...) to represent uncertainty as size increases.", icon: <Shuffle className="text-pink-500" />, color: "bg-pink-50 border-pink-200" },
+  { id: 90, category: "Culture", title: "Active Listening", text: "Essential skill for servant leaders to truly understand team and stakeholder needs.", icon: <Users className="text-purple-500" />, color: "bg-purple-50 border-purple-200" },
+  { id: 91, category: "Strategy", title: "Value-Based Prior.", text: "Ordering the backlog based on the ROI or business value each item provides.", icon: <Target className="text-cyan-500" />, color: "bg-cyan-50 border-cyan-200" },
+  { id: 92, category: "Lean", title: "5 Whys", text: "Root cause analysis technique to find the underlying problem by asking 'Why?' five times.", icon: <HelpCircle className="text-emerald-500" />, color: "bg-emerald-50 border-emerald-200" },
+  { id: 93, category: "Technique", title: "Fist to Five", text: "Group voting method to gauge consensus (0 = no, 5 = full support).", icon: <Users className="text-pink-500" />, color: "bg-pink-50 border-pink-200" },
+  { id: 94, category: "Scaling", title: "Scrum of Scrums", text: "Technique to coordinate multiple Scrum teams working on the same product.", icon: <Layers className="text-orange-500" />, color: "bg-orange-50 border-orange-200" },
+  { id: 95, category: "Strategy", title: "MVP vs MMF", text: "MVP is for learning; MMF (Minimum Marketable Feature) is for selling.", icon: <Rocket className="text-cyan-500" />, color: "bg-cyan-50 border-cyan-200" },
+  { id: 96, category: "Metrics", title: "Escaped Defects", text: "Defects found in production, showing gaps in the 'Definition of Done'.", icon: <TrendingDown className="text-orange-500" />, color: "bg-orange-50 border-orange-200" },
+  { id: 97, category: "XP", title: "BDD", text: "Behavior-Driven Development. Using natural language to describe system behaviors.", icon: <Lightbulb className="text-blue-500" />, color: "bg-blue-50 border-blue-200" },
+  { id: 98, category: "Culture", title: "Generalized Spec.", text: "People with a specialty who can also perform other team tasks (T-shaped).", icon: <Target className="text-purple-500" />, color: "bg-purple-50 border-purple-200" },
+  { id: 99, category: "Scaling", title: "Agile Portfolio", text: "Aligning strategy with execution by applying Lean-Agile principles to investments.", icon: <BarChart3 className="text-orange-500" />, color: "bg-orange-50 border-orange-200" },
+  { id: 100, category: "Strategy", title: "Agile Suit. Filter", text: "Tool to determine if a project is best suited for Predictive, Agile, or Hybrid.", icon: <Compass className="text-cyan-500" />, color: "bg-cyan-50 border-cyan-200" },
+
+  // FINAL 50 ITEMS (IDs 101-150) from Glossary of Agile Practice Guide
+  { id: 101, category: "Strategy", title: "A/B Testing", text: "Comparing two versions of a product to see which performs better with real users.", icon: <Shuffle className="text-cyan-500" />, color: "bg-cyan-50 border-cyan-200" },
+  { id: 102, category: "Technique", title: "Acceptance Criteria", text: "The set of conditions that a software product must satisfy to be accepted by a user or customer.", icon: <Shield className="text-pink-500" />, color: "bg-pink-50 border-pink-200" },
+  { id: 103, category: "Culture", title: "Agile Lead", text: "Generic term for a servant leader role, also known as Scrum Master or Team Lead.", icon: <Users className="text-purple-500" />, color: "bg-purple-50 border-purple-200" },
+  { id: 104, category: "Scrum", title: "Agile Team", text: "A cross-functional group of people that have all the skills needed to produce a working product increment.", icon: <Users className="text-red-500" />, color: "bg-red-50 border-red-200" },
+  { id: 105, category: "Strategy", title: "Business Value", text: "The relative worth or benefit that an item provides to the organization or customer.", icon: <Target className="text-cyan-500" />, color: "bg-cyan-50 border-cyan-200" },
+  { id: 106, category: "Strategy", title: "Cadence", text: "A regular, predictable rhythm of events and activities within the team.", icon: <Clock className="text-cyan-500" />, color: "bg-cyan-50 border-cyan-200" },
+  { id: 107, category: "Culture", title: "Co-location", text: "Organizing the team so they work in the same physical space to improve communication.", icon: <Anchor className="text-purple-500" />, color: "bg-purple-50 border-purple-200" },
+  { id: 108, category: "Scaling", title: "Component Team", text: "A team organized around a specific technical layer or functional area rather than customer value.", icon: <Layers className="text-orange-500" />, color: "bg-orange-50 border-orange-200" },
+  { id: 109, category: "Strategy", title: "Continuous Discovery", text: "Ongoing effort to research and learn about user needs throughout the product lifecycle.", icon: <Lightbulb className="text-cyan-500" />, color: "bg-cyan-50 border-cyan-200" },
+  { id: 110, category: "XP", title: "DevOps", text: "Practices that combine development and operations to shorten the delivery cycle and provide high quality.", icon: <Zap className="text-blue-500" />, color: "bg-blue-50 border-blue-200" },
+  { id: 111, category: "Culture", title: "Emotional Intelligence", text: "The ability to understand and manage your own emotions and those of the people around you.", icon: <Activity className="text-purple-500" />, color: "bg-purple-50 border-purple-200" },
+  { id: 112, category: "Scrum", title: "Epic", text: "A large user story that is eventually broken down into smaller, manageable stories.", icon: <Map className="text-red-500" />, color: "bg-red-50 border-red-200" },
+  { id: 113, category: "Culture", title: "Explicit Knowledge", text: "Information that can be easily documented, stored, and shared with others.", icon: <Layers className="text-purple-500" />, color: "bg-purple-50 border-purple-200" },
+  { id: 114, category: "Culture", title: "Tacit Knowledge", text: "Knowledge gained through experience that is difficult to document or transfer to others.", icon: <Lightbulb className="text-purple-500" />, color: "bg-purple-50 border-purple-200" },
+  { id: 115, category: "Scrum", title: "Feature", text: "A group of related requirements or stories that provide a specific capability to the user.", icon: <Map className="text-red-500" />, color: "bg-red-50 border-red-200" },
+  { id: 116, category: "Lean", title: "Flow", text: "The smooth, continuous movement of work through the development system.", icon: <Activity className="text-emerald-500" />, color: "bg-emerald-50 border-emerald-200" },
+  { id: 117, category: "Strategy", title: "Hybrid Approach", text: "A combination of predictive and agile methods used to manage a project.", icon: <Compass className="text-cyan-500" />, color: "bg-cyan-50 border-cyan-200" },
+  { id: 118, category: "Technique", title: "Ideal Time", text: "The amount of time it takes to complete a task without any interruptions or delays.", icon: <Clock className="text-pink-500" />, color: "bg-pink-50 border-pink-200" },
+  { id: 119, category: "Strategy", title: "Iterative", text: "An approach that allows for the repeat of cycles to improve and refine the product.", icon: <RotateCcw className="text-cyan-500" />, color: "bg-cyan-50 border-cyan-200" },
+  { id: 120, category: "Strategy", title: "Incremental", text: "An approach that delivers finished, functional pieces of the product over time.", icon: <Layers className="text-cyan-500" />, color: "bg-cyan-50 border-cyan-200" },
+  { id: 121, category: "Lean", title: "Kanban", text: "A method for managing work by emphasizing just-in-time delivery and visualizing flow.", icon: <Layers className="text-emerald-500" />, color: "bg-emerald-50 border-emerald-200" },
+  { id: 122, category: "Lean", title: "Lean Thinking", text: "A philosophy focused on maximizing customer value while minimizing waste.", icon: <Lightbulb className="text-emerald-500" />, color: "bg-emerald-50 border-emerald-200" },
+  { id: 123, category: "Culture", title: "Mindset", text: "Set of beliefs and attitudes that influence how an individual responds to situations.", icon: <Shield className="text-purple-500" />, color: "bg-purple-50 border-purple-200" },
+  { id: 124, category: "Lean", title: "Multitasking", text: "Attempting to work on multiple tasks simultaneously, which leads to decreased efficiency.", icon: <Shuffle className="text-emerald-500" />, color: "bg-emerald-50 border-emerald-200" },
+  { id: 125, category: "Culture", title: "Organizational Bias", text: "Systemic tendencies within a company that favor one way of working over another.", icon: <TrendingDown className="text-purple-500" />, color: "bg-purple-50 border-purple-200" },
+  { id: 126, category: "Technique", title: "Persona", text: "A fictional character created to represent a user type that might use the product.", icon: <Users className="text-pink-500" />, color: "bg-pink-50 border-pink-200" },
+  { id: 127, category: "XP", title: "Quality", text: "The degree to which a set of inherent characteristics fulfills requirements.", icon: <CheckCircle className="text-blue-500" />, color: "bg-blue-50 border-blue-200" },
+  { id: 128, category: "Technique", title: "Relative Estimating", text: "Sizing work by comparing it to other known pieces of work rather than using absolute units.", icon: <BarChart3 className="text-pink-500" />, color: "bg-pink-50 border-pink-200" },
+  { id: 129, category: "Strategy", title: "Risk", text: "An uncertain event or condition that, if it occurs, has a positive or negative effect on objectives.", icon: <Shield className="text-cyan-500" />, color: "bg-cyan-50 border-cyan-200" },
+  { id: 130, category: "Scrum", title: "Role", text: "A defined set of responsibilities and behaviors expected of a person on a team.", icon: <Users className="text-red-500" />, color: "bg-red-50 border-red-200" },
+  { id: 131, category: "Culture", title: "Self-Correction", text: "The ability of a team to identify and fix issues in their own process and performance.", icon: <RotateCcw className="text-purple-500" />, color: "bg-purple-50 border-purple-200" },
+  { id: 132, category: "Lean", title: "Silo", text: "A functional department that operates in isolation from other parts of the organization.", icon: <TrendingDown className="text-emerald-500" />, color: "bg-emerald-50 border-emerald-200" },
+  { id: 133, category: "Technique", title: "Swarming", text: "A technique where multiple team members focus on a single high-priority item to finish it quickly.", icon: <Users className="text-pink-500" />, color: "bg-pink-50 border-pink-200" },
+  { id: 134, category: "Scrum", title: "Task", text: "A small, specific piece of work required to complete a user story.", icon: <CheckCircle className="text-red-500" />, color: "bg-red-50 border-red-200" },
+  { id: 135, category: "Scrum", title: "Theme", text: "A top-level category or focus area used to group epics or stories.", icon: <Layers className="text-red-500" />, color: "bg-red-50 border-red-200" },
+  { id: 136, category: "Scrum", title: "Timebox", text: "A fixed period of time during which an activity or event must be completed.", icon: <Clock className="text-red-500" />, color: "bg-red-50 border-red-200" },
+  { id: 137, category: "XP", title: "Unit Testing", text: "Testing individual units of source code to determine if they are fit for use.", icon: <Zap className="text-blue-500" />, color: "bg-blue-50 border-blue-200" },
+  { id: 138, category: "Lean", title: "Value Stream", text: "The sequence of activities required to design, produce, and deliver a service to a customer.", icon: <Activity className="text-emerald-500" />, color: "bg-emerald-50 border-emerald-200" },
+  { id: 139, category: "Strategy", title: "Visibility", text: "The degree to which the work and the status of the project are apparent to all stakeholders.", icon: <Lightbulb className="text-cyan-500" />, color: "bg-cyan-50 border-cyan-200" },
+  { id: 140, category: "Technique", title: "Visual Management", text: "Using visual cues to communicate information about the work and the process.", icon: <BarChart3 className="text-pink-500" />, color: "bg-pink-50 border-pink-200" },
+  { id: 141, category: "Culture", title: "War Room", text: "A dedicated workspace for a team to co-locate and focus on a specific project or goal.", icon: <Anchor className="text-purple-500" />, color: "bg-purple-50 border-purple-200" },
+  { id: 142, category: "XP", title: "Feature Toggle", text: "A technique that allows developers to turn specific features on or off in a live environment.", icon: <Zap className="text-blue-500" />, color: "bg-blue-50 border-blue-200" },
+  { id: 143, category: "Metrics", title: "Lagging Indicator", text: "A metric that measures a result after the event has occurred (e.g., actual cost).", icon: <BarChart3 className="text-orange-500" />, color: "bg-orange-50 border-orange-200" },
+  { id: 144, category: "Metrics", title: "Leading Indicator", text: "A metric that predicts future performance or trends (e.g., team morale).", icon: <BarChart3 className="text-orange-500" />, color: "bg-orange-50 border-orange-200" },
+  { id: 145, category: "Scrum", title: "Backlog Item", text: "An individual element of work (story, bug, task) residing in the product backlog.", icon: <Layers className="text-red-500" />, color: "bg-red-50 border-red-200" },
+  { id: 146, category: "XP", title: "Continuous Delivery", text: "Keeping the code in a deployable state throughout the development cycle.", icon: <Rocket className="text-blue-500" />, color: "bg-blue-50 border-blue-200" },
+  { id: 147, category: "Scaling", title: "Crystal Family", text: "A family of agile methodologies tailored to project size and criticality.", icon: <Layers className="text-orange-500" />, color: "bg-orange-50 border-orange-200" },
+  { id: 148, category: "Culture", title: "Double Loop Learning", text: "Changing underlying assumptions or rules based on the outcome of a process.", icon: <RotateCcw className="text-purple-500" />, color: "bg-purple-50 border-purple-200" },
+  { id: 149, category: "XP", title: "Evolutionary Design", text: "Practicing design so that the system architecture grows as the team learns.", icon: <Lightbulb className="text-blue-500" />, color: "bg-blue-50 border-blue-200" },
+  { id: 150, category: "Lean", title: "Handoff", text: "The act of passing work from one person to another; considered a form of waste in Lean.", icon: <Shuffle className="text-emerald-500" />, color: "bg-emerald-50 border-emerald-200" },
+];
+
+const App = () => {
+  const [deck, setDeck] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [masteredIds, setMasteredIds] = useState(new Set());
+  const [needsReviewIds, setNeedsReviewIds] = useState(new Set());
+
+  // Initialize and shuffle deck
+  useEffect(() => {
+    shuffleDeck();
+  }, []);
+
+  const shuffleDeck = () => {
+    const shuffled = [...topicsData].sort(() => Math.random() - 0.5);
+    setDeck(shuffled);
+    setCurrentIndex(0);
+    setIsFlipped(false);
+  };
+
+  const currentCard = deck[currentIndex];
+
+  const handleNext = () => {
+    setIsFlipped(false);
+    setTimeout(() => {
+      setCurrentIndex((prev) => (prev + 1) % deck.length);
+    }, 150);
+  };
+
+  const handlePrev = () => {
+    setIsFlipped(false);
+    setTimeout(() => {
+      setCurrentIndex((prev) => (prev - 1 + deck.length) % deck.length);
+    }, 150);
+  };
+
+  const toggleMastered = (id) => {
+    setMasteredIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else {
+        next.add(id);
+        setNeedsReviewIds(prevReview => {
+          const nextReview = new Set(prevReview);
+          nextReview.delete(id);
+          return nextReview;
+        });
+      }
+      return next;
+    });
+  };
+
+  const toggleNeedsReview = (id) => {
+    setNeedsReviewIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else {
+        next.add(id);
+        setMasteredIds(prevMastered => {
+          const nextMastered = new Set(prevMastered);
+          nextMastered.delete(id);
+          return nextMastered;
+        });
+      }
+      return next;
+    });
+  };
+
+  if (!currentCard) return <div className="p-10 text-center text-slate-500 font-bold">Loading Flashcards...</div>;
+
+  const progressPercent = Math.round((masteredIds.size / topicsData.length) * 100);
+
+  return (
+    <div className="min-h-screen bg-slate-100 flex flex-col font-sans text-slate-900 overflow-x-hidden">
+      {/* Header */}
+      <header className="bg-white border-b border-slate-200 px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-20 shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="bg-indigo-600 p-2 rounded-lg text-white">
+            <Zap size={24} />
+          </div>
+          <div>
+            <h1 className="text-lg sm:text-xl font-black tracking-tight leading-none uppercase">Agile Master Deck</h1>
+            <p className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">150 Practice Guide Topics</p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-4 sm:gap-6 flex-1 justify-end">
+          <div className="hidden lg:block">
+            <div className="flex justify-between text-[10px] font-bold text-slate-400 mb-1 uppercase tracking-tighter">
+              <span>Overall Mastery</span>
+              <span>{progressPercent}% ({masteredIds.size}/150)</span>
+            </div>
+            <div className="w-48 h-2 bg-slate-200 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-indigo-500 transition-all duration-1000 ease-out" 
+                style={{ width: `${progressPercent}%` }}
+              ></div>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={shuffleDeck}
+              className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-colors whitespace-nowrap"
+            >
+              <Shuffle size={16} /> Shuffle
+            </button>
+            <button 
+              onClick={() => {
+                setMasteredIds(new Set());
+                setNeedsReviewIds(new Set());
+                shuffleDeck();
+              }}
+              className="hidden sm:flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-bold transition-colors"
+            >
+              <RotateCcw size={16} /> Reset
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Flashcard View */}
+      <main className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden">
+        
+        {/* Statistics Floating Panel (Desktop) */}
+        <div className="absolute top-8 left-8 hidden xl:flex flex-col gap-4">
+          <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 w-48 hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-2 text-green-600 font-bold mb-1">
+              <Trophy size={18} /> Mastered
+            </div>
+            <div className="text-3xl font-black text-slate-800">{masteredIds.size}</div>
+            <div className="text-[10px] text-slate-400 font-bold uppercase mt-1 tracking-widest">Confidence High</div>
+          </div>
+          <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 w-48 hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-2 text-orange-500 font-bold mb-1">
+              <HelpCircle size={18} /> Reviewing
+            </div>
+            <div className="text-3xl font-black text-slate-800">{needsReviewIds.size}</div>
+            <div className="text-[10px] text-slate-400 font-bold uppercase mt-1 tracking-widest">Needs Work</div>
+          </div>
+        </div>
+
+        {/* The Card Container */}
+        <div className="relative w-full max-w-xl aspect-[4/3] sm:h-[400px] perspective-1000 group">
+          <div 
+            onClick={() => setIsFlipped(!isFlipped)}
+            className={`relative w-full h-full transition-transform duration-500 transform-style-3d cursor-pointer ${isFlipped ? 'rotate-y-180' : ''}`}
+          >
+            {/* Front Side */}
+            <div className={`absolute inset-0 backface-hidden rounded-3xl border-b-[6px] sm:border-b-8 shadow-xl sm:shadow-2xl flex flex-col items-center justify-center p-6 sm:p-12 text-center border ${currentCard.color} transition-all`}>
+              <div className="mb-4 sm:mb-6 transform scale-125 sm:scale-150 p-4 bg-white/50 rounded-full shadow-inner">
+                {currentCard.icon}
+              </div>
+              <span className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-2">
+                {currentCard.category}
+              </span>
+              <h2 className="text-2xl sm:text-4xl font-black text-slate-800 leading-tight">
+                {currentCard.title}
+              </h2>
+              <div className="mt-6 sm:mt-10 flex items-center gap-2 text-indigo-500 font-bold animate-bounce text-xs sm:text-sm">
+                <RotateCcw size={16} /> Tap to reveal logic
+              </div>
+            </div>
+
+            {/* Back Side */}
+            <div className={`absolute inset-0 backface-hidden rotate-y-180 rounded-3xl border-b-[6px] sm:border-b-8 shadow-xl sm:shadow-2xl flex flex-col items-center justify-center p-6 sm:p-12 text-center border bg-white border-indigo-200 transition-all`}>
+              <span className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-indigo-400 mb-4 sm:mb-6">
+                Expert Breakdown
+              </span>
+              <p className="text-lg sm:text-2xl font-bold text-slate-700 leading-relaxed italic px-2">
+                "{currentCard.text}"
+              </p>
+              <div className="mt-8 sm:mt-10 flex items-center gap-2 text-slate-400 font-bold text-xs">
+                <RotateCcw size={16} /> Tap to flip back
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Controls */}
+        <div className="mt-8 sm:mt-12 w-full max-w-xl flex flex-col gap-4 sm:gap-6">
+          <div className="flex items-center justify-between gap-3 sm:gap-4">
+            <button 
+              onClick={handlePrev}
+              className="p-3 sm:p-4 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 rounded-2xl shadow-sm transition-all active:scale-90"
+            >
+              <ChevronLeft size={24} />
+            </button>
+            
+            <div className="flex-1 flex gap-2 sm:gap-3">
+              <button 
+                onClick={(e) => { e.stopPropagation(); toggleNeedsReview(currentCard.id); }}
+                className={`flex-1 flex items-center justify-center gap-2 py-3 sm:py-4 rounded-2xl font-bold text-sm sm:text-base transition-all ${
+                  needsReviewIds.has(currentCard.id) 
+                  ? 'bg-orange-500 text-white shadow-lg shadow-orange-200 scale-105' 
+                  : 'bg-white border border-slate-200 text-orange-500 hover:bg-orange-50'
+                }`}
+              >
+                <HelpCircle size={20} className="hidden sm:inline" /> Learning
+              </button>
+              
+              <button 
+                onClick={(e) => { e.stopPropagation(); toggleMastered(currentCard.id); }}
+                className={`flex-1 flex items-center justify-center gap-2 py-3 sm:py-4 rounded-2xl font-bold text-sm sm:text-base transition-all ${
+                  masteredIds.has(currentCard.id) 
+                  ? 'bg-green-500 text-white shadow-lg shadow-green-200 scale-105' 
+                  : 'bg-white border border-slate-200 text-green-600 hover:bg-green-50'
+                }`}
+              >
+                <CheckCircle size={20} className="hidden sm:inline" /> Mastered
+              </button>
+            </div>
+
+            <button 
+              onClick={handleNext}
+              className="p-3 sm:p-4 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 rounded-2xl shadow-sm transition-all active:scale-90"
+            >
+              <ChevronRight size={24} />
+            </button>
+          </div>
+
+          <div className="text-center font-bold text-slate-400 text-xs sm:text-sm uppercase tracking-widest">
+            Topic {currentIndex + 1} of {deck.length}
+          </div>
+        </div>
+      </main>
+
+      {/* CSS for 3D flip effect */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        .perspective-1000 {
+          perspective: 1000px;
+        }
+        .backface-hidden {
+          backface-visibility: hidden;
+        }
+        .transform-style-3d {
+          transform-style: preserve-3d;
+        }
+        .rotate-y-180 {
+          transform: rotateY(180deg);
+        }
+      `}} />
+
+      {/* Mobile/Tablet Footer Stats */}
+      <footer className="xl:hidden bg-white border-t border-slate-200 p-4 grid grid-cols-2 gap-4 sticky bottom-0 z-10">
+        <div className="flex flex-col items-center justify-center border-r border-slate-100">
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter mb-1">Mastered</span>
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-green-500"></div>
+            <span className="text-lg font-black text-slate-800">{masteredIds.size}</span>
+          </div>
+        </div>
+        <div className="flex flex-col items-center justify-center">
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter mb-1">Reviewing</span>
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-orange-500"></div>
+            <span className="text-lg font-black text-slate-800">{needsReviewIds.size}</span>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default App;
